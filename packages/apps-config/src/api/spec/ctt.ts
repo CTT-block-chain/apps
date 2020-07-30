@@ -1,6 +1,6 @@
 export default {
-  Address: "AccountId",
-  LookupSource: "AccountId",
+  //Address: "AccountId",
+  //LookupSource: "AccountId",
   AuthAccountId: "AccountId",
   AccountID32: "AccountId",
 
