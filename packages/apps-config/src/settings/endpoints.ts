@@ -36,6 +36,12 @@ function createDev(t: TFunction): LinkOption[] {
 function createLive(t: TFunction): LinkOption[] {
   return [
     {
+      dnslink: "ctt",
+      info: "ctt",
+      text: t<string>("rpc.local", "CTT (Own, 39.106.116.92:9944)", { ns: "apps-config" }),
+      value: "ws://39.106.116.92:9944"
+    },
+    {
       dnslink: "polkadot",
       info: "polkadot",
       text: t<string>("rpc.polkadot.parity", "Polkadot (Live, hosted by Parity)", { ns: "apps-config" }),

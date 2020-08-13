@@ -1,14 +1,6 @@
 export default {
-  //Address: "AccountId",
-  //LookupSource: "AccountId",
-  AuthAccountId: "AccountId",
   AccountID32: "AccountId",
-  PowerSize: "u128",
-
-  KPProductPublishData: {
-    paraIssueRate: "u32",
-    selfIssueRate: "u32"
-  },
+  AuthAccountId: "AccountId",
 
   KPProductIdentifyData: {
     goodsPrice: "u32",
@@ -17,10 +9,17 @@ export default {
     cartId: "Vec<u8>"
   },
 
+  KPProductPublishData: {
+    paraIssueRate: "u32",
+    selfIssueRate: "u32"
+  },
+
   KPProductTryData: {
     goodsPrice: "u32",
     offsetRate: "u32",
     trueRate: "u32",
     cartId: "Vec<u8>"
-  }
+  },
+
+  PowerSize: "u128"
 };
