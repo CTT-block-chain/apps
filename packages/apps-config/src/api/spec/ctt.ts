@@ -3,6 +3,7 @@ export default {
   //LookupSource: "AccountId",
   AuthAccountId: "AccountId",
   AccountID32: "AccountId",
+  PowerSize: "u128",
 
   KPProductPublishData: {
     paraIssueRate: "u32",
