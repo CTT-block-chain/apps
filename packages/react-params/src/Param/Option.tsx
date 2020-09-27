@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/react-params authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { TypeDef } from '@polkadot/types/types';
 import { Props } from '../types';
@@ -38,7 +37,7 @@ function Option ({ className = '', defaultValue, isDisabled, name, onChange, onE
       />
       {!isDisabled && (
         <Toggle
-          className='ui--Param-Option-toggle'
+          isOverlay
           label={t<string>('include option')}
           onChange={setIsActive}
           value={isActive}
@@ -50,10 +49,4 @@ function Option ({ className = '', defaultValue, isDisabled, name, onChange, onE
 
 export default React.memo(styled(Option)`
   position: relative;
-
-  > .ui--Param-Option-toggle {
-    bottom: 1.375rem;
-    position: absolute;
-    right: 3.5rem;
-  }
 `);

@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-society authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { DeriveSociety } from '@polkadot/api-derive/types';
 
@@ -26,7 +25,7 @@ interface Props {
 function Overview ({ className }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
-  const info = useCall<DeriveSociety>(api.derive.society.info, []);
+  const info = useCall<DeriveSociety>(api.derive.society.info);
   const { allMembers, isMember, ownMembers } = useMembers();
   const [isBidOpen, toggleBidOpen] = useToggle();
 

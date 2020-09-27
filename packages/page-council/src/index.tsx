@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-democracy authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { Option } from '@polkadot/types';
 import { AccountId } from '@polkadot/types/interfaces';
@@ -25,14 +24,16 @@ interface Props {
   className?: string;
 }
 
+const transformPrime = {
+  transform: (result: Option<AccountId>): AccountId | null => result.unwrapOr(null)
+};
+
 function CouncilApp ({ basePath, className }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
   const { pathname } = useLocation();
   const numMotions = useCounter();
-  const prime = useCall<AccountId | null>(api.query.council.prime, [], {
-    transform: (result: Option<AccountId>): AccountId | null => result.unwrapOr(null)
-  }) || null;
+  const prime = useCall<AccountId | null>(api.query.council.prime, undefined, transformPrime) || null;
   const motions = useCall<DeriveCollectiveProposals>(api.derive.council.proposals);
 
   const items = useMemo(() => [
@@ -42,8 +43,9 @@ function CouncilApp ({ basePath, className }: Props): React.ReactElement<Props> 
       text: t<string>('Council overview')
     },
     {
+      count: numMotions,
       name: 'motions',
-      text: t<string>('Motions ({{count}})', { replace: { count: numMotions } })
+      text: t<string>('Motions')
     }
   ], [numMotions, t]);
 

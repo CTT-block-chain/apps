@@ -1,9 +1,10 @@
 // Copyright 2017-2020 @polkadot/apps-routing authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { AppProps, BareProps } from '@polkadot/react-components/types';
+
+export type RouteGroup = 'accounts' | 'developer' | 'governance' | 'network' | 'settings';
 
 export interface RouteProps extends AppProps, BareProps {
   location: any;
@@ -19,6 +20,7 @@ export interface Route {
     needsApi?: (string | string[])[];
     needsSudo?: boolean;
   };
+  group: RouteGroup;
   icon: IconName;
   isIgnored?: boolean;
   name: string;
@@ -26,4 +28,4 @@ export interface Route {
   useCounter?: () => number | string | null;
 }
 
-export type Routes = (Route | null)[];
+export type Routes = Route[];

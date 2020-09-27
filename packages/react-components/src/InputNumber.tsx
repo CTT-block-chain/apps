@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/react-components authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { SiDef } from '@polkadot/util/types';
 import { BitLength } from './types';
@@ -8,6 +7,7 @@ import { BitLength } from './types';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { registry } from '@polkadot/react-api';
 import { BN_ZERO, BN_TEN, formatBalance, isBn } from '@polkadot/util';
 
 import { classes } from './util';
@@ -120,7 +120,7 @@ function inputToBn (input: string, si: SiDef | null, bitLength: BitLength, isZer
     }
 
     const div = new BN(input.replace(/\.\d*$/, ''));
-    const modString = input.replace(/^\d+\./, '');
+    const modString = input.replace(/^\d+\./, '').substr(0, registry.chainDecimals);
     const mod = new BN(modString);
 
     result = div
@@ -295,5 +295,10 @@ export default React.memo(styled(InputNumber)`
         display: none;
       }
     }
+  }
+
+  .ui.buttons+.ui--Toggle.isOverlay {
+    bottom: 1.1rem;
+    right: 6.5rem;
   }
 `);

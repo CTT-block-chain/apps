@@ -1,11 +1,10 @@
 // Copyright 2017-2020 @polkadot/app-tech-comm authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { Hash } from '@polkadot/types/interfaces';
 import { ComponentProps as Props } from '../types';
 
-import React, { useMemo } from 'react';
+import React, { useRef } from 'react';
 import { Button, Table } from '@polkadot/react-components';
 
 import { useTranslation } from '../translate';
@@ -15,14 +14,14 @@ import Propose from './Propose';
 function Proposals ({ className = '', isMember, members, prime, proposals }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
-  const header = useMemo(() => [
+  const headerRef = useRef([
     [t('proposals'), 'start', 2],
     [t('threshold')],
     [t('voting end')],
     [t('aye'), 'address'],
     [t('nay'), 'address'],
     []
-  ], [t]);
+  ]);
 
   return (
     <div className={className}>
@@ -34,7 +33,7 @@ function Proposals ({ className = '', isMember, members, prime, proposals }: Pro
       </Button.Group>
       <Table
         empty={proposals && t<string>('No committee proposals')}
-        header={header}
+        header={headerRef.current}
       >
         {proposals?.map((hash: Hash): React.ReactNode => (
           <Proposal

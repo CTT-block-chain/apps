@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/react-query authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { AccountId, AccountIndex, Address, StakingLedger } from '@polkadot/types/interfaces';
 
@@ -17,14 +16,18 @@ interface Props {
   label?: React.ReactNode;
 }
 
+const transformController = {
+  transform: (value: Option<AccountId>) => value.unwrapOr(null)
+};
+
+const transformLedger = {
+  transform: (value: Option<StakingLedger>) => value.unwrapOr(null)
+};
+
 function BondedDisplay ({ children, className = '', label, params }: Props): React.ReactElement<Props> {
   const { api } = useApi();
-  const controllerId = useCall<AccountId | null>(api.query.staking.bonded, [params], {
-    transform: (value: Option<AccountId>) => value.unwrapOr(null)
-  });
-  const stakingLedger = useCall<StakingLedger | null>(controllerId && api.query.staking.ledger, [controllerId], {
-    transform: (value: Option<StakingLedger>) => value.unwrapOr(null)
-  });
+  const controllerId = useCall<AccountId | null>(api.query.staking?.bonded, [params], transformController);
+  const stakingLedger = useCall<StakingLedger | null>(controllerId && api.query.staking?.ledger, [controllerId], transformLedger);
 
   return (
     <FormatBalance

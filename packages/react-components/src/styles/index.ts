@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/react-components authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { createGlobalStyle } from 'styled-components';
 
@@ -15,61 +14,121 @@ interface Props {
   uiHighlight?: string;
 }
 
-const defaultHighlight = '#f19135'; // #999
+const BRIGHTNESS = 128 + 32;
+const FACTORS = [0.2126, 0.7152, 0.0722];
+const PARTS = [0, 2, 4];
 
-const getHighlight = (props: Props): string =>
-  (props.uiHighlight || defaultHighlight);
+const defaultHighlight = '#f19135'; // '#f19135'; // #999
+
+function getHighlight (props: Props): string {
+  return (props.uiHighlight || defaultHighlight);
+}
+
+function getContrast (props: Props): string {
+  const hc = getHighlight(props).replace('#', '').toLowerCase();
+  const brightness = PARTS.reduce((b, p, index) => b + (parseInt(hc.substr(p, 2), 16) * FACTORS[index]), 0);
+
+  return brightness > BRIGHTNESS
+    ? 'rgba(45, 43, 41, 0.875)'
+    : 'rgba(255, 253, 251, 0.875)';
+}
 
 export default createGlobalStyle<Props>`
-  .ui--highlight--all {
+  .highlight--all {
     background: ${getHighlight} !important;
     border-color: ${getHighlight} !important;
     color: ${getHighlight} !important;
   }
 
-  .ui--highlight--before:before {
+  .highlight--before:before {
     background: ${getHighlight} !important;
   }
 
-  .ui--highlight--bg {
-    background: ${getHighlight} !important;
-  }
-
-  .ui--highlight--border {
+  .highlight--before-border:before {
     border-color: ${getHighlight} !important;
   }
 
-  .ui--highlight--color {
+  .highlight--bg {
+    background: ${getHighlight} !important;
+  }
+
+  .highlight--bg-contrast {
+    background: ${getContrast};
+  }
+
+  .highlight--bg-faint,
+  .highlight--bg-light {
+    background: white;
+    position: relative;
+
+    &:before {
+      background: ${getHighlight};
+      bottom: 0;
+      content: ' ';
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: -1;
+    }
+  }
+
+  .highlight--bg-faint:before {
+    opacity: 0.025;
+  }
+
+  .highlight--bg-light:before {
+    opacity: 0.125;
+  }
+
+  .highlight--border {
+    border-color: ${getHighlight} !important;
+  }
+
+  .highlight--color {
     color: ${getHighlight} !important;
   }
 
-  .ui--highlight--fill {
+  .highlight--color-contrast {
+    color: ${getContrast};
+  }
+
+  .highlight--fill {
     fill: ${getHighlight} !important;
   }
 
-  .ui--highlight--gradient {
+  .highlight--gradient {
     background: ${(props: Props) => `linear-gradient(90deg, ${props.uiHighlight || defaultHighlight}, transparent)`};
   }
 
-  .ui--highlight--icon {
+  .highlight--hover-bg:hover {
+    background: ${getHighlight} !important;
+  }
+
+  .highlight--hover-color:hover {
+    color: ${getHighlight} !important;
+  }
+
+  .highlight--icon {
     .ui--Icon {
       color: ${getHighlight} !important;
     }
   }
 
-  .ui--highlight--shadow {
+  .highlight--shadow {
     box-shadow: 0 0 1px ${getHighlight} !important;
   }
 
-  .ui--highlight--stroke {
+  .highlight--stroke {
     stroke: ${getHighlight} !important;
   }
 
   .ui--Button {
-    &:not(.isDisabled):not(.isIcon):not(.isBasic) {
+    &:not(.isDisabled):not(.isIcon):not(.isBasic),
+    &.withoutLink:not(.isDisabled) {
       .ui--Icon {
         background: ${getHighlight};
-        color: #f5f5f4;
+        color: ${getContrast};
       }
     }
 
@@ -90,10 +149,11 @@ export default createGlobalStyle<Props>`
     &:hover:not(.isDisabled):not(.isReadOnly),
     &.isSelected {
       background: ${getHighlight};
-      color: #f5f5f4;
+      color: ${getContrast};
       text-shadow: none;
 
-      &:not(.isIcon) {
+      &:not(.isIcon),
+      &.withoutLink {
         .ui--Icon {
           color: inherit;
         }
@@ -102,7 +162,14 @@ export default createGlobalStyle<Props>`
   }
 
   .ui--Table td .ui--Button {
-    &:not(.isDisabled):not(.isIcon) {
+    &:not(.isDisabled):not(.isIcon):not(.isToplevel),
+    &.withoutLink:not(.isDisabled) {
+      &:hover {
+        .ui--Icon {
+          color: ${getContrast};
+        }
+      }
+
       .ui--Icon {
         background: transparent;
         color: ${getHighlight};
@@ -132,11 +199,15 @@ export default createGlobalStyle<Props>`
       }
     }
 
-    .ui--Toggle.isChecked .ui--Toggle-Slider {
-      background-color: ${getHighlight} !important;
+    .ui--Toggle.isChecked {
+      &:not(.isRadio) {
+        .ui--Toggle-Slider {
+          background-color: ${getHighlight} !important;
 
-      &:before {
-        border-color: ${getHighlight} !important;
+          &:before {
+            border-color: ${getHighlight} !important;
+          }
+        }
       }
     }
   }
@@ -168,19 +239,44 @@ export default createGlobalStyle<Props>`
 
     &.error,
     &.warning {
-      font-size: 0.95rem;
+      border-left-width: 0.25rem;
+      line-height: 1.5;
       margin-left: 2.25rem;
       padding: 0.75rem 1rem;
+      position: relative;
+      z-index: 5;
+
+      &:before {
+        border-radius: 0.25rem;
+        bottom: 0;
+        content: ' ';
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        z-index: -1;
+      }
     }
 
-    &.nomargin {
-      margin-left: 0;
+    &.extraMargin {
+      margin: 2rem auto;
+    }
+
+    &.centered {
+      margin: 1.5rem auto;
+      max-width: 75rem;
+
+      &+.ui--Button-Group {
+        margin-top: 2rem;
+      }
     }
 
     &.error {
-      background: #fff6f6;
-      border-color: #e0b4b4;
-      color: #9f3a38;
+      &:before {
+        background: rgba(255, 12, 12, 0.05);
+      }
+
+      border-color: rgba(255, 12, 12, 1);
     }
 
     &.padded {
@@ -192,12 +288,16 @@ export default createGlobalStyle<Props>`
     }
 
     &.warning {
-      background: #ffffe0;
-      border-color: #eeeeae;
+      &:before {
+        background: rgba(255, 196, 12, 0.05);
+      }
+
+      border-color: rgba(255, 196, 12, 1);
     }
   }
 
   body {
+    background: #f5f3f1;
     height: 100%;
     margin: 0;
   }
@@ -271,8 +371,6 @@ export default createGlobalStyle<Props>`
   }
 
   main {
-    min-height: 100vh;
-
     > section {
       margin-bottom: 2em;
     }

@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-democracy authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { DeriveElectionsInfo } from '@polkadot/api-derive/types';
 import { BlockNumber } from '@polkadot/types/interfaces';
@@ -25,7 +24,7 @@ function Summary ({ bestNumber, className = '', electionsInfo }: Props): React.R
     return null;
   }
 
-  const { candidateCount, desiredSeats, members, runnersUp, termDuration, voteCount } = electionsInfo;
+  const { candidateCount, desiredRunnersUp, desiredSeats, members, runnersUp, termDuration, voteCount } = electionsInfo;
 
   return (
     <SummaryBox className={className}>
@@ -34,7 +33,7 @@ function Summary ({ bestNumber, className = '', electionsInfo }: Props): React.R
           {formatNumber(members.length)}&nbsp;/&nbsp;{formatNumber(desiredSeats)}
         </CardSummary>
         <CardSummary label={t<string>('runners up')}>
-          {formatNumber(runnersUp.length)}
+          {formatNumber(runnersUp.length)}&nbsp;/&nbsp;{formatNumber(desiredRunnersUp)}
         </CardSummary>
         <CardSummary label={t<string>('candidates')}>
           {formatNumber(candidateCount)}

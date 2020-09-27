@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-storage authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { AppProps as Props } from '@polkadot/react-components/types';
 import { QueryTypes } from './types';
@@ -18,6 +17,7 @@ function StorageApp ({ basePath, className = '' }: Props): React.ReactElement<Pr
     (query: QueryTypes) => setQueue((queue: QueryTypes[]) => [query, ...queue]),
     []
   );
+
   const _onRemove = useCallback(
     (id: number) => setQueue((queue: QueryTypes[]) => queue.filter((item) => item.id !== id)),
     []

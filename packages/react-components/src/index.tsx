@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/react-components authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 export * from '@polkadot/react-qr';
 
@@ -72,6 +71,7 @@ export { default as Modal } from './Modal';
 export { default as Nonce } from './Nonce';
 export { default as Output } from './Output';
 export { default as Password } from './Password';
+export { default as PasswordStrength } from './PasswordStrength';
 export { default as Popup } from './Popup';
 export { default as Progress } from './Progress';
 export { default as ProposedAction } from './ProposedAction';
@@ -89,14 +89,13 @@ export { default as Tabs } from './Tabs';
 export { default as Tag } from './Tag';
 export { default as Tags } from './Tags';
 export { default as Toggle } from './Toggle';
+export { default as ToggleGroup } from './ToggleGroup';
 export { default as Tooltip } from './Tooltip';
 export { default as TxButton } from './TxButton';
 export { default as TxComponent } from './TxComponent';
 export { default as TxModal } from './TxModal';
 export { default as TxModalNew } from './TxModalNew';
 export { default as VoteAccount } from './VoteAccount';
-export { default as VoteActions } from './VoteActions';
-export { default as VoteToggle } from './VoteToggle';
 export { default as VoteValue } from './VoteValue';
 
 export { default as media } from './media';

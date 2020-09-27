@@ -1,11 +1,9 @@
 // Copyright 2017-2020 @polkadot/app-staking authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { I18nProps } from '@polkadot/react-components/types';
 
 import React, { useEffect, useState } from 'react';
-import { Icon } from '@polkadot/react-components';
 
 import { useTranslation } from '../../translate';
 
@@ -37,7 +35,7 @@ function ValidateSessionEd25519 ({ onError, sessionId, stashId }: Props): React.
 
   return (
     <article className='warning'>
-      <div><Icon icon='exclamation-triangle' />{error}</div>
+      <div>{error}</div>
     </article>
   );
 }

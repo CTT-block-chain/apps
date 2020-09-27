@@ -1,11 +1,10 @@
 // Copyright 2017-2020 @polkadot/app-explorer authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { DigestItem } from '@polkadot/types/interfaces';
 import { Codec, TypeDef } from '@polkadot/types/types';
 
-import React, { useMemo } from 'react';
+import React, { useRef } from 'react';
 import { Struct, Tuple, Raw, Vec, getTypeDef } from '@polkadot/types';
 import { Expander, Table } from '@polkadot/react-components';
 import Params from '@polkadot/react-params';
@@ -103,12 +102,12 @@ function Logs (props: Props): React.ReactElement<Props> | null {
   const { value } = props;
   const { t } = useTranslation();
 
-  const header = useMemo(() => [[t('logs'), 'start']], [t]);
+  const headerRef = useRef([[t('logs'), 'start']]);
 
   return (
     <Table
       empty={t<string>('No logs available')}
-      header={header}
+      header={headerRef.current}
     >
       {value?.map((log, index) => (
         <tr key={`log:${index}`}>

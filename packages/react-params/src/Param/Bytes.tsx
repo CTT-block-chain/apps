@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/react-params authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { Props } from '../types';
 
@@ -63,7 +62,7 @@ function Bytes ({ className = '', defaultValue, isDisabled, isError, label, name
       }
       {!isDisabled && (
         <Toggle
-          className='ui--Param-Bytes-toggle'
+          isOverlay
           label={t<string>('file upload')}
           onChange={setFileInput}
           value={isFileDrop}
@@ -75,10 +74,4 @@ function Bytes ({ className = '', defaultValue, isDisabled, isError, label, name
 
 export default React.memo(styled(Bytes)`
   position: relative;
-
-  > .ui--Param-Bytes-toggle {
-    top: 1.375rem;
-    position: absolute;
-    right: 3.5rem;
-  }
 `);

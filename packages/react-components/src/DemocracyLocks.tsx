@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/react-components authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { DeriveDemocracyLock } from '@polkadot/api-derive/types';
 
@@ -47,9 +46,9 @@ function groupLocks (t: TFunction, bestNumber: BN, locks: DeriveDemocracyLock[] 
       .sort((a, b) => a[0].referendumId.cmp(b[0].referendumId))
       .sort((a, b) => a[1].cmp(b[1]))
       .sort((a, b) => a[0].isFinished === b[0].isFinished ? 0 : (a[0].isFinished ? -1 : 1))
-      .reduce((sorted: Entry[], [{ balance, isFinished, referendumId, vote }, blocks]): Entry[] => {
+      .reduce((sorted: Entry[], [{ balance, isDelegated, isFinished, referendumId, vote }, blocks]): Entry[] => {
         const isCountdown = blocks.gt(BN_ZERO);
-        const header = <div>#{referendumId.toString()} {formatBalance(balance, { forceUnit: '-' })} {vote.conviction.toString()}</div>;
+        const header = <div>#{referendumId.toString()} {formatBalance(balance, { forceUnit: '-' })} {vote.conviction.toString()}{isDelegated && '/d'}</div>;
         const prev = sorted.length ? sorted[sorted.length - 1] : null;
 
         if (!prev || (isCountdown || (isFinished !== prev.isFinished))) {
@@ -85,7 +84,7 @@ function groupLocks (t: TFunction, bestNumber: BN, locks: DeriveDemocracyLock[] 
 function DemocracyLocks ({ className = '', value }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const { api } = useApi();
-  const bestNumber = useCall<BN>(api.derive.chain.bestNumber, []);
+  const bestNumber = useCall<BN>(api.derive.chain.bestNumber);
   const [trigger] = useState(`${Date.now()}-democracy-locks-${++id}`);
   const [{ maxBalance, sorted }, setState] = useState<State>({ maxBalance: BN_ZERO, sorted: [] });
 

@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-staking authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { AccountId, AccountIndex, Address } from '@polkadot/types/interfaces';
 
@@ -27,7 +26,6 @@ interface Props {
   isShort?: boolean;
   label?: React.ReactNode;
   labelBalance?: React.ReactNode;
-  noLookup?: boolean;
   summary?: React.ReactNode;
   type?: KeyringItemType;
   value?: AccountId | AccountIndex | Address | string | null | Uint8Array;
@@ -40,7 +38,7 @@ interface Props {
   withShrink?: boolean;
 }
 
-function AddressMini ({ balance, bonded, children, className = '', iconInfo, isHighlight, isPadded = true, label, labelBalance, noLookup, summary, value, withAddress = true, withBalance = false, withBonded = false, withLockedVote = false, withName = true, withShrink = false, withSidebar = true }: Props): React.ReactElement<Props> | null {
+function AddressMini ({ balance, bonded, children, className = '', iconInfo, isHighlight, isPadded = true, label, labelBalance, summary, value, withAddress = true, withBalance = false, withBonded = false, withLockedVote = false, withName = true, withShrink = false, withSidebar = true }: Props): React.ReactElement<Props> | null {
   if (!value) {
     return null;
   }
@@ -64,7 +62,6 @@ function AddressMini ({ balance, bonded, children, className = '', iconInfo, isH
             {withName
               ? (
                 <AccountName
-                  noLookup={noLookup}
                   value={value}
                   withSidebar={withSidebar}
                 />

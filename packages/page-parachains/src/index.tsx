@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-parachains authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { DeriveParachainInfo } from '@polkadot/api-derive/types';
 
@@ -8,7 +7,7 @@ import React, { useMemo, useRef } from 'react';
 import { matchPath, Route, Switch } from 'react-router';
 import { useLocation } from 'react-router-dom';
 import { Tabs } from '@polkadot/react-components';
-import { useSudo } from '@polkadot/react-hooks';
+import { useApi, useSudo } from '@polkadot/react-hooks';
 
 import Overview from './Overview';
 import Parachain from './Parachain';
@@ -21,6 +20,7 @@ interface Props {
 
 function ParachainsApp ({ basePath }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const { api } = useApi();
   const sudoState = useSudo();
   const paraInfoRef = useRef<DeriveParachainInfo | null>(null);
 
@@ -52,13 +52,15 @@ function ParachainsApp ({ basePath }: Props): React.ReactElement<Props> {
         />
       </header>
       <Switch>
-        <Route path={`${basePath}/:id`}>
-          <Parachain
-            basePath={basePath}
-            paraInfoRef={paraInfoRef}
-            {...sudoState}
-          />
-        </Route>
+        {api.query.parachains && (
+          <Route path={`${basePath}/:id`}>
+            <Parachain
+              basePath={basePath}
+              paraInfoRef={paraInfoRef}
+              {...sudoState}
+            />
+          </Route>
+        )}
         <Route>
           <Overview {...sudoState} />
         </Route>

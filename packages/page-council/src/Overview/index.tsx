@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-democracy authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { DeriveCouncilVotes, DeriveElectionsInfo } from '@polkadot/api-derive/types';
 import { AccountId, BlockNumber } from '@polkadot/types/interfaces';
@@ -20,29 +19,29 @@ interface Props {
   prime: AccountId | null;
 }
 
-function transformVotes (entries: DeriveCouncilVotes): Record<string, AccountId[]> {
-  return entries.reduce((result: Record<string, AccountId[]>, [voter, { votes }]): Record<string, AccountId[]> => {
-    votes.forEach((candidate): void => {
-      const address = candidate.toString();
+const transformVotes = {
+  transform: (entries: DeriveCouncilVotes): Record<string, AccountId[]> => {
+    return entries.reduce((result: Record<string, AccountId[]>, [voter, { votes }]): Record<string, AccountId[]> => {
+      votes.forEach((candidate): void => {
+        const address = candidate.toString();
 
-      if (!result[address]) {
-        result[address] = [];
-      }
+        if (!result[address]) {
+          result[address] = [];
+        }
 
-      result[address].push(voter);
-    });
+        result[address].push(voter);
+      });
 
-    return result;
-  }, {});
-}
+      return result;
+    }, {});
+  }
+};
 
 function Overview ({ className = '', prime }: Props): React.ReactElement<Props> {
   const { api } = useApi();
-  const bestNumber = useCall<BlockNumber>(api.derive.chain.bestNumber, []);
-  const electionsInfo = useCall<DeriveElectionsInfo>(api.derive.elections.info, []);
-  const allVotes = useCall<Record<string, AccountId[]>>(api.derive.council.votes, [], {
-    transform: transformVotes
-  });
+  const bestNumber = useCall<BlockNumber>(api.derive.chain.bestNumber);
+  const electionsInfo = useCall<DeriveElectionsInfo>(api.derive.elections.info);
+  const allVotes = useCall<Record<string, AccountId[]>>(api.derive.council.votes, undefined, transformVotes);
 
   return (
     <div className={className}>

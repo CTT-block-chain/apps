@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/apps authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 const config = require('@polkadot/dev/config/jest');
 
@@ -14,13 +13,30 @@ const internalModules = findPackages()
     return modules;
   }, {});
 
-module.exports = Object.assign({}, config, {
+const defaultConfig = {
   moduleNameMapper: {
     ...internalModules,
     '\\.(css|less)$': 'empty/object',
-    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': 'empty/object'
+    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': 'empty/object',
+    '\\.(md)$': '<rootDir>/__mocks__/fileMock.js'
   },
+  testTimeout: 25000,
   transformIgnorePatterns: [
     '<rootDir>/node_modules'
+  ]
+};
+
+module.exports = Object.assign({}, config, {
+  projects: [
+    {
+      ...defaultConfig,
+      displayName: 'all-tests',
+      globalSetup: './jest/globalSetup.ts',
+      globalTeardown: './jest/globalTeardown.ts'
+    },
+    {
+      ...defaultConfig,
+      displayName: 'fast-tests'
+    }
   ]
 });

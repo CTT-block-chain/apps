@@ -1,10 +1,9 @@
 // Copyright 2017-2020 @polkadot/app-staking authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { StakerState } from '@polkadot/react-hooks/types';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { AddressMini, Button, InputAddress, Modal, Static, TxButton } from '@polkadot/react-components';
 import { useToggle } from '@polkadot/react-hooks';
@@ -26,14 +25,12 @@ interface IdState {
 function Nominate ({ className = '', isDisabled, ownNominators, targets }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [ids, setIds] = useState<IdState | null>(null);
-  const [filter, setFilter] = useState<string[]>([]);
   const [isOpen, toggleOpen] = useToggle();
 
-  useEffect((): void => {
-    ownNominators && setFilter(
-      ownNominators.map(({ stashId }) => stashId)
-    );
-  }, [ownNominators]);
+  const filter = useMemo(
+    () => (ownNominators || []).map(({ stashId }) => stashId),
+    [ownNominators]
+  );
 
   const _onChangeStash = useCallback(
     (accountId?: string | null): void => {
@@ -122,7 +119,7 @@ export default React.memo(styled(Nominate)`
   .ui--AddressMini.padded.addressStatic {
     padding-top: 0.5rem;
 
-    .ui--AddressMini-address {
+    .ui--AddressMini-info {
       min-width: 10rem;
       max-width: 10rem;
     }

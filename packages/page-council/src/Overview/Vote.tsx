@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-council authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { DeriveElectionsInfo } from '@polkadot/api-derive/types';
 
@@ -109,6 +108,19 @@ function Vote ({ electionsInfo }: Props): React.ReactElement<Props> {
             </Modal.Columns>
           </Modal.Content>
           <Modal.Actions onCancel={toggleVisible}>
+            <TxButton
+              accountId={accountId}
+              icon='trash-alt'
+              isDisabled={!defaultVotes.length}
+              label={t<string>('Unvote all')}
+              onStart={toggleVisible}
+              params={[]}
+              tx={
+                api.tx.electionsPhragmen
+                  ? 'electionsPhragmen.removeVoter'
+                  : 'elections.removeVoter'
+              }
+            />
             <TxButton
               accountId={accountId}
               isDisabled={!accountId || votes.length === 0 || voteValue.lten(0)}

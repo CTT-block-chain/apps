@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/apps-routing authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { Route } from './types';
 
@@ -16,6 +15,7 @@ export default function create (t: <T = string> (key: string, text: string, opti
       ],
       needsSudo: true
     },
+    group: 'developer',
     icon: 'unlock',
     name: 'sudo',
     text: t<string>('nav.sudo', 'Sudo', { ns: 'apps-routing' })

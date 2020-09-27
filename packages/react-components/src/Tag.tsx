@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/react-components authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import React, { useState } from 'react';
 import styled from 'styled-components';
@@ -9,7 +8,7 @@ import Tooltip from './Tooltip';
 
 interface Props {
   className?: string;
-  color?: 'blue' | 'green' | 'grey' | 'orange' | 'pink' | 'red';
+  color?: 'blue' | 'green' | 'grey' | 'orange' | 'pink' | 'red' | 'yellow';
   hover?: React.ReactNode;
   isTag?: boolean;
   label: React.ReactNode;
@@ -80,6 +79,10 @@ export default React.memo(styled(Tag)`
 
   &.redColor {
     background: #db2828;
+  }
+
+  &.yellowColor {
+    background: darkgoldenrod;
   }
 
   &.isTag {

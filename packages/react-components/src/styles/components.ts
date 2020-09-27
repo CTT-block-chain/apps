@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/react-components authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { css } from 'styled-components';
 
@@ -103,16 +102,6 @@ export default css`
     .ui--SiDropdown {
       width: 6rem;
       text-align: center;
-    }
-
-    .ui--MaxButton {
-      position: absolute;
-      right: 6.5rem;
-      top: 20%;
-      height: 60%;
-      text-transform: uppercase;
-      padding: 0 0.5rem !important;
-      border-radius: 0.3rem !important;
     }
   }
 

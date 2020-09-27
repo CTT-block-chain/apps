@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/react-components authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 
@@ -19,6 +18,8 @@ interface Props {
   isAddress?: boolean;
   value: string;
 }
+
+const NOOP = () => undefined;
 
 function CopyButton ({ children, className, icon = 'copy', isAddress = false, value }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
@@ -48,6 +49,7 @@ function CopyButton ({ children, className, icon = 'copy', isAddress = false, va
             <Button
               className='icon-button show-on-hover'
               icon={icon}
+              onClick={NOOP}
             />
           </span>
         </div>
@@ -57,12 +59,6 @@ function CopyButton ({ children, className, icon = 'copy', isAddress = false, va
 }
 
 export default React.memo(styled(CopyButton)`
-  cursor: copy;
-
-  button.u.ui--Icon.primary.button.icon-button {
-    cursor: copy;
-  }
-
   .copySpan {
     white-space: nowrap;
   }

@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-nodeinfo authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { Info } from './types';
 
@@ -40,44 +39,39 @@ function Summary ({ info: { extrinsics, health, peers } = EMPTY_INFO, nextRefres
         <CardSummary label={t<string>('refresh in')}>
           <Elapsed value={nextRefresh} />
         </CardSummary>
-        <CardSummary
-          className='ui--media-small'
-          label={t<string>('total peers')}
-        >
-          {
-            health
-              ? `${health.peers.toNumber()}`
-              : '-'
-          }
-        </CardSummary>
-        <CardSummary
-          className='ui--media-small'
-          label={t<string>('syncing')}
-        >
-          {
-            health
-              ? (
-                health.isSyncing.valueOf()
-                  ? t<string>('yes')
-                  : t<string>('no')
-              )
-              : '-'
-          }
-        </CardSummary>
+        {health && (
+          <>
+            <CardSummary
+              className='media--800'
+              label={t<string>('total peers')}
+            >
+              {formatNumber(health.peers)}
+            </CardSummary>
+            <CardSummary
+              className='media--800'
+              label={t<string>('syncing')}
+            >
+              {health.isSyncing.valueOf()
+                ? t<string>('yes')
+                : t<string>('no')
+              }
+            </CardSummary>
+          </>
+        )}
       </section>
-      <section className='ui--media-large'>
-        <CardSummary label={t<string>('queued tx')}>
-          {
-            extrinsics
-              ? `${extrinsics.length}`
-              : '-'
-          }
-        </CardSummary>
-      </section>
+      {extrinsics && (extrinsics.length > 0) && (
+        <section className='media--1200'>
+          <CardSummary label={t<string>('queued tx')}>
+            {extrinsics.length}
+          </CardSummary>
+        </section>
+      )}
       <section>
-        <CardSummary label={t<string>('peer best')}>
-          {formatNumber(peerBest)}
-        </CardSummary>
+        {peerBest?.gtn(0) && (
+          <CardSummary label={t<string>('peer best')}>
+            {formatNumber(peerBest)}
+          </CardSummary>
+        )}
         <CardSummary label={t<string>('our best')}>
           <BestNumber />
         </CardSummary>

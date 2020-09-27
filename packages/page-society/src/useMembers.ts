@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-society authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { DeriveSocietyMember } from '@polkadot/api-derive/types';
 import { OwnMembers } from './types';
@@ -22,7 +21,7 @@ export default function useMembers (): OwnMembers {
   const { api } = useApi();
   const { allAccounts } = useAccounts();
   const [state, setState] = useState<OwnMembers>({ allMembers: [], isMember: false, ownMembers: [] });
-  const members = useCall<DeriveSocietyMember[]>(api.derive.society?.members, []);
+  const members = useCall<DeriveSocietyMember[]>(api.derive.society?.members);
 
   useEffect((): void => {
     allAccounts && members && setState(

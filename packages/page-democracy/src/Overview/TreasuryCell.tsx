@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-democracy authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { ProposalIndex, TreasuryProposal } from '@polkadot/types/interfaces';
 import { TypeDef } from '@polkadot/types/types';
@@ -30,12 +29,14 @@ interface ParamState {
   values: Value[];
 }
 
+const transformProposal = {
+  transform: (optProp: Option<TreasuryProposal>) => optProp.unwrapOr(null)
+};
+
 function TreasuryCell ({ className = '', value }: Props): React.ReactElement<Props> | null {
   const { api } = useApi();
   const [proposalId] = useState(value.unwrap());
-  const proposal = useCall<TreasuryProposal | null>(api.query.treasury.proposals, [proposalId], {
-    transform: (optProp: Option<TreasuryProposal>) => optProp.unwrapOr(null)
-  });
+  const proposal = useCall<TreasuryProposal | null>(api.query.treasury.proposals, [proposalId], transformProposal);
   const [{ params, values }, setExtracted] = useState<ParamState>({ params: [], values: [] });
 
   useEffect((): void => {

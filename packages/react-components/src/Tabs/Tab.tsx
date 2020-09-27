@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/react-components authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { TabItem } from './types';
 
@@ -8,17 +7,19 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
+import Badge from '../Badge';
 import Icon from '../Icon';
 
 interface Props extends TabItem {
   basePath: string;
   className?: string;
+  count?: number;
   index: number;
   isSequence?: boolean;
   num: number;
 }
 
-function Tab ({ basePath, className = '', hasParams, index, isExact, isRoot, isSequence, name, num, text }: Props): React.ReactElement<Props> {
+function Tab ({ basePath, className = '', count, hasParams, index, isExact, isRoot, isSequence, name, num, text }: Props): React.ReactElement<Props> {
   const to = isRoot
     ? basePath
     : `${basePath}/${name}`;
@@ -41,19 +42,25 @@ function Tab ({ basePath, className = '', hasParams, index, isExact, isRoot, isS
           icon='arrow-right'
         />
       )}
+      {!!count && (
+        <Badge
+          className='tabCounter'
+          color='counter'
+          info={count}
+        />
+      )}
     </NavLink>
   );
 }
 
 export default React.memo(styled(Tab)`
   border-bottom: 2px solid transparent;
-  color: rgba(0, 0, 0, 0.87) !important;
-  padding: 0.75rem 1.5rem;
+  color: #4e4e4e !important;
+  margin-bottom: -3px;
+  padding: 0.5rem 1.5rem 0.75rem;
 
   &.tabLinkActive {
     border-bottom-color: #e6e6e6;
-    color: rgba(0, 0, 0, 0.95);
-    font-weight: 700;
   }
 
   &:hover {
@@ -62,6 +69,10 @@ export default React.memo(styled(Tab)`
     &:not(.tabLinkActive) {
       border-bottom-color: #e6e6e6;
     }
+  }
+
+  .tabCounter {
+    margin: -1rem 0 -1rem 0.75rem;
   }
 
   .tabIcon {

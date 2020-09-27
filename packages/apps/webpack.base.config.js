@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/apps authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable camelcase */
 
@@ -149,7 +148,7 @@ function createWebpack (ENV, context) {
           ...mapChunks('polkadot', [
             /* 00 */ /node_modules\/@polkadot\/(wasm)/,
             /* 01 */ /node_modules\/(@polkadot\/(api|metadata|rpc|types))/,
-            /* 02 */ /node_modules\/(@polkadot\/(extension|keyring|react|ui|util|vanitygen)|@acala-network|@edgeware|@ledgerhq|@open-web3|@zondax|edgeware)/
+            /* 02 */ /node_modules\/(@polkadot\/(extension|keyring|react|ui|util|vanitygen)|@acala-network|@edgeware|@laminar|@ledgerhq|@open-web3|@subsocial|@zondax|edgeware)/
           ]),
           ...mapChunks('react', [
             /* 00 */ /node_modules\/(@fortawesome)/,

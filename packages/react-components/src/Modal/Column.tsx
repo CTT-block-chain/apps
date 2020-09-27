@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/react-components authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { ColumnProps } from './types';
 
@@ -18,6 +17,7 @@ export default React.memo(styled(Column)`
 
   &:nth-child(1) {
     flex: 100%;
+    max-width: 100%;
   }
 
   &:nth-child(2) {
@@ -29,6 +29,7 @@ export default React.memo(styled(Column)`
     &:nth-child(1),
     &:only-child {
       flex: 0 65%;
+      max-width: 65%;
     }
 
     &:nth-child(2) {

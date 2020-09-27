@@ -1,10 +1,9 @@
 // Copyright 2017-2020 @polkadot/app-storage authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { QueryTypes, ParitalQueryTypes } from '../types';
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { Route, Switch } from 'react-router';
 import { Tabs } from '@polkadot/react-components';
 
@@ -22,7 +21,8 @@ let id = -1;
 
 function Selection ({ basePath, onAdd }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const items = useMemo(() => [
+
+  const itemsRef = useRef([
     {
       isRoot: true,
       name: 'modules',
@@ -36,7 +36,7 @@ function Selection ({ basePath, onAdd }: Props): React.ReactElement<Props> {
       name: 'raw',
       text: t<string>('Raw storage')
     }
-  ], [t]);
+  ]);
 
   const _onAdd = useCallback(
     (query: ParitalQueryTypes): void => onAdd({ ...query, id: ++id }),
@@ -48,7 +48,7 @@ function Selection ({ basePath, onAdd }: Props): React.ReactElement<Props> {
       <header>
         <Tabs
           basePath={basePath}
-          items={items}
+          items={itemsRef.current}
         />
       </header>
       <Switch>

@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-js authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 
@@ -27,8 +26,7 @@ function Sudo ({ className, isMine, sudoKey }: Props): React.ReactElement<Props>
   const [weight, setWeight] = useState<BN>(BN_ZERO);
 
   const _onChangeExtrinsic = useCallback(
-    (method: SubmittableExtrinsic<'promise'> | null = null) =>
-      setMethod(() => method),
+    (method: SubmittableExtrinsic<'promise'> | null = null) => setMethod(() => method),
     []
   );
 
@@ -45,35 +43,35 @@ function Sudo ({ className, isMine, sudoKey }: Props): React.ReactElement<Props>
           label={t<string>('submit the following change')}
           onChange={_onChangeExtrinsic}
         />
-        <br />
-        {withWeight && (
+        {api.tx.sudo.sudoUncheckedWeight && (
           <InputNumber
             help={t<string>('The unchecked weight as specified for the sudoUncheckedWeight call.')}
+            isDisabled={!withWeight}
             isError={weight.eq(BN_ZERO)}
             isZeroable={false}
             label={t<string>('unchecked weight for this call')}
             onChange={_onChangeWeight}
             value={weight}
-          />
-        )}
-        {api.tx.sudo.sudoUncheckedWeight && (
-          <Toggle
-            className='sudoToggle'
-            label={
-              withWeight
-                ? t<string>('sudo with unchecked weight parameter')
-                : t<string>('sudo without unchecked weight parameter')
-            }
-            onChange={toggleWithWeight}
-            value={withWeight}
-          />
+          >
+            <Toggle
+              className='sudoToggle'
+              isOverlay
+              label={t<string>('with weight override')}
+              onChange={toggleWithWeight}
+              value={withWeight}
+            />
+          </InputNumber>
         )}
         <Button.Group>
           <TxButton
             accountId={sudoKey}
             icon='sign-in-alt'
             isDisabled={!method || (withWeight ? weight.eq(BN_ZERO) : false)}
-            label={t<string>('Submit Sudo')}
+            label={
+              withWeight
+                ? t<string>('Submit Sudo Unchecked')
+                : t<string>('Submit Sudo')
+            }
             params={
               withWeight
                 ? [method, weight]

@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-staking authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { DeriveSessionIndexes } from '@polkadot/api-derive/types';
 import { SessionRewards } from '../types';
@@ -13,7 +12,7 @@ import { isFunction } from '@polkadot/util';
 export default function useBlockCounts (accountId: string, sessionRewards: SessionRewards[]): u32[] {
   const { api } = useApi();
   const mountedRef = useIsMountedRef();
-  const indexes = useCall<DeriveSessionIndexes>(api.derive.session?.indexes, []);
+  const indexes = useCall<DeriveSessionIndexes>(api.derive.session?.indexes);
   const current = useCall<u32>(api.query.imOnline?.authoredBlocks, [indexes?.currentIndex, accountId]);
   const [counts, setCounts] = useState<u32[]>([]);
   const [historic, setHistoric] = useState<u32[]>([]);

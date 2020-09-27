@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/react-components authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
 import styled from 'styled-components';
@@ -10,11 +9,15 @@ type HeaderDef = [React.ReactNode?, string?, number?, (() => void)?];
 interface Props {
   className?: string;
   filter?: React.ReactNode;
-  header: (null | undefined | HeaderDef)[];
+  header?: (null | undefined | HeaderDef)[];
   isEmpty: boolean;
 }
 
-function Head ({ className = '', filter, header, isEmpty }: Props): React.ReactElement<Props> {
+function Head ({ className = '', filter, header, isEmpty }: Props): React.ReactElement<Props> | null {
+  if (!header?.length) {
+    return null;
+  }
+
   return (
     <thead className={className}>
       {filter && (
@@ -31,7 +34,7 @@ function Head ({ className = '', filter, header, isEmpty }: Props): React.ReactE
             onClick={onClick}
           >
             {index === 0
-              ? <h1>{label}</h1>
+              ? <h1 className='highlight--color'>{label}</h1>
               : isEmpty
                 ? ''
                 : label
@@ -44,8 +47,10 @@ function Head ({ className = '', filter, header, isEmpty }: Props): React.ReactE
 }
 
 export default React.memo(styled(Head)`
+  position: relative;
+  z-index: 1;
+
   th {
-    color: rgba(78, 78, 78, .66);
     font-family: sans-serif;
     font-weight: 100;
     padding: 0.75rem 1rem 0.25rem;
@@ -57,6 +62,14 @@ export default React.memo(styled(Head)`
       font-size: 1.75rem;
     }
 
+    &:first-child {
+      border-left: 1px solid #eeecea;
+    }
+
+    &:last-child {
+      border-right: 1px solid #eeecea;
+    }
+
     &.address {
       padding-left: 3rem;
       text-align: left;
@@ -64,6 +77,10 @@ export default React.memo(styled(Head)`
 
     &.badge {
       padding: 0;
+    }
+
+    &.expand {
+      text-align: right;
     }
 
     &.isClickable {
@@ -81,11 +98,33 @@ export default React.memo(styled(Head)`
   }
 
   tr {
-    background: transparent;
+    background: white;
     text-transform: lowercase;
 
-    &.filter th {
-      padding: 0;
+    &:first-child {
+      th {
+        border-top: 1px solid #eeecea;
+      }
+    }
+
+    &:not(.filter) {
+      th {
+        color: rgba(78, 78, 78, 0.66);
+      }
+    }
+
+    &.filter {
+      .ui.input {
+        background: transparent;
+
+        &:first-child {
+          margin-top: -1px;
+        }
+      }
+
+      th {
+        padding: 0;
+      }
     }
   }
 `);

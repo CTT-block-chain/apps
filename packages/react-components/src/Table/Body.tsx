@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/react-components authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
 import styled from 'styled-components';
@@ -11,7 +10,7 @@ import Spinner from '../Spinner';
 interface Props {
   children?: React.ReactNode;
   className?: string;
-  empty?: React.ReactNode;
+  empty?: React.ReactNode | false;
   emptySpinner?: React.ReactNode;
 }
 
@@ -30,7 +29,7 @@ function Body ({ children, className = '', empty, emptySpinner }: Props): React.
 }
 
 export default React.memo(styled(Body)`
-  background: white;
+  position: relative;
 
   td {
     padding: 0.75rem 1rem;
@@ -38,11 +37,11 @@ export default React.memo(styled(Body)`
     vertical-align: middle;
 
     &:first-child {
-      border-left: 1px solid #e4e6e8;
+      border-left: 1px solid #eeecea;
     }
 
     &:last-child {
-      border-right: 1px solid #e4e6e8;
+      border-right: 1px solid #eeecea;
     }
 
     label {
@@ -69,11 +68,11 @@ export default React.memo(styled(Body)`
     }
 
     &.badge {
-      padding: 0;
+      padding: 0.5rem;
     }
 
     &.button {
-      padding: 0.5rem 0.25rem;
+      padding: 0.5rem;
       text-align: right;
       white-space: nowrap;
 
@@ -86,8 +85,24 @@ export default React.memo(styled(Body)`
       border-top-width: 0;
     }
 
+    &.expand {
+      &:not(.left) {
+        text-align: right;
+      }
+
+      .ui--Expander+.ui--Expander {
+        margin-top: 0.375rem;
+      }
+    }
+
     &.hash {
       font-family: monospace;
+    }
+
+    &.links {
+      padding: 0.5rem 0.75rem;
+      text-align: center;
+      width: 0;
     }
 
     &.number {
@@ -132,22 +147,18 @@ export default React.memo(styled(Body)`
       color: darkorange;
     }
 
-    .ui--Button-Group .ui--Button {
+    .ui--Button-Group .ui--Button:not(.isToplevel) {
       margin: 0;
     }
   }
 
   tr {
-    &:nth-child(even) {
-      background: #f9f8f7;
-    }
+    // &:nth-child(odd) {
+    //   background: #faf8f6;
+    // }
 
-    &:first-child td {
-      border-top: 1px solid #e4e6e8;
-    }
-
-    &:last-child td {
-      border-bottom: 1px solid #e4e6e8;
+    &:nth-child(odd) {
+      background: white;
     }
 
     &:first-child {
@@ -161,19 +172,30 @@ export default React.memo(styled(Body)`
     }
 
     &:last-child {
-      td:first-child {
-        border-bottom-left-radius: 0.25rem;
-      }
+      td {
+        border-bottom: 1px solid #eeecea;
 
-      td:last-child {
-        border-bottom-right-radius: 0.25rem;
+        &:first-child {
+          border-bottom-left-radius: 0.25rem;
+        }
+
+        :last-child {
+          border-bottom-right-radius: 0.25rem;
+        }
       }
+    }
+
+    &.transparent {
+      background: transparent;
+    }
+
+    .ui--Button-Group {
+      margin: 0;
     }
 
     .ui--Button:not(.isIcon):not(:hover) {
       background: transparent !important;
       box-shadow: none !important;
-      // color: #555 !important;
     }
 
     .ui.toggle.checkbox input:checked~.box:before,

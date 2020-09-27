@@ -1,12 +1,10 @@
 // Copyright 2017-2020 @polkadot/app-contracts authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { AppProps as Props } from '@polkadot/react-components/types';
-import { TabItem } from '@polkadot/react-components/Tabs/types';
 import { ComponentProps } from './types';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Route, Switch } from 'react-router';
 import { HelpOverlay, Tabs } from '@polkadot/react-components';
 import { useAccounts, useContracts, useToggle } from '@polkadot/react-hooks';
@@ -27,6 +25,18 @@ function ContractsApp ({ basePath, onStatusChange }: Props): React.ReactElement<
   const [isDeployOpen, toggleIsDeployOpen, setIsDeployOpen] = useToggle();
   const [updated, setUpdated] = useState(0);
   const [allCodes, setAllCodes] = useState(store.getAllCode());
+
+  const itemsRef = useRef([
+    {
+      name: 'code',
+      text: t('Code')
+    },
+    {
+      isRoot: true,
+      name: 'contracts',
+      text: t('Contracts')
+    }
+  ]);
 
   const _triggerUpdate = useCallback(
     (): void => {
@@ -78,27 +88,13 @@ function ContractsApp ({ basePath, onStatusChange }: Props): React.ReactElement<
     [_triggerUpdate]
   );
 
-  const hidden: string[] = [];
-
   return (
     <main className='contracts--App'>
       <HelpOverlay md={introMd as string} />
       <header>
         <Tabs
           basePath={basePath}
-          hidden={hidden}
-          items={[
-            {
-              name: 'code',
-              text: 'Code'
-            },
-            {
-              isRoot: true,
-              name: 'contracts',
-              text: 'Contracts'
-            }
-          ].map((tab): TabItem => ({ ...tab, text: t(tab.text) }))
-          }
+          items={itemsRef.current}
         />
       </header>
       <Switch>

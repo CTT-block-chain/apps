@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-democracy authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { ParaInfo } from '@polkadot/types/interfaces';
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
@@ -16,8 +15,9 @@ import { Button, Dropdown, InputFile, InputNumber, InputWasm, Modal, TxButton } 
 import { useTranslation } from '../translate';
 
 interface Props {
+  isDisabled: boolean;
   nextFreeId?: BN;
-  sudoKey: string;
+  sudoKey?: string;
 }
 
 type Scheduling = 'Always' | 'Dynamic';
@@ -30,7 +30,7 @@ const schedulingOptions = [{
   value: 'Dynamic'
 }];
 
-function Register ({ nextFreeId = BN_THOUSAND, sudoKey }: Props): React.ReactElement<Props> | null {
+function Register ({ isDisabled, nextFreeId = BN_THOUSAND, sudoKey }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const { api } = useApi();
   const { isOpen, onClose, onOpen } = useModal();
@@ -45,9 +45,7 @@ function Register ({ nextFreeId = BN_THOUSAND, sudoKey }: Props): React.ReactEle
     null,
     (code): boolean => !!code && isWasmValidRef.current
   );
-  const [initialHeadState, isInitialHeadStateValid, setInitialHeadState] = useFormField<Uint8Array>(
-    null
-  );
+  const [initialHeadState, isInitialHeadStateValid, setInitialHeadState] = useFormField<Uint8Array>(null);
   const [scheduling, , setScheduling] = useFormField<Scheduling>('Always');
 
   const info = useMemo(
@@ -59,12 +57,13 @@ function Register ({ nextFreeId = BN_THOUSAND, sudoKey }: Props): React.ReactEle
   const extrinsic = useMemo(
     (): SubmittableExtrinsic | null => {
       try {
-        return api.tx.registrar.registerPara(
+        // FIXME democracy
+        return api.tx.sudo.sudo(api.tx.registrar.registerPara(
           id,
           info,
           code ? u8aToHex(code) : null,
           initialHeadState ? u8aToString(initialHeadState) : null
-        );
+        ));
       } catch (error) {
         console.log(error);
 
@@ -76,13 +75,12 @@ function Register ({ nextFreeId = BN_THOUSAND, sudoKey }: Props): React.ReactEle
 
   return (
     <>
-      <div className='ui--Row-buttons'>
-        <Button
-          icon='plus'
-          label={t<string>('Register a parachain')}
-          onClick={onOpen}
-        />
-      </div>
+      <Button
+        icon='plus'
+        isDisabled={isDisabled || !sudoKey}
+        label={t<string>('Register a parachain')}
+        onClick={onOpen}
+      />
       {isOpen && (
         <Modal
           header={t<string>('Register a parachain')}
@@ -136,11 +134,10 @@ function Register ({ nextFreeId = BN_THOUSAND, sudoKey }: Props): React.ReactEle
           <Modal.Actions onCancel={onClose}>
             <TxButton
               accountId={sudoKey}
+              extrinsic={extrinsic}
               isDisabled={!isIdValid || !isCodeValid || !isInitialHeadStateValid}
               onClick={onClose}
               onSendRef={onSendRef}
-              params={[extrinsic]}
-              tx={'sudo.sudo'}
             />
           </Modal.Actions>
         </Modal>

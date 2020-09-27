@@ -1,12 +1,12 @@
 // Copyright 2017-2020 @polkadot/app-staking authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { DeriveBalancesAll, DeriveStakingAccount } from '@polkadot/api-derive/types';
 import { AmountValidateState } from '../types';
 
 import BN from 'bn.js';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { ApiPromise } from '@polkadot/api';
 import { InputAddress, InputBalance, Modal, TxButton } from '@polkadot/react-components';
 import { useApi, useCall } from '@polkadot/react-hooks';
 import { BalanceFree } from '@polkadot/react-query';
@@ -22,30 +22,35 @@ interface Props {
   stashId: string;
 }
 
+function calcBalance (api: ApiPromise, stakingInfo?: DeriveStakingAccount, stashBalance?: DeriveBalancesAll): BN | null {
+  if (stakingInfo && stakingInfo.stakingLedger && stashBalance) {
+    const sumUnlocking = (stakingInfo.unlocking || []).reduce((acc, { value }) => acc.iadd(value), new BN(0));
+    const redeemable = stakingInfo.redeemable || BN_ZERO;
+    const available = stashBalance.freeBalance.sub(stakingInfo.stakingLedger.active.unwrap()).sub(sumUnlocking).sub(redeemable);
+
+    return available.gt(api.consts.balances.existentialDeposit)
+      ? available.sub(api.consts.balances.existentialDeposit)
+      : BN_ZERO;
+  }
+
+  return null;
+}
+
 function BondExtra ({ controllerId, onClose, stakingInfo, stashId }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
   const [amountError, setAmountError] = useState<AmountValidateState | null>(null);
   const [maxAdditional, setMaxAdditional] = useState<BN | undefined>();
-  const [maxBalance] = useState<BN | undefined>();
-  const [startBalance, setStartBalance] = useState<BN | null>(null);
   const stashBalance = useCall<DeriveBalancesAll>(api.derive.balances.all, [stashId]);
   const currentAmount = useMemo(
     () => stakingInfo && stakingInfo.stakingLedger?.active.unwrap(),
     [stakingInfo]
   );
 
-  useEffect((): void => {
-    if (stakingInfo && stakingInfo.stakingLedger && stashBalance) {
-      const available = stashBalance.freeBalance.sub(stakingInfo.stakingLedger.active.unwrap());
-
-      setStartBalance(
-        available.gt(api.consts.balances.existentialDeposit)
-          ? available.sub(api.consts.balances.existentialDeposit)
-          : BN_ZERO
-      );
-    }
-  }, [api, stakingInfo, stashBalance]);
+  const startBalance = useMemo(
+    () => calcBalance(api, stakingInfo, stashBalance),
+    [api, stakingInfo, stashBalance]
+  );
 
   return (
     <Modal
@@ -81,7 +86,6 @@ function BondExtra ({ controllerId, onClose, stakingInfo, stashId }: Props): Rea
                     params={stashId}
                   />
                 }
-                maxValue={maxBalance}
                 onChange={setMaxAdditional}
               />
               <ValidateAmount

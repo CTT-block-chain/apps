@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-democracy authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import BN from 'bn.js';
 import React from 'react';
@@ -17,10 +16,10 @@ interface Props {
 function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
-  const activeProposals = useCall<any[]>(api.derive.democracy.proposals, []);
-  const bestNumber = useCall<BN>(api.derive.chain.bestNumber, []);
-  const publicPropCount = useCall<BN>(api.query.democracy.publicPropCount, []);
-  const referendumTotal = useCall<BN>(api.query.democracy.referendumCount, []);
+  const activeProposals = useCall<unknown[]>(api.derive.democracy.proposals);
+  const bestNumber = useCall<BN>(api.derive.chain.bestNumber);
+  const publicPropCount = useCall<BN>(api.query.democracy.publicPropCount);
+  const referendumTotal = useCall<BN>(api.query.democracy.referendumCount);
 
   return (
     <SummaryBox>
@@ -41,7 +40,7 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
         </CardSummary>
       </section>
       {bestNumber && (
-        <section className='ui--media-medium'>
+        <section className='media--1100'>
           <CardSummary
             label={t<string>('launch period')}
             progress={{

@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-accounts authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
@@ -8,7 +7,7 @@ import { useAccountInfo, useToggle } from '@polkadot/react-hooks';
 import { colorLink } from '@polkadot/react-components/styles/theme';
 import { AccountName, Button, Icon, IdentityIcon, Input, LinkExternal, Sidebar, Tags } from '@polkadot/react-components';
 
-import Transfer from '../Accounts/modals/Transfer';
+import Transfer from '../modals/Transfer';
 import { useTranslation } from '../translate';
 import Balances from './Balances';
 import Flags from './Flags';
@@ -220,6 +219,10 @@ export default React.memo(styled(FullSidebar)`
           font-weight: bold;
           text-align: right;
           flex-basis: 20%;
+
+          &.top {
+            align-self: flex-start;
+          }
         }
 
         .td {
@@ -231,7 +234,7 @@ export default React.memo(styled(FullSidebar)`
       }
     }
 
-    .parent {
+    .parent, .subs {
       padding: 0 !important;
     }
   }

@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-council authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 
@@ -10,7 +9,7 @@ import { useApi, useToggle } from '@polkadot/react-hooks';
 import { isHex } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
-import { getThreshold } from './thresholds';
+import { getThreshold } from '../thresholds';
 
 interface Props {
   className?: string;
@@ -35,6 +34,7 @@ function ProposeExternal ({ className = '', isMember, members }: Props): React.R
   const [accountId, setAcountId] = useState<string | null>(null);
   const [{ proposal, proposalLength }, setProposal] = useState<ProposalState>({ proposalLength: 0 });
   const [{ hash, isHashValid }, setHash] = useState<HashState>({ hash: '', isHashValid: false });
+
   const threshold = Math.ceil((members.length || 0) * getThreshold(api));
 
   const _onChangeHash = useCallback(

@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/app-nodeinfo authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { Info } from './types';
 
@@ -19,9 +18,9 @@ async function retrieveInfo (api: ApiPromise): Promise<Partial<Info>> {
   try {
     const [blockNumber, health, peers, extrinsics] = await Promise.all([
       api.derive.chain.bestNumber(),
-      api.rpc.system.health(),
-      api.rpc.system.peers(),
-      api.rpc.author.pendingExtrinsics()
+      api.rpc.system.health().catch(() => null),
+      api.rpc.system.peers().catch(() => null),
+      api.rpc.author.pendingExtrinsics().catch(() => null)
     ]);
 
     return { blockNumber, extrinsics, health, peers };

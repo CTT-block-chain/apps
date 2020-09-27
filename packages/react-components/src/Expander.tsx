@@ -1,9 +1,10 @@
 // Copyright 2017-2020 @polkadot/react-components authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
+import { IconName } from '@fortawesome/fontawesome-svg-core';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
+import { LabelHelp } from '@polkadot/react-components';
 import { useToggle } from '@polkadot/react-hooks';
 import { Text } from '@polkadot/types';
 
@@ -17,12 +18,25 @@ interface Meta {
 export interface Props {
   children?: React.ReactNode;
   className?: string;
+  help?: string;
+  helpIcon?: IconName;
   isOpen?: boolean;
+  isPadded?: boolean;
   summary?: React.ReactNode;
+  summaryHead?: React.ReactNode;
   summaryMeta?: Meta;
   summarySub?: React.ReactNode;
-  withDot?: boolean;
   withHidden?: boolean;
+}
+
+function splitSingle (value: string[], sep: string): string[] {
+  return value.reduce((result: string[], value: string): string[] => {
+    return value.split(sep).reduce((result: string[], value: string) => result.concat(value), result);
+  }, []);
+}
+
+function splitParts (value: string): string[] {
+  return ['[', ']'].reduce((result: string[], sep) => splitSingle(result, sep), [value]);
 }
 
 function formatMeta (meta?: Meta): React.ReactNode | null {
@@ -32,15 +46,17 @@ function formatMeta (meta?: Meta): React.ReactNode | null {
 
   const strings = meta.documentation.map((doc) => doc.toString().trim());
   const firstEmpty = strings.findIndex((doc) => !doc.length);
-
-  return (
+  const combined = (
     firstEmpty === -1
       ? strings
       : strings.slice(0, firstEmpty)
-  ).join(' ');
+  ).join(' ').replace(/#(<weight>| <weight>).*<\/weight>/, '');
+  const parts = splitParts(combined.replace(/\\/g, '').replace(/`/g, ''));
+
+  return <>{parts.map((part, index) => index % 2 ? <em key={index}>[{part}]</em> : <span key={index}>{part}</span>)}&nbsp;</>;
 }
 
-function Expander ({ children, className = '', isOpen, summary, summaryMeta, summarySub, withDot, withHidden }: Props): React.ReactElement<Props> {
+function Expander ({ children, className = '', help, helpIcon, isOpen, isPadded, summary, summaryHead, summaryMeta, summarySub, withHidden }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [isExpanded, toggleExpanded] = useToggle(isOpen);
   const headerMain = useMemo(
@@ -57,22 +73,32 @@ function Expander ({ children, className = '', isOpen, summary, summaryMeta, sum
   );
 
   return (
-    <div className={`ui--Expander ${isExpanded ? 'isExpanded' : ''} ${hasContent ? 'hasContent' : ''} ${className}`}>
+    <div className={`ui--Expander${isExpanded ? ' isExpanded' : ''}${isPadded ? ' isPadded' : ''}${hasContent ? ' hasContent' : ''} ${className}`}>
       <div
         className='ui--Expander-summary'
         onClick={toggleExpanded}
       >
         <div className='ui--Expander-summary-header'>
-          {hasContent
-            ? <Icon icon={isExpanded ? 'angle-double-down' : 'angle-double-right'} />
-            : withDot
-              ? <Icon icon='circle' />
-              : undefined
-          }{headerMain || t<string>('Details')}
+          {help && (
+            <LabelHelp
+              help={help}
+              icon={helpIcon}
+            />
+          )}
+          {summaryHead}
+          {headerMain || t<string>('Details')}
+          {headerSub && (
+            <div className='ui--Expander-summary-header-sub'>{headerSub}</div>
+          )}
         </div>
-        {headerSub && (
-          <div className='ui--Expander-summary-sub'>{headerSub}</div>
-        )}
+        <Icon
+          color={hasContent ? undefined : 'transparent'}
+          icon={
+            isExpanded
+              ? 'caret-up'
+              : 'caret-down'
+          }
+        />
       </div>
       {hasContent && (isExpanded || withHidden) && (
         <div className='ui--Expander-content'>{children}</div>
@@ -102,28 +128,48 @@ export default React.memo(styled(Expander)`
     cursor: pointer;
   }
 
+  &.isPadded {
+    .ui--Expander-summary {
+      margin-left: 2.25rem;
+    }
+  }
+
   .ui--Expander-summary {
     margin: 0;
-    min-width: 12.5rem;
+    min-width: 13.5rem;
     overflow: hidden;
 
-    .ui--Expander-summary-header > .ui--FormatBalance {
-      min-width: 10rem;
-    }
-
-    > div {
+    .ui--Expander-summary-header {
+      display: inline-block;
+      max-width: calc(100% - 2rem);
       overflow: hidden;
       text-overflow: ellipsis;
+      vertical-align: middle;
+      white-space: nowrap;
+
+      span {
+        white-space: normal;
+      }
     }
 
     .ui--Icon {
-      margin-right: 0.5rem;
+      margin-left: 0.75rem;
+      vertical-align: middle;
     }
 
-    .ui--Expander-summary-sub {
+    .ui--LabelHelp {
+      .ui--Icon {
+        margin-left: 0;
+        margin-right: 0.5rem;
+        vertical-align: text-bottom;
+      }
+    }
+
+    .ui--Expander-summary-header-sub {
       font-size: 1rem;
       opacity: 0.6;
-      padding-left: 1.75rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 `);

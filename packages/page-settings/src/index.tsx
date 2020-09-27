@@ -1,13 +1,12 @@
 // Copyright 2017-2020 @polkadot/app-settings authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { AppProps as Props } from '@polkadot/react-components/types';
 
 import React, { useMemo } from 'react';
 import { Route, Switch } from 'react-router';
 import { HelpOverlay, Tabs } from '@polkadot/react-components';
-import uiSettings from '@polkadot/ui-settings';
+import { useApi } from '@polkadot/react-hooks';
 
 import md from './md/basics.md';
 import { useTranslation } from './translate';
@@ -19,13 +18,11 @@ import useCounter from './useCounter';
 
 export { useCounter };
 
-const hidden = uiSettings.uiMode === 'full'
-  ? []
-  : ['developer'];
-
 function SettingsApp ({ basePath, onStatusChange }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const { isApiConnected, isApiReady } = useApi();
   const numExtensions = useCounter();
+
   const items = useMemo(() => [
     {
       isRoot: true,
@@ -33,12 +30,9 @@ function SettingsApp ({ basePath, onStatusChange }: Props): React.ReactElement<P
       text: t<string>('General')
     },
     {
+      count: numExtensions,
       name: 'metadata',
-      text: t<string>('Metadata {{count}}', {
-        replace: {
-          count: numExtensions ? `(${numExtensions})` : ''
-        }
-      })
+      text: t<string>('Metadata')
     },
     {
       name: 'developer',
@@ -49,6 +43,13 @@ function SettingsApp ({ basePath, onStatusChange }: Props): React.ReactElement<P
       text: t<string>('Translate')
     }
   ], [numExtensions, t]);
+
+  const hidden = useMemo(
+    () => (isApiConnected && isApiReady)
+      ? []
+      : ['metadata', 'i18n'],
+    [isApiConnected, isApiReady]
+  );
 
   return (
     <main className='settings--App'>

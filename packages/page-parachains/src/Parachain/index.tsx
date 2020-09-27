@@ -1,10 +1,9 @@
 // Copyright 2017-2020 @polkadot/app-parachains authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { DeriveParachainInfo, DeriveParachainFull } from '@polkadot/api-derive/types';
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Button, CardSummary, Columar, Column, Icon, Menu, Popup, Spinner, SummaryBox } from '@polkadot/react-components';
@@ -35,6 +34,11 @@ function Parachain ({ basePath, className = '', isMine, paraInfoRef, sudoKey }: 
   const { isOpen: isDeregisterOpen, onClose: onDeregisterClose, onOpen: onDeregisterOpen } = useModal();
   const parachain = useCall<DeriveParachainFull | null>(api.derive.parachains.info, [id || null]);
 
+  const onDeregister = useCallback(
+    () => history.push(basePath),
+    [basePath, history]
+  );
+
   if (isUndefined(parachain)) {
     return (
       <Spinner />
@@ -57,10 +61,6 @@ function Parachain ({ basePath, className = '', isMine, paraInfoRef, sudoKey }: 
   if (!paraInfoRef.current) {
     paraInfoRef.current = parachain.info;
   }
-
-  const onDeregister = (): void => {
-    history.push(basePath);
-  };
 
   return (
     <div className={className}>

@@ -1,13 +1,12 @@
 // Copyright 2017-2020 @polkadot/app-staking authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { DeriveBalancesAll } from '@polkadot/api-derive/types';
-import { AmountValidateState } from '../types';
+import { AmountValidateState, DestinationType } from '../types';
 import { BondInfo } from './types';
 
 import BN from 'bn.js';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Dropdown, InputAddress, InputBalance, Modal, Static } from '@polkadot/react-components';
 import { BalanceFree, BlockToTime } from '@polkadot/react-query';
 import { useApi, useCall } from '@polkadot/react-hooks';
@@ -16,7 +15,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { useTranslation } from '../../translate';
 import InputValidateAmount from '../Account/InputValidateAmount';
 import InputValidationController from '../Account/InputValidationController';
-import { rewardDestinationOptions } from '../constants';
+import { createDestCurr } from '../destOptions';
 import useUnbondDuration from '../useUnbondDuration';
 
 interface Props {
@@ -31,11 +30,16 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
   const [amountError, setAmountError] = useState<AmountValidateState | null>(null);
   const [controllerError, setControllerError] = useState<boolean>(false);
   const [controllerId, setControllerId] = useState<string | null>(null);
-  const [destination, setDestination] = useState(0);
+  const [destination, setDestination] = useState<DestinationType>('Staked');
   const [stashId, setStashId] = useState<string | null>(null);
   const [startBalance, setStartBalance] = useState<BN | null>(null);
   const stashBalance = useCall<DeriveBalancesAll>(api.derive.balances.all, [stashId]);
   const bondedBlocks = useUnbondDuration();
+
+  const options = useMemo(
+    () => createDestCurr(t),
+    [t]
+  );
 
   const _setError = useCallback(
     // eslint-disable-next-line handle-callback-err
@@ -150,7 +154,7 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
             help={t<string>('The destination account for any payments as either a nominator or validator')}
             label={t<string>('payment destination')}
             onChange={setDestination}
-            options={rewardDestinationOptions}
+            options={options}
             value={destination}
           />
         </Modal.Column>

@@ -1,6 +1,5 @@
 // Copyright 2017-2020 @polkadot/react-components authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+// SPDX-License-Identifier: Apache-2.0
 
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { BareProps } from '../types';
@@ -18,12 +17,14 @@ export interface ButtonProps {
   isFull?: boolean;
   isIcon?: boolean;
   isSelected?: boolean;
+  isToplevel?: boolean;
   label?: React.ReactNode;
   onClick?: Button$Callback;
   onMouseEnter?: Button$Callback;
   onMouseLeave?: Button$Callback;
   tabIndex?: number;
   tooltip?: React.ReactNode;
+  withoutLink?: boolean;
 }
 
 export type DividerProps = BareProps;
