@@ -58,7 +58,7 @@ const chainColors: Record<string, any> = [
   ['Track', chainRoccoTrack],
   ['Trick', chainRoccoTrick],
   ['Westend', chainWestend],
-  ['CTT', chainCtt],
+  ['ctt', chainCtt],
 ].reduce((colors, [chain, color]): Record<string, any> => ({
   ...colors,
   [chain.toLowerCase()]: color

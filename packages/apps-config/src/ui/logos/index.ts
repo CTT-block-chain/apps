@@ -19,6 +19,7 @@ import nodeCanvas from './nodes/canvas-2.png';
 import nodeCentrifuge from './nodes/centrifuge.png';
 import nodeCrab from './nodes/crab.svg';
 import nodeCrust from './nodes/crust.svg';
+import nodeCtt from './nodes/ctt_white.svg';
 import nodeDarwinia from './nodes/darwinia.png';
 import nodeDockMainnet from './nodes/dock-mainnet.png';
 import nodeDockTestnet from './nodes/dock-testnet.png';
@@ -83,6 +84,7 @@ const nodeLogos: Record<string, any> = [
   ['Centrifuge Chain Node', nodeCentrifuge],
   ['crab', nodeCrab],
   ['crust node', nodeCrust],
+  ['ctt', nodeCtt],
   ['darwinia parachain', nodeDarwinia],
   ['Dock Full Node', nodeDockMainnet],
   ['Edgeware Node', nodeEdgeware],
@@ -120,6 +122,7 @@ const namedLogos: Record<string, any> = {
   centrifuge: nodeCentrifuge,
   crab: nodeCrab,
   crust: nodeCrust,
+  ctt: nodeCtt,
   'dock-mainnet': nodeDockMainnet,
   'dock-testnet': nodeDockTestnet,
   dusty: chainDusty,

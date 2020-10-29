@@ -14,5 +14,6 @@ export function getSystemIcon (systemName: string): 'beachball' | 'polkadot' | '
 
 export function getSystemChainColor (systemChain: string, systemName: string): string | undefined {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  console.log("systemChain:", systemChain, systemName);
   return chainColors[sanitize(systemChain)] || nodeColors[sanitize(systemName)];
 }

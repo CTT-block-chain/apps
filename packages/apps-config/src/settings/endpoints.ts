@@ -63,7 +63,7 @@ function createLiveNetworks(t: TFunction): LinkOption[] {
   return [
     {
       info: 'ctt',
-      text: t('rpc.ctt', 'CTT', { ns: 'apps-config' }),
+      text: t('rpc.ctt', 'ctt', { ns: 'apps-config' }),
       textBy: t('rpc.hosted.by', 'hosted by {{host}}', { ns: 'apps-config', replace: { host: 'ctt' } }),
       value: 'ws://39.106.116.92:9944'
     }
