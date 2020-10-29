@@ -39,7 +39,7 @@ export interface TxTriggerProps {
 export type TxTrigger = React.ComponentType<TxTriggerProps>;
 
 export interface TxProps {
-  extrinsic?: SubmittableExtrinsic | null;
+  extrinsic?: SubmittableExtrinsic | SubmittableExtrinsic[] | null;
   tx?: string;
   params?: any[] | ConstructTxFn;
 }
@@ -123,4 +123,28 @@ export type CallContract = ContractDeployed;
 export interface NullContract {
   abi: null;
   address: null;
+}
+
+export interface ThemeDef {
+  bgInput: string;
+  bgInputError: string;
+  bgInverse: string;
+  bgMenu: string;
+  bgMenuHover: string;
+  bgPage: string;
+  bgTable: string;
+  bgTabs: string;
+  bgToggle: string;
+  borderTable: string;
+  borderTabs: string;
+  color: string;
+  colorCheckbox: string;
+  colorError: string;
+  colorLabel: string;
+  colorSummary: string;
+  theme: 'dark' | 'light';
+}
+
+export interface ThemeProps {
+  theme: ThemeDef;
 }
