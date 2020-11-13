@@ -7,6 +7,7 @@
   "rpc.centrifuge": "Centrifuge",
   "rpc.crab": "Darwinia Crab",
   "rpc.crust.network": "Crust Maxwell CC2",
+  "rpc.ctt": "ctt",
   "rpc.custom": "Custom environment",
   "rpc.custom.entry": "Custom",
   "rpc.datahighway.harbour": "Harbour",
