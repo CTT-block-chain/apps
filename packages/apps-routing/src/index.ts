@@ -27,6 +27,8 @@ import sudo from './sudo';
 import techcomm from './techcomm';
 import transfer from './transfer';
 import treasury from './treasury';
+import chain_application from './chain_application';
+import knowledge_power from './knowledge_power';
 
 export default function create (t: TFunction): Routes {
   return [
@@ -52,6 +54,8 @@ export default function create (t: TFunction): Routes {
     signing(t),
     sudo(t),
     js(t),
-    settings(t)
+    settings(t),
+    knowledge_power(t),
+    chain_application(t),
   ];
 }

@@ -1117,6 +1117,8 @@
   "nav.toolbox": "工具箱",
   "nav.transfer": "转账",
   "nav.treasury": "财政",
+  "nav.knowledge_power": "知识算力",
+  "nav.chain_application": "链应用",
   "nay": "不",
   "new account": "新建账户",
   "new address": "新建地址",
@@ -1379,5 +1381,12 @@
   "{{step}}. Sign with your ETH address": "{{step}}. 用你的以太坊地址签名",
   "{{threshold}}, not passing": "{{threshold}},没有通过",
   "{{threshold}}, passing": "{{threshold}}, 通过",
-  "{{value}}x voting balance, locked for {{lock}}x enactment ({{period}} days)": "{{value}}x投票余额，锁定 {{lock}}x 执行 ({{period}} days)"
+  "{{value}}x voting balance, locked for {{lock}}x enactment ({{period}} days)": "{{value}}x投票余额，锁定 {{lock}}x 执行 ({{period}} days)",
+
+  "Account Power": "账户算力",
+  "Commodity Power": "体验商品算力",
+  "Document Power": "文章算力",
+  "Leaderboard": "排行榜",
+  "Role Groups": "角色组",
+  "Roles": "角色"
 }

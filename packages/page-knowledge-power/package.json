@@ -1,0 +1,24 @@
+{
+  "name": "@ctt/app-knowledge-power",
+  "private": true,
+  "version": "0.64.2-1",
+  "main": "index.js",
+  "repository": "https://github.com/CTT-block-chain/web-wallet.git",
+  "author": "ctt dev",
+  "maintainers": [
+    "ctt dev"
+  ],
+  "contributors": [],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@babel/runtime": "^7.12.1",
+    "@polkadot/react-components": "^0.64.2-1",
+    "@polkadot/vanitygen": "^0.22.2-6",
+    "detect-browser": "^5.2.0",
+    "file-saver": "^2.0.2"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^11.1.0",
+    "testcontainers": "^4.6.0"
+  }
+}

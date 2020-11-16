@@ -101,6 +101,8 @@ function Menu ({ className = '' }: Props): React.ReactElement<Props> {
     developer: t('Developer'),
     governance: t('Governance'),
     network: t('Network'),
+    knowledge_power: t('Knowledge Power'),
+    chain_application: t('Chain Application'),
     settings: t('Settings')
   });
 
