@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import { Button, Dropdown, Expander, InputAddress, InputBalance, Modal, Toggle, TxButton } from '@polkadot/react-components';
 import { ContractPromise } from '@polkadot/api-contract';
 import { useAccountId, useDebounce, useFormField, useToggle } from '@polkadot/react-hooks';
+import { Available } from '@polkadot/react-query';
 import { BN_ZERO } from '@polkadot/util';
 
 import { InputMegaGas, Params } from '../shared';
@@ -27,6 +28,8 @@ interface Props {
   onChangeMessage: (messageIndex: number) => void;
   onClose: () => void;
 }
+
+const MAX_CALL_WEIGHT = new BN(5_000_000_000_000).subn(1);
 
 function Call ({ className = '', contract, messageIndex, onCallResult, onChangeMessage, onClose }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
@@ -63,9 +66,9 @@ function Call ({ className = '', contract, messageIndex, onCallResult, onChangeM
     contract
       .read(message, message.isPayable ? dbValue : 0, -1, ...dbParams)
       .send(accountId)
-      .then(({ result }) => setEstimatedWeight(
-        result.isSuccess
-          ? result.asSuccess.gasConsumed
+      .then(({ gasConsumed, result }) => setEstimatedWeight(
+        result.isOk
+          ? gasConsumed
           : null
       ))
       .catch(() => setEstimatedWeight(null));
@@ -76,7 +79,7 @@ function Call ({ className = '', contract, messageIndex, onCallResult, onChangeM
       if (!accountId || !message || !value || !weight) return;
 
       contract
-        .read(message, message.isPayable ? value : 0, weight.weight, ...params)
+        .read(message, message.isPayable ? value : 0, weight.isEmpty ? -1 : weight.weight, ...params)
         .send(accountId)
         .then((result): void => {
           setOutcomes([{
@@ -123,6 +126,12 @@ function Call ({ className = '', contract, messageIndex, onCallResult, onChangeM
           defaultValue={accountId}
           help={t<string>('Specify the user account to use for this contract call. And fees will be deducted from this account.')}
           label={t<string>('call from account')}
+          labelExtra={
+            <Available
+              label={t<string>('transferrable')}
+              params={accountId}
+            />
+          }
           onChange={setAccountId}
           type='account'
           value={accountId}
@@ -145,6 +154,7 @@ function Call ({ className = '', contract, messageIndex, onCallResult, onChangeM
                   ? message.args
                   : undefined
               }
+              registry={contract.abi.registry}
             />
           </>
         )}
@@ -159,8 +169,9 @@ function Call ({ className = '', contract, messageIndex, onCallResult, onChangeM
           />
         )}
         <InputMegaGas
-          estimatedWeight={estimatedWeight}
+          estimatedWeight={message.isMutating ? estimatedWeight : MAX_CALL_WEIGHT}
           help={t<string>('The maximum amount of gas to use for this contract call. If the call requires more, it will fail.')}
+          isCall={!message.isMutating}
           weight={weight}
         />
         {message.isMutating && (

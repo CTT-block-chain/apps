@@ -1,5 +1,42 @@
 # CHANGELOG
 
+## 0.66.1 Nov 9, 2020
+
+Contributed:
+
+- Adjust font injection into all pages (Thanks to https://github.com/EthWorks)
+- Update types for Acala TC5 (Thanks to https://github.com/xlc)
+- Cleanup global font injection (Thanks to https://github.com/Tbaut)
+
+Changes:
+
+- Cleanup calculation of available voting balance on council (no unneeded refreshes)
+- Default to make contract calls with maximum weight (& align wih Rust RPC max)
+- Always check the refCount before allowing all-balance transfers
+- Allow council motions to display even when some on-chain proposals are invalid
+- Fix treasury tips to correctly check values against hashes
+- Add support for Ethereum icons (for Ethereum-compatible chains)
+- Bump to major `@polkadot/{keyring, util, util-crypto}` release
+
+
+## 0.65.1 Nov 2, 2020
+
+Contributed:
+
+- Fix for Electron account loading (Thanks to https://github.com/EthWorks)
+- Adjust electron override hashes & bump versions (Thanks to https://github.com/EthWorks)
+- Update i18n zh strings (Thanks to https://github.com/starit)
+- Adjust Edgeware RefCount type (Thanks to https://github.com/drewstone)
+- Trigger tip refresh on close (Thanks to https://github.com/Tbaut)
+
+Changes:
+
+- Adjust for latest Rococo types
+- Adjust council motion parsing (allow for some non-parseable)
+- Adjust for use of new `api-contracts` (including call errors)
+- Allow for selection of payment destination on initial bonding
+
+
 ## 0.64.1 Oct 26, 2020
 
 Contributed:
