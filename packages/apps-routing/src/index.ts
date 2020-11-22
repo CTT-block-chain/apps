@@ -27,8 +27,12 @@ import sudo from './sudo';
 import techcomm from './techcomm';
 import transfer from './transfer';
 import treasury from './treasury';
-import chain_application from './chain_application';
+//import chain_application from './chain_application';
 import knowledge_power from './knowledge_power';
+import competitive_list from './competitive_list';
+import roles_and_role_groups from './roles_and_role_groups';
+import data_statistics from './data_statistics';
+import issuance_fund from './issuance_fund';
 
 export default function create (t: TFunction): Routes {
   return [
@@ -43,6 +47,7 @@ export default function create (t: TFunction): Routes {
     democracy(t),
     council(t),
     treasury(t),
+    issuance_fund(t),
     techcomm(t),
     parachains(t),
     society(t),
@@ -56,6 +61,9 @@ export default function create (t: TFunction): Routes {
     js(t),
     settings(t),
     knowledge_power(t),
-    chain_application(t),
+    // chain_application(t),
+     competitive_list(t),
+     roles_and_role_groups(t),
+     data_statistics(t),
   ];
 }
