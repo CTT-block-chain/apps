@@ -4,18 +4,20 @@
 import { TFunction } from 'i18next';
 import { Route } from './types';
 
-import Component, { useCounter } from '@ctt/app-knowledge-power';
+import Component, { useCounter } from '@polkadot/app-treasury';
 
 export default function create (t: TFunction): Route {
   return {
     Component,
     display: {
-      needsApi: []
+      needsApi: [
+        'tx.treasury.proposeSpend'
+      ]
     },
-    group: 'chain_application',
-    icon: 'lightbulb-on',
-    name: 'knowledge_power',
-    text: t('nav.knowledge_power', 'Knowledge Power', { ns: 'apps-routing' }),
-     /* useCounter */
+    group: 'governance',
+    icon: 'gem',
+    name: 'issuance_fund',
+    text: t('nav.issuance_fund', 'Issuance Fund', { ns: 'apps-routing' }),
+    useCounter
   };
 }

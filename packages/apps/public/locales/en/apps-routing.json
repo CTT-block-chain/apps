@@ -23,5 +23,9 @@
   "nav.transfer": "Transfer",
   "nav.treasury": "Treasury",
   "nav.knowledge_power": "Knowledge Power",
-  "nav.chain_application": "Chain Application"
+  "nav.competitive_list": "Competitive List",
+  "nav.roles_and_role_groups": "Roles And Role Groups",
+  "nav.data_statistics": "Data Statistics",
+  "nav.issuance_fund": "Issuance Fund"
+  //"nav.chain_application": "Chain Application"
 }

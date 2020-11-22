@@ -4,7 +4,7 @@
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { AppProps, BareProps } from '@polkadot/react-components/types';
 
-export type RouteGroup = 'accounts' | 'developer' | 'governance' | 'network' | 'settings' | 'knowledge_power' | 'chain_application';
+export type RouteGroup = 'accounts' | 'developer' | 'governance' | 'network' | 'chain_application' | 'settings';//| 'knowledge_power'
 
 export interface RouteProps extends AppProps, BareProps {
   location: any;

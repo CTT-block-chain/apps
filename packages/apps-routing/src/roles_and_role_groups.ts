@@ -4,7 +4,7 @@
 import { TFunction } from 'i18next';
 import { Route } from './types';
 
-import Component, { useCounter } from '@ctt/app-knowledge-power';
+import Component, { useCounter } from '@polkadot/app-settings';
 
 export default function create (t: TFunction): Route {
   return {
@@ -13,9 +13,8 @@ export default function create (t: TFunction): Route {
       needsApi: []
     },
     group: 'chain_application',
-    icon: 'lightbulb-on',
-    name: 'knowledge_power',
-    text: t('nav.knowledge_power', 'Knowledge Power', { ns: 'apps-routing' }),
-     /* useCounter */
+    icon: 'database',
+    name: 'roles_and_role_groups',
+    text: t('nav.roles_and_role_groups', 'Roles And Role Groups', { ns: 'apps-routing' })
   };
 }

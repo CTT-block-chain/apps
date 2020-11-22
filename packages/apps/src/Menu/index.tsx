@@ -30,8 +30,8 @@ const disabledLog = new Map<string, string>();
 
 function createExternals (t: TFunction): ItemRoute[] {
   return [
-    { href: 'https://github.com/polkadot-js/apps', icon: 'code-branch', name: 'github', text: t<string>('nav.github', 'GitHub', { ns: 'apps-routing' }) },
-    { href: 'https://wiki.polkadot.network', icon: 'book', name: 'wiki', text: t<string>('nav.wiki', 'Wiki', { ns: 'apps-routing' }) }
+    { href: 'https://github.com/CTT-block-chain/web-wallet', icon: 'code-branch', name: 'github', text: t<string>('nav.github', 'GitHub', { ns: 'apps-routing' }) },
+    /* { href: 'https://wiki.polkadot.network', icon: 'book', name: 'wiki', text: t<string>('nav.wiki', 'Wiki', { ns: 'apps-routing' }) } */
   ];
 }
 
@@ -101,7 +101,7 @@ function Menu ({ className = '' }: Props): React.ReactElement<Props> {
     developer: t('Developer'),
     governance: t('Governance'),
     network: t('Network'),
-    knowledge_power: t('Knowledge Power'),
+    //knowledge_power: t('Knowledge Power'),
     chain_application: t('Chain Application'),
     settings: t('Settings')
   });

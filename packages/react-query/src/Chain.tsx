@@ -15,10 +15,11 @@ interface Props {
 function Chain ({ children, className = '', label }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { systemChain } = useApi();
-
+  const systemChainNew='测试版v1.0';
   return (
     <div className={className}>
-      {label || ''}{systemChain || t('Unknown')}{children}
+     {/*label || ''*/}{/*systemChain || t('Unknown')*/}{/*children*/}
+     {systemChainNew}
     </div>
   );
 }
