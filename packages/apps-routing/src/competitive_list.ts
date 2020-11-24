@@ -4,7 +4,7 @@
 import { TFunction } from 'i18next';
 import { Route } from './types';
 
-import Component, { useCounter } from '@polkadot/app-settings';
+import Component, { useCounter } from '@ctt/app-competitive-list';
 
 export default function create (t: TFunction): Route {
   return {

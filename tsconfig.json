@@ -72,7 +72,15 @@
       "@polkadot/react-signer": [ "packages/react-signer/src" ],
       "@polkadot/react-signer/*": [ "packages/react-signer/src/*" ],
       "@ctt/app-knowledge-power": [ "packages/page-knowledge-power/src" ],
-      "@ctt/app-knowledge-power/*": [ "packages/page-knowledge-power/src/*" ]
+      "@ctt/app-knowledge-power/*": [ "packages/page-knowledge-power/src/*" ],
+      "@ctt/app-competitive-list": [ "packages/page-competitive-list/src" ],
+      "@ctt/app-competitive-list/*": [ "packages/page-competitive-list/src/*" ],
+      "@ctt/app-roles-and-role-groups": [ "packages/page-roles-and-role-groups/src" ],
+      "@ctt/app-roles-and-role-groups/*": [ "packages/page-roles-and-role-groups/src/*" ],
+      "@ctt/app-data-statistics": [ "packages/page-data-statistics/src" ],
+      "@ctt/app-data-statistics/*": [ "packages/page-data-statistics/src/*" ],
+      "@ctt/app-issuance-fund": [ "packages/page-issuance-fund/src" ],
+      "@ctt/app-issuance-fund/*": [ "packages/page-issuance-fund/src/*" ]
     },
     "skipLibCheck": true,
     "typeRoots": [

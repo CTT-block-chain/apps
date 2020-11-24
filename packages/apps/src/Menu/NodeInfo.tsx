@@ -15,7 +15,6 @@ const uiInfo = `apps v${pkgJson.version}`;
 
 function NodeInfo ({ className = '' }: Props): React.ReactElement<Props> {
   const { api, isApiReady } = useApi();
-
   return (
     <div className={`${className} media--1400 highlight--color-contrast`}>
       {isApiReady && (
