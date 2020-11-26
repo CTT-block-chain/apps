@@ -11,7 +11,10 @@ import { HelpOverlay, Tabs } from '@polkadot/react-components';
 import basicMd from './md/basic.md';
 import { useTranslation } from './translate';
 import useCounter from './useCounter';
-import Accounts from './AccountPower';
+import Accounts from './Accounts';
+import ExpErienceGoodsKP from './ExpErienceGoodsKP';
+import DocumentKP from './DocumentKP';
+import CompetitiveReviewParticipation from './CompetitiveReviewParticipation';
 
 export { useCounter };
 
@@ -25,8 +28,20 @@ function AccountsApp ({ basePath, onStatusChange }: Props): React.ReactElement<P
   const itemsRef = useRef([
     {
       isRoot: true,
-      name: 'overview',
-      text: t<string>('My accounts')
+      name: 'accountKP',
+      text: t<string>('Account KP')
+    },
+    {
+      name: 'experienceGoodsKP',
+      text: t<string>('Experience goods KP')
+    },
+    {
+      name: 'documentKP',
+      text: t<string>('Document KP')
+    },
+    {
+      name: 'competitiveReviewParticipation',
+      text: t<string>('Competitive review participation')
     }
   ]);
 
@@ -41,6 +56,24 @@ function AccountsApp ({ basePath, onStatusChange }: Props): React.ReactElement<P
         />
       </header>
       <Switch>
+        <Route path={`${basePath}/CompetitiveReviewParticipation`}>
+          <CompetitiveReviewParticipation
+            basePath={basePath}
+            onStatusChange={onStatusChange}
+          />
+        </Route>
+        <Route path={`${basePath}/DocumentKP`}>
+          <DocumentKP
+            basePath={basePath}
+            onStatusChange={onStatusChange}
+          />
+        </Route>
+        <Route path={`${basePath}/ExpErienceGoodsKP`}>
+          <ExpErienceGoodsKP
+            basePath={basePath}
+            onStatusChange={onStatusChange}
+          />
+        </Route>
         <Route>
           <Accounts
             basePath={basePath}
