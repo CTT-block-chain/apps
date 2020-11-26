@@ -25,6 +25,7 @@ function AccountsApp ({ basePath, onStatusChange }: Props): React.ReactElement<P
 
   const itemsRef = useRef([
     {
+      isRoot: true,
       name: 'roleGroups',
       text: t<string>('Role Groups')
     },

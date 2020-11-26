@@ -9,18 +9,12 @@ import Component, { useCounter } from '@ctt/app-knowledge-power';
 export default function create (t: TFunction): Route {
   return {
     Component,
-   /* display: {},
-    group: 'knowledge_power',
-    icon: 'lightbulb-on',
-    name: 'knowledge_power',
-    */
     display: {
       needsApi: []
     },
     group: 'chain_application',
-    icon: 'database',
+    icon: 'book',
     name: 'knowledge_power',
     text: t('nav.knowledge_power', 'Knowledge Power', { ns: 'apps-routing' }),
-   /* useCounter */
   };
 }

@@ -13,7 +13,7 @@ export default function create (t: TFunction): Route {
       needsApi: []
     },
     group: 'chain_application',
-    icon: 'database',
+    icon: 'list-alt',
     name: 'competitive_list',
     text: t('nav.competitive_list', 'Competitive List', { ns: 'apps-routing' })
   };
