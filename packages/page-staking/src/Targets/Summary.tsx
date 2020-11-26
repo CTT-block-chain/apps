@@ -50,29 +50,76 @@ function Summary ({ avgStaked, lastReward, lowStaked, numNominators, numValidato
   return (
     <SummaryBox>
       <section className='media--800'>
-        {totalIssuance && (
-          <CardSummary
-            label={`${totalStaked?.gtn(0) ? `${t<string>('total staked')} / ` : ''}${t<string>('total issuance')}`}
-            progress={progressStake}
-          >
-            <div>
-              {totalStaked?.gtn(0) && (
-                <>
-                  <FormatBalance
-                    value={totalStaked}
-                    withCurrency={false}
-                    withSi
-                  />
-                  &nbsp;/&nbsp;
-                </>
-              )}
-              <FormatBalance
-                value={totalIssuance}
-                withSi
-              />
-            </div>
-          </CardSummary>
-        )}
+       {totalIssuance && (
+         <CardSummary
+           label={`${totalStaked?.gtn(0) ? `${t<string>('total staked')} / ` : ''}${t<string>('Number of block issues')}`}
+           progress={progressStake}
+         >
+           <div>
+             {totalStaked?.gtn(0) && (
+               <>
+                 <FormatBalance
+                   value={totalStaked}
+                   withCurrency={false}
+                   withSi
+                 />
+                 &nbsp;/&nbsp;
+               </>
+             )}
+             <FormatBalance
+               value={totalIssuance}
+               withSi
+             />
+           </div>
+         </CardSummary>
+       )}
+       {totalIssuance && (
+         <CardSummary
+           label={`${totalStaked?.gtn(0) ? `${t<string>('total staked')} / ` : ''}${t<string>('Initial issue quantity')}`}
+           progress={progressStake}
+         >
+           <div>
+             {totalStaked?.gtn(0) && (
+               <>
+                 <FormatBalance
+                   value={totalStaked}
+                   withCurrency={false}
+                   withSi
+                 />
+                 &nbsp;/&nbsp;
+               </>
+             )}
+             <FormatBalance
+               value={totalIssuance}
+               withSi
+             />
+           </div>
+         </CardSummary>
+       )}
+       {totalIssuance && (
+         <CardSummary
+           label={`${totalStaked?.gtn(0) ? `${t<string>('total staked')} / ` : ''}${t<string>('Fund stock')}`}
+           progress={progressStake}
+         >
+           <div>
+             {totalStaked?.gtn(0) && (
+               <>
+                 <FormatBalance
+                   value={totalStaked}
+                   withCurrency={false}
+                   withSi
+                 />
+                 &nbsp;/&nbsp;
+               </>
+             )}
+             <FormatBalance
+               value={totalIssuance}
+               withSi
+             />
+           </div>
+         </CardSummary>
+       )}
+            
       </section>
       {avgStaked && lowStaked && (
         <CardSummary

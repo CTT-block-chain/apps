@@ -29,11 +29,31 @@ function Summary (): React.ReactElement {
         {api.query.balances && (
           <CardSummary
             className='media--800'
-            label={t<string>('total issuance')}
+            label={t<string>('Number of block issues')}
           >
             <TotalIssuance />
           </CardSummary>
+        
         )}
+        {api.query.balances && (
+          <CardSummary
+            className='media--800'
+            label={t<string>('Initial issue quantity')}
+          >
+            <TotalIssuance />
+          </CardSummary>
+        
+        )}
+        {api.query.balances && (
+          <CardSummary
+            className='media--800'
+            label={t<string>('Fund stock')}
+          >
+            <TotalIssuance />
+          </CardSummary>
+        
+        )}
+              
       </section>
       <section className='media--1200'>
         <SummarySession withEra={false} />

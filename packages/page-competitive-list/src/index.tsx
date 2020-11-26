@@ -25,6 +25,7 @@ function AccountsApp ({ basePath, onStatusChange }: Props): React.ReactElement<P
 
   const itemsRef = useRef([
     {
+      isRoot: true,
       name: 'wholeNetworkList',
       text: t<string>('Whole network list')
     },
