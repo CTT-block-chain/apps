@@ -13,7 +13,7 @@ export default function create (t: TFunction): Route {
       needsApi: []
     },
     group: 'chain_application',
-    icon: 'database',
+    icon: 'chart-bar',
     name: 'data_statistics',
     text: t('nav.data_statistics', 'Data Statistics', { ns: 'apps-routing' })
   };

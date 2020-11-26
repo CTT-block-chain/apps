@@ -185,6 +185,8 @@ function Account ({ allSlashes, className = '', info: { controllerId, destinatio
           : destination?.toString()
         }
       </td>
+      <td/>
+      <td/>
       <td className='number'>
         <StakingBonded stakingInfo={stakingAccount} />
         <StakingUnbonding stakingInfo={stakingAccount} />

@@ -7,7 +7,7 @@ import { BondInfo } from './types';
 
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Dropdown, InputAddress, InputBalance, Modal, Static } from '@polkadot/react-components';
+import { Dropdown, InputAddress, InputBalance,InputBalanceChanges, Modal, Static } from '@polkadot/react-components';
 import { BalanceFree, BlockToTime } from '@polkadot/react-query';
 import { useApi, useCall } from '@polkadot/react-hooks';
 import { BN_ZERO } from '@polkadot/util';
@@ -86,6 +86,14 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
   const hasValue = !!amount?.gtn(0);
   const isAccount = destination === 'Account';
 
+  const testError=false;
+  const testValue1=5.63;
+  const testValue2='858.68KP';
+  const testValue3=2815.00;
+  const testValue4='KP';
+  const isDisabledInput=true;
+  const valueInput=null;
+
   return (
     <div className={className}>
       <Modal.Columns>
@@ -131,11 +139,36 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
               }
               onChange={setAmount}
             />
+
             <InputValidateAmount
               controllerId={controllerId}
               onError={setAmountError}
               stashId={stashId}
               value={amount}
+            />
+            <InputBalanceChanges
+              defaultValue={testValue1}
+              help={ <span >{testValue4}</span>}
+              children={<span >{t<string>('')}</span>}
+              isError={testError}
+              isDisabled={isDisabledInput}
+              value={valueInput}
+              label={t<string>('KP weight')}
+              labelExtra={
+                <span className='label'>{t<string>('KP value')} {testValue2}</span>
+              }
+            />
+            <Static
+              defaultValue={testValue3}
+              help={<span >{t<string>('')}</span>}
+              children={<span >{t<string>('')}</span>}
+              isError={testError}
+              isDisabled={isDisabledInput}
+              value={valueInput}
+              label={t<string>('Weighted value')}
+              labelExtra={
+                t<string>('')
+              }
             />
             {bondedBlocks?.gtn(0) && (
               <Static

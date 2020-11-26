@@ -18,7 +18,7 @@ export default function create (t: TFunction): Route {
       needsApi: []
     },
     group: 'chain_application',
-    icon: 'database',
+    icon: 'book',
     name: 'knowledge_power',
     text: t('nav.knowledge_power', 'Knowledge Power', { ns: 'apps-routing' }),
    /* useCounter */

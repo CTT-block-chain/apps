@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 interface Props {
   className?: string;
-  color?: 'gray' | 'green' | 'normal' | 'orange' | 'red' | 'transparent' | 'white';
+  color?: 'gray' | 'green' | 'normal' | 'orange' | 'red' | 'transparent' | 'white' | 'blue';
   icon: IconName;
   isSpinning?: boolean;
   onClick?: () => void;
@@ -64,5 +64,8 @@ export default React.memo(styled(Icon)`
 
   &.whiteColor {
     color: white;
+  }
+  &.blueColor {
+    color: blue;
   }
 `);

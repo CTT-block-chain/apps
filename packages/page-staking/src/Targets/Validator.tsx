@@ -93,6 +93,10 @@ function Validator ({ allSlashes, canSelect, filterName, info, isNominated, isSe
 
   const { accountId, bondOther, bondOwn, bondTotal, commissionPer, isCommission, isElected, isFavorite, key, numNominators, rankOverall, rewardPayout, validatorPayment } = info;
 
+  const testValue1='0.00';
+  const testValue2='0.00';
+  const testValue3='26345.66';
+  const testValue4='26345.66';
   return (
     <tr>
       <td className='badge together'>
@@ -136,7 +140,9 @@ function Validator ({ allSlashes, canSelect, filterName, info, isNominated, isSe
       <td className='address all'>
         <AddressSmall value={accountId} />
       </td>
+      <td className='number media--1200'>{testValue1}</td>
       <td className='number media--1200'>{numNominators || ''}</td>
+      <td className='number'>{testValue2}</td>
       <td className='number'>
         {
           isCommission
@@ -144,7 +150,9 @@ function Validator ({ allSlashes, canSelect, filterName, info, isNominated, isSe
             : <FormatBalance value={validatorPayment} />
         }
       </td>
+      <td className='number'>{testValue3}</td>
       <td className='number together'>{!bondTotal.isZero() && <FormatBalance value={bondTotal} />}</td>
+       <td className='number'>{testValue4}</td>
       <td className='number together'>{!bondOwn.isZero() && <FormatBalance value={bondOwn} />}</td>
       <td className='number together media--1600'>{!bondOther.isZero() && <FormatBalance value={bondOther} />}</td>
       <td className='number together'>{!rewardPayout.isZero() && <FormatBalance value={rewardPayout} />}</td>

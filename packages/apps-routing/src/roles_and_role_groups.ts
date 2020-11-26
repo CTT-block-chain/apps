@@ -13,7 +13,7 @@ export default function create (t: TFunction): Route {
       needsApi: []
     },
     group: 'chain_application',
-    icon: 'database',
+    icon: 'user-friends',
     name: 'roles_and_role_groups',
     text: t('nav.roles_and_role_groups', 'Roles And Role Groups', { ns: 'apps-routing' })
   };
