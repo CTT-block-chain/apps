@@ -39,8 +39,8 @@ function Council ({ id, isDisabled, members }: Props): React.ReactElement<Props>
 
   useEffect((): void => {
     const proposal = councilType === 'reject'
-      ? api.tx.treasury.rejectProposal(id)
-      : api.tx.treasury.approveProposal(id);
+      ? api.tx.treasuryTech.rejectProposal(id)
+      : api.tx.treasuryTech.approveProposal(id);
 
     setProposal({ proposal, proposalLength: proposal.length });
   }, [api, councilType, id]);

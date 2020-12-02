@@ -13,7 +13,7 @@ import { formatNumber, stringToU8a } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
 
-const TREASURY_ACCOUNT = stringToU8a('modlpy/trsry'.padEnd(32, '\0'));
+const TREASURY_ACCOUNT = stringToU8a('modlpy/trtch'.padEnd(32, '\0'));
 
 interface Props {
   approvalCount?: number;
@@ -26,15 +26,15 @@ function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<P
   const { t } = useTranslation();
   const { api } = useApi();
   const bestNumber = useCall<Balance>(api.derive.chain.bestNumber);
-  const totalProposals = useCall<BN>(api.query.treasury.proposalCount);
+  const totalProposals = useCall<BN>(api.query.treasuryTech.proposalCount);
   const treasuryBalance = useCall<DeriveBalancesAccount>(api.derive.balances.account, [TREASURY_ACCOUNT]);
-  const spendPeriod = api.consts.treasury.spendPeriod;
+  const spendPeriod = api.consts.treasuryTech.spendPeriod;
 
   const value = treasuryBalance?.freeBalance.gtn(0)
     ? treasuryBalance.freeBalance
     : null;
-  const burn = treasuryBalance?.freeBalance.gtn(0) && !api.consts.treasury.burn.isZero()
-    ? api.consts.treasury.burn.mul(treasuryBalance?.freeBalance).div(PM_DIV)
+  const burn = treasuryBalance?.freeBalance.gtn(0) && !api.consts.treasuryTech.burn.isZero()
+    ? api.consts.treasuryTech.burn.mul(treasuryBalance?.freeBalance).div(PM_DIV)
     : null;
 
   return (

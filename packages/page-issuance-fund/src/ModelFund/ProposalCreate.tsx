@@ -22,7 +22,7 @@ function Propose ({ className }: Props): React.ReactElement<Props> | null {
   const hasValue = value?.gtn(0);
 
   const bondPercentage = useMemo(
-    () => `${api.consts.treasury.proposalBond.muln(100).divn(1_000_000).toNumber().toFixed(2)}%`,
+    () => `${api.consts.treasuryMod.proposalBond.muln(100).divn(1_000_000).toNumber().toFixed(2)}%`,
     [api]
   );
 
@@ -77,7 +77,7 @@ function Propose ({ className }: Props): React.ReactElement<Props> | null {
                   {bondPercentage}
                 </Static>
                 <InputBalance
-                  defaultValue={api.consts.treasury.proposalBondMinimum.toString()}
+                  defaultValue={api.consts.treasuryMod.proposalBondMinimum.toString()}
                   help={t<string>('The minimum amount that will be bonded')}
                   isDisabled
                   label={t<string>('minimum bond')}
