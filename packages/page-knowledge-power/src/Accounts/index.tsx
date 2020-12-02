@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ActionStatus } from '@polkadot/react-components/Status/types';
+import { DeriveAccountPowers } from '@polkadot/api-derive/types';
 import { AccountId, ProxyDefinition, ProxyType, Voting } from '@polkadot/types/interfaces';
 import { Delegation, SortedAccount } from '../types';
 
@@ -69,6 +70,12 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
         )
   });
   const isLoading = useLoadingDelay();
+
+  // test code
+  const accountPowers = useCall<DeriveAccountPowers>(api.derive.kp.accountPowers);
+  if (!!accountPowers) {
+    console.log('accountPowers:', JSON.stringify(accountPowers));
+  }
 
   const headerRef = useRef([
     [t('accounts'), 'start', 3],
@@ -143,10 +150,10 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
       <td />
       <td />
       <td className='number'>
-        
+
       </td>
       <td className='number'>
-       
+
       </td>
       <td />
     </tr>
