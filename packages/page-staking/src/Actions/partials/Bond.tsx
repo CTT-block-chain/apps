@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { DeriveBalancesAll } from '@polkadot/api-derive/types';
+import { PowerSize, Balance } from '@polkadot/types/interfaces';
 import { AmountValidateState, DestinationType } from '../types';
 import { BondInfo } from './types';
 
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Dropdown, InputAddress, InputBalance,InputBalanceChanges, Modal, Static } from '@polkadot/react-components';
+import { Dropdown, InputAddress, InputBalance, InputBalanceChanges, Modal, Static } from '@polkadot/react-components';
 import { BalanceFree, BlockToTime } from '@polkadot/react-query';
 import { useApi, useCall } from '@polkadot/react-hooks';
 import { BN_ZERO } from '@polkadot/util';
@@ -87,12 +88,35 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
   const isAccount = destination === 'Account';
 
   const testError=false;
-  const testValue1=5.63;
-  const testValue2='858.68KP';
-  const testValue3=2815.00;
-  const testValue4='KP';
   const isDisabledInput=true;
-  const valueInput=null;
+
+  let amountVote = new BN(0);
+  let controllerAccountKp: number = 0;
+  // default kp factor is 0.1;
+  let kpFactor = 0.1;
+  let accountPower = new BN(0);
+
+  const pow = useCall<PowerSize>(api.derive.kp.accountPower, [controllerId]);
+  if (!!pow) {
+    accountPower = pow;
+    controllerAccountKp = Number(accountPower.toString()) / 100.0;
+    let reduceKpRange: number = controllerAccountKp / 100.0;
+    if (reduceKpRange == 0) {
+      kpFactor = 0.1;
+    } else if (reduceKpRange <= 1 && reduceKpRange > 0) {
+      kpFactor = reduceKpRange;
+    } else {
+      kpFactor = Math.sqrt(reduceKpRange);
+    }
+  }
+
+  const REDUCE_FACTOR = new BN(1e10);
+  let reduce = amount?.div(REDUCE_FACTOR);
+  const convert = useCall<Balance>(api.derive.kp.stakeToVoteEvulate, [controllerId, reduce]);
+
+  if (convert != undefined) {
+    amountVote = convert.mul(REDUCE_FACTOR);
+  }
 
   return (
     <div className={className}>
@@ -146,29 +170,29 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
               stashId={stashId}
               value={amount}
             />
-            <InputBalanceChanges
-              defaultValue={testValue1}
-              help={ <span >{testValue4}</span>}
+            <Static
+              defaultValue={0}
               children={<span >{t<string>('')}</span>}
               isError={testError}
               isDisabled={isDisabledInput}
-              value={valueInput}
-              label={t<string>('KP weight')}
-              labelExtra={
-                <span className='label'>{t<string>('KP value')} {testValue2}</span>
-              }
+              value={controllerAccountKp?.toString()}
+              label={t<string>('KP')}
             />
             <Static
-              defaultValue={testValue3}
+              children={<span >{t<string>('')}</span>}
+              isError={testError}
+              isDisabled={isDisabledInput}
+              value={kpFactor}
+              label={t<string>('KP Weight Param')}
+            />
+            <InputBalanceChanges
+              defaultValue={amountVote}
               help={<span >{t<string>('')}</span>}
               children={<span >{t<string>('')}</span>}
               isError={testError}
               isDisabled={isDisabledInput}
-              value={valueInput}
+              value={amountVote}
               label={t<string>('Weighted value')}
-              labelExtra={
-                t<string>('')
-              }
             />
             {bondedBlocks?.gtn(0) && (
               <Static
