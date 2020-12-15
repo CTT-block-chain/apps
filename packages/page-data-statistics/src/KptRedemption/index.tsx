@@ -88,14 +88,11 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
     const sortedAccounts = sortAccounts(allAccounts, favorites);
     const sortedAddresses = sortedAccounts.map((a) => a.account.address);
-    console.log("sortedAccounts:"+JSON.stringify(sortedAccounts));
-    console.log("sortedAccountsWithDelegation:"+JSON.stringify(sortedAccountsWithDelegation));
-
+    
     setSorted({ sortedAccounts, sortedAddresses });
   }, [allAccounts, favorites]);
 
   useEffect(() => {
-    console.log("delegations:"+delegations)
     if (api.query.democracy?.votingOf && !delegations?.length) {
       return;
     }
@@ -103,7 +100,6 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     setSortedAccountsWithDelegation(
       sortedAccounts?.map((account, index) => {
         let delegation: Delegation | undefined;
-        console.log("delegations2:"+delegations)
         if (delegations && delegations[index]?.isDelegating) {
           const { balance: amount, conviction, target } = delegations[index].asDelegating;
 
@@ -113,8 +109,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
             conviction
           };
         }
-      console.log("sortedAccountsWithDelegation2:"+JSON.stringify(sortedAccountsWithDelegation));
-        return ({
+       return ({
           ...account,
           delegation
         });
@@ -126,8 +121,6 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     (account: string, balance: BN) =>
       setBalances(({ accounts }: Balances): Balances => {
         accounts[account] = balance;
-        console.log("balance:"+balance)
-        console.log(" accounts[account]:"+ accounts[account])
         return {
           accounts,
           balanceTotal: Object.values(accounts).reduce((total: BN, value: BN) => total.add(value), BN_ZERO)

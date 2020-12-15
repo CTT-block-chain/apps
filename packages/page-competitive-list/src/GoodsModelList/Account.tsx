@@ -78,14 +78,11 @@ const transformRecovery = {
 };
 
 function Account ({ account: { address, meta }, className = '', delegation, filter, isFavorite, proxy, setBalance, toggleFavorite }: Props): React.ReactElement<Props> | null {
-  console.log("Account--account:"+address)
-  const { t } = useTranslation();
+   const { t } = useTranslation();
   const { theme } = useContext<ThemeDef>(ThemeContext);
   const { queueExtrinsic } = useContext(StatusContext);
   const api = useApi();
   const bestNumber = useCall<BN>(api.api.derive.chain.bestNumber);
-  console.log("Account--bestNumber:"+JSON.stringify(useCall<BN>(api.api.derive.chain.bestNumber)))
-  console.log("Account--balances.all:"+JSON.stringify(useCall<DeriveBalancesAll>(api.api.derive.balances.all, [address])))
   const balancesAll = useCall<DeriveBalancesAll>(api.api.derive.balances.all, [address]);
   const democracyLocks = useCall<DeriveDemocracyLock[]>(api.api.derive.democracy?.locks, [address]);
   const recoveryInfo = useCall<RecoveryConfig | null>(api.api.query.recovery?.recoverable, [address], transformRecovery);
@@ -196,7 +193,7 @@ function Account ({ account: { address, meta }, className = '', delegation, filt
       getLedger()
         .getAddress(true, meta.accountOffset as number || 0, meta.addressOffset as number || 0)
         .catch((error): void => {
-          console.error(`ledger: ${(error as Error).message}`);
+          //console..error(`ledger: ${(error as Error).message}`);
         });
     },
     [meta]

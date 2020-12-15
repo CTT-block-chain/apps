@@ -15,7 +15,8 @@ import Proposals from './Proposals';
 
 import { useTranslation } from '../translate';
 
-const TREASURY_ACCOUNT = stringToU8a('modlpy/trsry'.padEnd(32, '\0'));
+
+const TRMODEL_ACCOUNT = stringToU8a('modlpy/trmod'.padEnd(32, '\0'));//模型
 
 interface Props {
   approvalCount?: number;
@@ -29,17 +30,28 @@ function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<P
   const { api } = useApi();
   const bestNumber = useCall<Balance>(api.derive.chain.bestNumber);
   const totalProposals = useCall<BN>(api.query.treasury.proposalCount);
-  const treasuryBalance = useCall<DeriveBalancesAccount>(api.derive.balances.account, [TREASURY_ACCOUNT]);
+  const trmodelBalance = useCall<DeriveBalancesAccount>(api.derive.balances.account, [TRMODEL_ACCOUNT]);
   const spendPeriod = api.consts.treasury.spendPeriod;
   const [isPreimageOpen, togglePreimage] = useToggle();
 
-  const value = treasuryBalance?.freeBalance.gtn(0)
-    ? treasuryBalance.freeBalance
+  const value_tr = trmodelBalance?.freeBalance.gtn(0)
+    ? trmodelBalance.freeBalance
     : null;
-  const burn = treasuryBalance?.freeBalance.gtn(0) && !api.consts.treasury.burn.isZero()
+ /* const burn = treasuryBalance?.freeBalance.gtn(0) && !api.consts.treasury.burn.isZero()
     ? api.consts.treasury.burn.mul(treasuryBalance?.freeBalance).div(PM_DIV)
-    : null;
-
+    : null; */
+ //模型增发基存量=模型创建基金余额
+    let fundStock_tr = BigInt(1);
+    if(!!value_tr){
+      fundStock_tr=value_tr.toBigInt();
+      //console.log("fundStock:"+fundStock);
+    }
+    //模型增发基金发行量=3亿-基金存量
+    let initial_issue_quantity_tr = BigInt('30000000000000000000000');
+    if(!!fundStock_tr){
+      initial_issue_quantity_tr=initial_issue_quantity_tr-fundStock_tr;
+     // console.log("initial_issue_quantity_tr:"+initial_issue_quantity_tr);
+    }
   return (
     <SummaryBox>
       <section>
@@ -49,32 +61,24 @@ function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<P
 
       </section>
       <section>
-        {value && (
-          <CardSummary label={t<string>('Annual issue')}>
+        {initial_issue_quantity_tr && (
+          <CardSummary
+            className='media--1000'
+            label={t<string>('Initial issue quantity')}
+          >
             <FormatBalance
-              value={value}
+              value={initial_issue_quantity_tr}
               withSi
             />
           </CardSummary>
         )}
-        {burn && (
+        {value_tr && (
           <CardSummary
             className='media--1000'
-            label={t<string>('Total number of additional issues in model year')}
+            label={t<string>('Total model Additional balance')}
           >
             <FormatBalance
-              value={burn}
-              withSi
-            />
-          </CardSummary>
-        )}
-        {burn && (
-          <CardSummary
-            className='media--1000'
-            label={t<string>('Surplus (kpt)')}
-          >
-            <FormatBalance
-              value={burn}
+              value={value_tr}
               withSi
             />
           </CardSummary>

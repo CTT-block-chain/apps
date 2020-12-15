@@ -15,7 +15,7 @@ export default function create (t: TFunction): Route {
       ]
     },
     group: 'governance',
-    icon: 'gem',
+    icon: 'dollar-sign',//gem
     name: 'issuance_fund',
     text: t('nav.issuance_fund', 'Issuance Fund', { ns: 'apps-routing' }),
     useCounter

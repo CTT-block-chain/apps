@@ -13,7 +13,7 @@ import { formatNumber, stringToU8a } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
 
-const TREASURY_ACCOUNT = stringToU8a('modlpy/trsry'.padEnd(32, '\0'));
+const TREASURY_ACCOUNT = stringToU8a('modlpy/trtch'.padEnd(32, '\0'));
 
 interface Props {
   approvalCount?: number;
@@ -26,17 +26,28 @@ function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<P
   const { t } = useTranslation();
   const { api } = useApi();
   const bestNumber = useCall<Balance>(api.derive.chain.bestNumber);
-  const totalProposals = useCall<BN>(api.query.treasury.proposalCount);
+  const totalProposals = useCall<BN>(api.query.treasuryTech.proposalCount);
   const treasuryBalance = useCall<DeriveBalancesAccount>(api.derive.balances.account, [TREASURY_ACCOUNT]);
-  const spendPeriod = api.consts.treasury.spendPeriod;
+  const spendPeriod = api.consts.treasuryTech.spendPeriod;
 
   const value = treasuryBalance?.freeBalance.gtn(0)
     ? treasuryBalance.freeBalance
     : null;
-  const burn = treasuryBalance?.freeBalance.gtn(0) && !api.consts.treasury.burn.isZero()
-    ? api.consts.treasury.burn.mul(treasuryBalance?.freeBalance).div(PM_DIV)
+  const burn = treasuryBalance?.freeBalance.gtn(0) && !api.consts.treasuryTech.burn.isZero()
+    ? api.consts.treasuryTech.burn.mul(treasuryBalance?.freeBalance).div(PM_DIV)
     : null;
-
+//技术开发与管理基金存量=融资余额
+  let fundStock = BigInt(1);
+  if(!!value){
+    fundStock=value.toBigInt();
+    //console.log("fundStock:"+fundStock);
+  }
+  //技术开发与管理基金发行量=1亿-基金存量
+  let initial_issue_quantity = BigInt('10000000000000000000000');
+  if(!!fundStock){
+    initial_issue_quantity=initial_issue_quantity-fundStock;
+    //console.log("initial_issue_quantity:"+initial_issue_quantity);
+  }
   return (
     <SummaryBox>
       <section>
@@ -50,23 +61,19 @@ function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<P
           {formatNumber(approvalCount)}
         </CardSummary>
       </section>
-      
       <section>
-        {value && (
-          <CardSummary label={t<string>('Total funds (kpt)')}>
+        {initial_issue_quantity && (
+          <CardSummary label={t<string>('Initial issue quantity')}>
             <FormatBalance
-              value={value}
+              value={initial_issue_quantity}
               withSi
             />
           </CardSummary>
         )}
-        {burn && (
-          <CardSummary
-            className='media--1000'
-            label={t<string>('Total model creation releases')}
-          >
+        {value && (
+          <CardSummary label={t<string>('Fund stock')}>
             <FormatBalance
-              value={burn}
+              value={value}
               withSi
             />
           </CardSummary>
@@ -83,7 +90,6 @@ function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<P
           </CardSummary>
         )}
       </section>
-
       {bestNumber && spendPeriod?.gtn(0) && (
         <section>
           <CardSummary
