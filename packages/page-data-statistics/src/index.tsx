@@ -13,6 +13,7 @@ import { useTranslation } from './translate';
 import useCounter from './useCounter';
 import ModelKptIssuance from './ModelKptIssuance';
 import KptRedemption from './KptRedemption';
+import ChainApplication from './ChainApplication';
 
 export { useCounter };
 
@@ -33,6 +34,11 @@ function AccountsApp ({ basePath, onStatusChange }: Props): React.ReactElement<P
       name: 'kptRedemption',
       text: t<string>('KPT redemption')
     }
+    ,
+    {
+      name: 'chainApplication',
+      text: t<string>('Chain Application')
+    }
   ]);
 
   return (
@@ -46,6 +52,12 @@ function AccountsApp ({ basePath, onStatusChange }: Props): React.ReactElement<P
         />
       </header>
       <Switch>
+        <Route path={`${basePath}/ChainApplication`}>
+          <ChainApplication
+            basePath={basePath}
+            onStatusChange={onStatusChange}
+          />
+        </Route>
         <Route path={`${basePath}/KptRedemption`}>
           <KptRedemption
             basePath={basePath}

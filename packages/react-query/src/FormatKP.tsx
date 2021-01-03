@@ -31,30 +31,17 @@ function format (value: Compact<any> | BN | string, withCurrency = true, withSi?
   const isShort = _isShort || (withSi && prefix.length >= K_LENGTH);
   const unitPost = withCurrency ? 'KP' : '';
 
-  if (prefix.length > M_LENGTH) {
-    const [major, rest] = formatBalance(value, { withUnit: false }).split('.');
-    const minor = rest.substr(0, 4);
-    const unit = rest.substr(4);
-
-    return <>{major}.<span className='ui--FormatBalance-postfix'>{minor}</span><span className='ui--FormatBalance-unit'>{unit}{unit ? unitPost : ` ${unitPost}`}</span>{labelPost || ''}</>;
-  }
-
-  return <>{`${prefix}${isShort ? '' : '.'}`}{!isShort && <span className='ui--FormatBalance-postfix'>{`0000${postfix || ''}`.slice(-4)}</span>}<span className='ui--FormatBalance-unit'> {unitPost}</span>{labelPost || ''}</>;
+ return <><span className='ui--FormatBalance-postfix'>{value}{unitPost}</span></>;
 }
 
 function FormatBalance ({ children, className = '', isShort, label, labelPost, value, withCurrency, withSi }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-
+  const newValue=value+' KP';
   // labelPost here looks messy, however we ensure we have one less text node
   return (
     <div className={`ui--FormatBalance ${className}`}>
-      {label ? <>{label}&nbsp;</> : ''}<span className='ui--FormatBalance-value'>{
-        value
-          ? value === 'all'
-            ? t<string>('everything{{labelPost}}', { replace: { labelPost } })
-            : format(value, withCurrency, withSi, isShort, labelPost)
-          : `-${labelPost || ''}`
-      }</span>{children}
+      {label ? <>{label}&nbsp;</> : ''}
+      <span className='ui--FormatBalance-value'>{newValue}</span>{children}
     </div>
   );
 }

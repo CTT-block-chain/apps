@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { DeriveBalancesAll } from '@polkadot/api-derive/types';
+import { PowerSize, Balance } from '@polkadot/types/interfaces';
 import { AmountValidateState, DestinationType } from '../types';
 import { BondInfo } from './types';
 
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Dropdown, InputAddress, InputBalance,InputBalanceChanges, Modal, Static } from '@polkadot/react-components';
+import { Dropdown, InputAddress, InputBalance, InputBalanceChanges, Modal, Static } from '@polkadot/react-components';
 import { BalanceFree, BlockToTime } from '@polkadot/react-query';
 import { useApi, useCall } from '@polkadot/react-hooks';
 import { BN_ZERO } from '@polkadot/util';
@@ -87,13 +88,52 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
   const isAccount = destination === 'Account';
 
   const testError=false;
-  const testValue1=5.63;
-  const testValue2='858.68KP';
-  const testValue3=2815.00;
-  const testValue4='KP';
   const isDisabledInput=true;
-  const valueInput=null;
 
+  let amountVote = new BN(0);
+  let controllerAccountKp: number = 0;
+  // default kp factor is 0.1;
+  let kpFactor = 0.1;
+  let accountPower = new BN(0);
+
+  const pow = useCall<PowerSize>(api.derive.kp.accountPower, [controllerId]);
+  if (!!pow) {
+    accountPower = pow;
+    controllerAccountKp = Number(accountPower.toString()) / 100.0;
+    let reduceKpRange: number = controllerAccountKp / 100.0;
+    if (reduceKpRange == 0) {
+      kpFactor = 0.1;
+    } else if (reduceKpRange <= 1 && reduceKpRange > 0) {
+      kpFactor = reduceKpRange;
+    } else {
+      kpFactor = Math.sqrt(reduceKpRange);
+    }
+  }
+
+  const REDUCE_FACTOR = new BN(1e10);
+  let reduce = amount?.div(REDUCE_FACTOR);
+  const convert = useCall<Balance>(api.derive.kp.stakeToVoteEvulate, [controllerId, reduce]);
+
+  if (convert != undefined) {
+    amountVote = convert.mul(REDUCE_FACTOR);
+  }
+
+ /* <Static
+              children={<span >{t<string>('')}</span>}
+              isError={testError}
+              isDisabled={isDisabledInput}
+              value={kpFactor}
+              label={t<string>('KP Weight Param')}
+            />
+            <InputBalanceChanges
+              defaultValue={amountVote}
+              help={<span >{t<string>('')}</span>}
+              children={<span >{t<string>('')}</span>}
+              isError={testError}
+              isDisabled={isDisabledInput}
+              value={amountVote}
+              label={t<string>('Weighted value')}
+            /> */
   return (
     <div className={className}>
       <Modal.Columns>
@@ -146,30 +186,15 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
               stashId={stashId}
               value={amount}
             />
-            <InputBalanceChanges
-              defaultValue={testValue1}
-              help={ <span >{testValue4}</span>}
-              children={<span >{t<string>('')}</span>}
-              isError={testError}
-              isDisabled={isDisabledInput}
-              value={valueInput}
-              label={t<string>('KP weight')}
-              labelExtra={
-                <span className='label'>{t<string>('KP value')} {testValue2}</span>
-              }
-            />
             <Static
-              defaultValue={testValue3}
-              help={<span >{t<string>('')}</span>}
+              defaultValue={0}
               children={<span >{t<string>('')}</span>}
               isError={testError}
               isDisabled={isDisabledInput}
-              value={valueInput}
-              label={t<string>('Weighted value')}
-              labelExtra={
-                t<string>('')
-              }
+              value={controllerAccountKp?.toString()}
+              label={t<string>('KP')}
             />
+
             {bondedBlocks?.gtn(0) && (
               <Static
                 help={t<string>('The bonding duration for any staked funds. Needs to be unlocked and withdrawn to become available.')}
@@ -180,8 +205,8 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
             )}
           </Modal.Column>
           <Modal.Column>
-            <p>{t<string>('The amount placed at-stake should not be your full available available amount to allow for transaction fees.')}</p>
-            <p>{t<string>('Once bonded, it wil need to be unlocked/withdrawn and will be locked for at least the bonding duration.')}</p>
+            <p>{t<string>('Chain ownership rights and interests is the KP weighting of KPT. The current computational power value is the current value, and the actual KP weighting is based on the actual occurrence time node.')}</p>
+            <p>{t<string>('')}</p>
           </Modal.Column>
         </Modal.Columns>
       )}

@@ -16,6 +16,11 @@ interface Props extends ModalProps {
   className?: string;
   onClose: () => void;
   onStatusChange: (status: ActionStatus) => void;
+
+  changeQueryStatus: (status: boolean) => void;
+  changeAppId: (appId: int) => void;
+  changeBlockNumber: (blockNumber: string) => void;
+  changeModelID: (modelID: string) => void;
 }
 
 interface CreateOptions {
@@ -42,76 +47,106 @@ function createProxy (address: string, { genesisHash, name, tags = [] }: CreateO
   return status;
 }
 
-function ProxyAdd ({ className = '', onClose, onStatusChange }: Props): React.ReactElement<Props> {
+function ProxyAdd ({ className = '', onClose, onStatusChange, changeQueryStatus, changeAppId, changeBlockNumber, changeModelID}: Props): React.ReactElement<Props> {
   const { api, isDevelopment } = useApi();
   const { t } = useTranslation();
-  const [{ isNameValid, name }, setName] = useState({ isNameValid: false, name: '' });
+
+  const [{ isAppIdValid, appId }, setAppId] = useState({ isAppIdValid: false, appId: 0 });
+  const [{ isBlockNumberValid, blockNumber }, setBlockNumber] = useState({ isBlockNumberValid: false, blockNumber: '' });
+  const [{ isModelIDValid, modelID }, setModelID] = useState({ isModelIDValid: false, modelID: '' });
+
   const [stashAddress, setStashAddress] = useState<string | null>(null);
   const { hasOwned } = useProxies(stashAddress);
 
   const _createProxied = useCallback(
     (): void => {
-      if (stashAddress) {
-        const options = { genesisHash: isDevelopment ? undefined : api.genesisHash.toString(), name: name.trim() };
-        const status = createProxy(stashAddress, options, t<string>('added proxy'));
-
-        onStatusChange(status);
-        onClose();
-      }
+      onClose();
     },
-    [api.genesisHash, isDevelopment, name, onClose, onStatusChange, stashAddress, t]
+    [api.genesisHash, isDevelopment, name, onClose, onStatusChange, changeQueryStatus, changeAppId, changeBlockNumber, changeModelID, stashAddress, t]
   );
 
-  const _onChangeName = useCallback(
-    (name: string) => setName({ isNameValid: (name.trim().length >= 3), name }),
+  const _onChangeAppId = useCallback(
+    (appId: int): void=> {
+      changeQueryStatus(true);
+      changeAppId(appId);
+      setAppId({ isAppIdValid: true, appId })
+    },
     []
   );
-
-  const isValid = isNameValid && !!stashAddress && hasOwned;
-
+  const _onChangeBlockNumber = useCallback(
+    (blockNumber: string) : void=> {
+      changeQueryStatus(true);
+      changeBlockNumber(blockNumber);
+      setBlockNumber({ isBlockNumberValid: true, blockNumber })
+    },
+    []
+  );
+  const _onChangeModelID = useCallback(
+    (modelID: string) : void=> {
+      changeQueryStatus(true);
+      changeModelID(modelID);
+      setModelID({ isModelIDValid: true, modelID })
+    },
+    []
+  );
   return (
     <Modal
       className={className}
-      header={t<string>('Add proxied account')}
+      header={t<string>('List query')}
       size='large'
     >
       <Modal.Content>
         <Modal.Columns>
           <Modal.Column>
-            <InputAddressSimple
-              autoFocus
-              help={t<string>('The address that you have a valid proxy setup for.')}
-              isError={!hasOwned}
-              label={t<string>('proxied account')}
-              onChange={setStashAddress}
-              placeholder={t<string>('stash address')}
+            <Input
+              className='full'
+              help={t<string>('Enter the Application ID of the token you want to search.')}
+              isError={false}
+              label={t<string>('AppId')}
+              onChange={_onChangeAppId}
+              placeholder={t<string>('AppId')}
             />
           </Modal.Column>
           <Modal.Column>
-            <p>{t<string>('The address that has previously setup a proxy to one of the accounts that you control.')}</p>
+            <p>{t<string>('')}</p>
           </Modal.Column>
         </Modal.Columns>
         <Modal.Columns>
           <Modal.Column>
             <Input
               className='full'
-              help={t<string>('Name given to this proxied account. You can edit it at any later point in time.')}
-              isError={!isNameValid}
-              label={t<string>('name')}
-              onChange={_onChangeName}
-              placeholder={t<string>('proxied name')}
+              help={t<string>('Enter the Block Number of the token you want to search.')}
+              label={t<string>('Block Number')}
+              onChange={_onChangeBlockNumber}
+              placeholder={t<string>('Block Number')}
             />
           </Modal.Column>
           <Modal.Column>
-            <p>{t<string>('The name is for unique identification of the account in your owner lists.')}</p>
+            <p>{t<string>('')}</p>
           </Modal.Column>
         </Modal.Columns>
+        <Modal.Columns>
+          <Modal.Column>
+            <Input
+              className='full'
+              help={t<string>('Enter the Model ID of the token you want to search.')}
+              isError={false}
+              label={t<string>('Model ID')}
+              onChange={_onChangeModelID}
+              placeholder={t<string>('Model ID')}
+            />
+          </Modal.Column>
+          <Modal.Column>
+            <p>{t<string>('')}</p>
+          </Modal.Column>
+        </Modal.Columns>
+
       </Modal.Content>
       <Modal.Actions onCancel={onClose}>
         <Button
-          icon='plus'
-          isDisabled={!isValid}
-          label={t<string>('Add')}
+          icon='check'
+          isDisabled={false}
+          label={t<string>('Submit')}
           onClick={_createProxied}
         />
       </Modal.Actions>

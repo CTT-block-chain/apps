@@ -58,20 +58,28 @@ function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<P
 
       </section>
       <section>
-
-      </section>
-      <section>
-        {initial_issue_quantity_tr && (
-          <CardSummary
-            className='media--1000'
-            label={t<string>('Initial issue quantity')}
-          >
+        {
+          initial_issue_quantity_tr
+        ?
+        (''&& (
+          <CardSummary className='media--1000' label={t<string>('Initial issue quantity of model Additional')}>
             <FormatBalance
               value={initial_issue_quantity_tr}
               withSi
             />
           </CardSummary>
-        )}
+        ))
+        :
+        (
+          <CardSummary label={t<string>('Initial issue quantity of model Additional')}>
+            <FormatBalance
+              value={0}
+              withSi
+            />
+          </CardSummary>
+        )
+
+        }
         {value_tr && (
           <CardSummary
             className='media--1000'
@@ -84,14 +92,9 @@ function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<P
           </CardSummary>
         )}
       </section>
-     <Button.Group>
-       <Button
-         icon='plus'
-         label={t<string>('Submit preimage')}
-         onClick={togglePreimage}
-       />
-       <ProposalCreate />
-     </Button.Group>
+     <section>
+
+     </section>
     </SummaryBox>
   );
 }

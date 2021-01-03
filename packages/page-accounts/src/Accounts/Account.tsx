@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { DeriveBalancesAll, DeriveDemocracyLock } from '@polkadot/api-derive/types';
+import { DeriveBalancesAll, DeriveDemocracyLock, DeriveAccountPowers } from '@polkadot/api-derive/types';
 import { ActionStatus } from '@polkadot/react-components/Status/types';
+
+
 import { ThemeDef } from '@polkadot/react-components/types';
 import { ProxyDefinition, RecoveryConfig } from '@polkadot/types/interfaces';
 import { KeyringAddress } from '@polkadot/ui-keyring/types';
@@ -14,7 +16,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import styled, { ThemeContext } from 'styled-components';
 import { ApiPromise } from '@polkadot/api';
 import { getLedger } from '@polkadot/react-api';
-import { AddressInfo, AddressMini, AddressSmall, Badge, Button, ChainLock, CryptoType, Forget, Icon, IdentityIcon, LinkExternal, Menu, Popup, StatusContext, Tags } from '@polkadot/react-components';
+import { AddressInfoKP,AddressInfo, AddressMini, AddressSmall, Badge, Button, ChainLock, CryptoType, Forget, Icon, IdentityIcon, LinkExternal, Menu, Popup, StatusContext, Tags } from '@polkadot/react-components';
 import { useAccountInfo, useApi, useCall, useToggle } from '@polkadot/react-hooks';
 import { Option } from '@polkadot/types';
 import keyring from '@polkadot/ui-keyring';
@@ -82,6 +84,8 @@ function Account ({ account: { address, meta }, className = '', delegation, filt
   const { theme } = useContext<ThemeDef>(ThemeContext);
   const { queueExtrinsic } = useContext(StatusContext);
   const api = useApi();
+
+
   const bestNumber = useCall<BN>(api.api.derive.chain.bestNumber);
   const balancesAll = useCall<DeriveBalancesAll>(api.api.derive.balances.all, [address]);
   const democracyLocks = useCall<DeriveDemocracyLock[]>(api.api.derive.democracy?.locks, [address]);
@@ -198,6 +202,36 @@ function Account ({ account: { address, meta }, className = '', delegation, filt
     },
     [meta]
   );
+
+  const params = useMemo(() => [address]);
+  const singlePower = useCall<PowerSize>(api.api.derive.kp.accountPower, params);
+  var newStatistics: Array=[];
+  const statistics = useCall<AccountStatistics>(api.api.derive.kp.accountStatistics,params);
+  if (!!statistics) {
+    var newObj=statistics?.toJSON();
+    newStatistics.push(newObj);//这里要变成数组，下面才能用，现在statistics是个object
+  }
+
+  //下面要查询每个应用的 知识算力
+  var Value: Any;//知识算力
+  if(!!singlePower){
+    Value=[
+      {
+      "appName":'减法app',
+      "appId":'10000001',
+      "power":( parseFloat(singlePower) / 100.00 ).toFixed(4) + '',
+      }
+    ];
+  }else{
+    Value=[
+      {
+      "appName":'减法app',
+      "appId":'10000001',
+      "power":'0.0000',
+      }
+    ];
+  }
+
 
   if (!isVisible) {
     return null;
@@ -400,6 +434,15 @@ function Account ({ account: { address, meta }, className = '', delegation, filt
       </td>
       <td className='number media--1500'>
         {balancesAll?.accountNonce.gt(BN_ZERO) && formatNumber(balancesAll.accountNonce)}
+      </td>
+      <td className='number'>
+        <AddressInfoKP
+          kpInfo={Value}
+          address={address}
+          withBalance
+          withBalanceToggle
+          withExtended={false}
+        />
       </td>
       <td className='number'>
         <AddressInfo

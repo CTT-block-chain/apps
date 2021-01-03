@@ -12,6 +12,10 @@ import Externals from './Externals';
 import Proposals from './Proposals';
 import Referendums from './Referendums';
 import Summary from './Summary';
+import SummaryFinancingFund from './SummaryFinancingFund';
+import SummaryModelFund from './SummaryModelFund';
+import SummaryModelFund2 from './SummaryModelFund2';
+import SummaryTechFund from './SummaryTechFund';
 import PreImage from './PreImage';
 import Propose from './Propose';
 
@@ -29,6 +33,10 @@ function Overview ({ className }: Props): React.ReactElement<Props> {
   return (
     <div className={className}>
       <Summary referendumCount={referendums?.length} />
+      <SummaryFinancingFund  />
+      <SummaryModelFund  />
+      <SummaryModelFund2  />
+      <SummaryTechFund  />
       <Button.Group>
         <Button
           icon='plus'

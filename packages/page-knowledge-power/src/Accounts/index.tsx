@@ -1,5 +1,6 @@
 // Copyright 2017-2020 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+import { DeriveAccountPowers } from '@polkadot/api-derive/types';
 
 import { ActionStatus } from '@polkadot/react-components/Status/types';
 import { AccountId, ProxyDefinition, ProxyType, Voting } from '@polkadot/types/interfaces';
@@ -8,22 +9,12 @@ import { Delegation, SortedAccount } from '../types';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-/* import { isLedger } from '@polkadot/react-api'; */
-import { useApi, useAccounts, useCall, useFavorites, useIpfs, useLoadingDelay, useToggle } from '@polkadot/react-hooks';
-/* import { FormatBalance } from '@polkadot/react-query'; */
+import { useApi, useAccounts, useCall, useFavorites, useLoadingDelay} from '@polkadot/react-hooks';//, useIpfs, useToggle
 import { Button, Input, Table } from '@polkadot/react-components';
 import { BN_ZERO } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
-/* import CreateModal from '../modals/Create';
-import ImportModal from '../modals/Import';
-import Ledger from '../modals/Ledger';
-import Multisig from '../modals/MultisigCreate';
-import Proxy from '../modals/ProxiedAdd';
-import Qr from '../modals/Qr'; */
 import Account from './Account';
-/* import BannerClaims from './BannerClaims';
-import BannerExtension from './BannerExtension'; */
 import { sortAccounts } from '../util';
 
 interface Balances {
@@ -47,13 +38,6 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   const { t } = useTranslation();
   const { api } = useApi();
   const { allAccounts, hasAccounts } = useAccounts();
-/*  const { isIpfs } = useIpfs();
-  const [isCreateOpen, toggleCreate] = useToggle();
-  const [isImportOpen, toggleImport] = useToggle();
-  const [isLedgerOpen, toggleLedger] = useToggle();
-  const [isMultisigOpen, toggleMultisig] = useToggle();
-  const [isProxyOpen, toggleProxy] = useToggle();
-  const [isQrOpen, toggleQr] = useToggle(); */
   const [favorites, toggleFavorite] = useFavorites(STORE_FAVS);
   const [{ balanceTotal }, setBalances] = useState<Balances>({ accounts: {} });
   const [filterOn, setFilter] = useState<string>('');
@@ -69,6 +53,14 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
         )
   });
   const isLoading = useLoadingDelay();
+
+  // test code
+  const accountPowers = useCall<DeriveAccountPowers>(api.derive.kp.accountPowers);
+  if (!!accountPowers) {
+    console.log('accountPowers:', JSON.stringify(accountPowers));
+  }else{
+    //console.log('----------------', );
+  }
 
   const headerRef = useRef([
     [t('accounts'), 'start', 3],
@@ -86,11 +78,12 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
     const sortedAccounts = sortAccounts(allAccounts, favorites);
     const sortedAddresses = sortedAccounts.map((a) => a.account.address);
-    
+
     setSorted({ sortedAccounts, sortedAddresses });
   }, [allAccounts, favorites]);
 
   useEffect(() => {
+    //console.log("delegations:"+delegations)
     if (api.query.democracy?.votingOf && !delegations?.length) {
       return;
     }
@@ -107,19 +100,20 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
             conviction
           };
         }
-       return ({
+      return ({
           ...account,
           delegation
         });
       })
     );
   }, [api, delegations, sortedAccounts]);
-
   const _setBalance = useCallback(
     (account: string, balance: BN) =>
       setBalances(({ accounts }: Balances): Balances => {
         accounts[account] = balance;
-         return {
+        //console.log("balance:"+balance)
+        //console.log(" accounts[account]:"+ accounts[account])
+        return {
           accounts,
           balanceTotal: Object.values(accounts).reduce((total: BN, value: BN) => total.add(value), BN_ZERO)
         };
@@ -136,10 +130,10 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
       <td />
       <td />
       <td className='number'>
-        
+
       </td>
       <td className='number'>
-       
+
       </td>
       <td />
     </tr>
@@ -156,7 +150,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
       />
     </div>
   ), [filterOn, t]);
-
+  //console.log("_setBalance:"+JSON.stringify(_setBalance));
   return (
     <div className={className}>
       <Table

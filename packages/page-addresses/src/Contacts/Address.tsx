@@ -1,15 +1,15 @@
 // Copyright 2017-2020 @polkadot/app-addresses authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { DeriveAccountInfo, DeriveBalancesAll } from '@polkadot/api-derive/types';
+import { DeriveBalancesAll, DeriveDemocracyLock, DeriveAccountPowers } from '@polkadot/api-derive/types';
 import { KeyringAddress } from '@polkadot/ui-keyring/types';
 import { ActionStatus } from '@polkadot/react-components/Status/types';
 import { ThemeDef } from '@polkadot/react-components/types';
 
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState, useMemo } from 'react';
 import styled, { ThemeContext } from 'styled-components';
 import Transfer from '@polkadot/app-accounts/modals/Transfer';
-import { AddressSmall, AddressInfo, Button, ChainLock, Icon, LinkExternal, Forget, Menu, Popup, Tags } from '@polkadot/react-components';
+import { AddressInfoKP, AddressSmall, AddressInfo, Button, ChainLock, Icon, LinkExternal, Forget, Menu, Popup, Tags } from '@polkadot/react-components';
 import { useApi, useCall } from '@polkadot/react-hooks';
 import keyring from '@polkadot/ui-keyring';
 import { BN_ZERO, formatNumber } from '@polkadot/util';
@@ -143,6 +143,35 @@ function Address ({ address, className = '', filter, isFavorite, toggleFavorite 
     [address, t]
   );
 
+  const params = useMemo(() => [address]);
+  const singlePower = useCall<PowerSize>(api.api.derive.kp.accountPower, params);
+  var newStatistics: Array=[];
+  const statistics = useCall<AccountStatistics>(api.api.derive.kp.accountStatistics,params);
+  if (!!statistics) {
+    var newObj=statistics?.toJSON();
+    newStatistics.push(newObj);//这里要变成数组，下面才能用，现在statistics是个object
+  }
+
+  //下面要查询每个应用的 知识算力
+  var Value: Any;//知识算力
+  if(!!singlePower){
+    Value=[
+      {
+      "appName":'减法app',
+      "appId":'10000001',
+      "power":( parseFloat(singlePower) / 100.00 ).toFixed(4) + '',
+      }
+    ];
+  }else{
+    Value=[
+      {
+      "appName":'减法app',
+      "appId":'10000001',
+      "power":'0.0000',
+      }
+    ];
+  }
+
   if (!isVisible) {
     return null;
   }
@@ -188,9 +217,10 @@ function Address ({ address, className = '', filter, isFavorite, toggleFavorite 
         {balancesAll?.accountNonce.gt(BN_ZERO) && formatNumber(balancesAll.accountNonce)}
       </td>
       <td className='number'>
-        <AddressInfo
+        <AddressInfoKP
+          kpInfo={Value}
           address={address}
-          withBalance={WITH_BALANCE}
+          withBalance
           withBalanceToggle
           withExtended={false}
         />

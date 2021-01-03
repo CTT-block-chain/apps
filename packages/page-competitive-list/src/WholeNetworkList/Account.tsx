@@ -1,6 +1,8 @@
 // Copyright 2017-2020 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { FormatKP } from '@polkadot/react-query';
+
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { DeriveBalancesAll, DeriveDemocracyLock } from '@polkadot/api-derive/types';
 import { ActionStatus } from '@polkadot/react-components/Status/types';
@@ -38,14 +40,12 @@ import useMultisigApprovals from './useMultisigApprovals';
 import useProxies from './useProxies';
 
 interface Props {
-  account: KeyringAddress;
+  param2: Array;
   className?: string;
-  delegation?: Delegation;
-  filter: string;
-  isFavorite: boolean;
-  proxy?: [ProxyDefinition[], BN];
-  setBalance: (address: string, value: BN) => void;
-  toggleFavorite: (address: string) => void;
+  intoType?: string;
+  appId?: int;
+  blockNumber?: string;
+  modelID?: string;
 }
 
 interface DemocracyUnlockable {
@@ -77,282 +77,114 @@ const transformRecovery = {
   transform: (opt: Option<RecoveryConfig>) => opt.unwrapOr(null)
 };
 
-function Account ({ account: { address, meta }, className = '', delegation, filter, isFavorite, proxy, setBalance, toggleFavorite }: Props): React.ReactElement<Props> | null {
-  console.log("Account--account:"+address)
+function Account ({ param2 = [], className = '', appId=0, intoType='', blockNumber='', modelID='', }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const { theme } = useContext<ThemeDef>(ThemeContext);
   const { queueExtrinsic } = useContext(StatusContext);
   const api = useApi();
-  const bestNumber = useCall<BN>(api.api.derive.chain.bestNumber);
-  console.log("Account--bestNumber:"+JSON.stringify(useCall<BN>(api.api.derive.chain.bestNumber)))
-  console.log("Account--balances.all:"+JSON.stringify(useCall<DeriveBalancesAll>(api.api.derive.balances.all, [address])))
-  const balancesAll = useCall<DeriveBalancesAll>(api.api.derive.balances.all, [address]);
-  const democracyLocks = useCall<DeriveDemocracyLock[]>(api.api.derive.democracy?.locks, [address]);
-  const recoveryInfo = useCall<RecoveryConfig | null>(api.api.query.recovery?.recoverable, [address], transformRecovery);
-  const multiInfos = useMultisigApprovals(address);
-  const proxyInfo = useProxies(address);
-  const { flags: { isDevelopment, isExternal, isHardware, isInjected, isMultisig, isProxied }, genesisHash, identity, name: accName, onSetGenesisHash, tags } = useAccountInfo(address);
-  const [{ democracyUnlockTx }, setUnlockableIds] = useState<DemocracyUnlockable>({ democracyUnlockTx: null, ids: [] });
-  const [vestingVestTx, setVestingTx] = useState<SubmittableExtrinsic<'promise'> | null>(null);
-  const [isBackupOpen, toggleBackup] = useToggle();
-  const [isDeriveOpen, toggleDerive] = useToggle();
-  const [isForgetOpen, toggleForget] = useToggle();
-  const [isIdentityMainOpen, toggleIdentityMain] = useToggle();
-  const [isIdentitySubOpen, toggleIdentitySub] = useToggle();
-  const [isMultisigOpen, toggleMultisig] = useToggle();
-  const [isProxyOverviewOpen, toggleProxyOverview] = useToggle();
-  const [isPasswordOpen, togglePassword] = useToggle();
-  const [isRecoverAccountOpen, toggleRecoverAccount] = useToggle();
-  const [isRecoverSetupOpen, toggleRecoverSetup] = useToggle();
-  const [isSettingsOpen, toggleSettings] = useToggle();
-  const [isTransferOpen, toggleTransfer] = useToggle();
-  const [isDelegateOpen, toggleDelegate] = useToggle();
-  const [isUndelegateOpen, toggleUndelegate] = useToggle();
 
   useEffect((): void => {
-    if (balancesAll) {
-      setBalance(address, balancesAll.freeBalance.add(balancesAll.reservedBalance));
 
-      api.api.tx.vesting?.vest && setVestingTx(() =>
-        balancesAll.vestingLocked.isZero()
-          ? null
-          : api.api.tx.vesting.vest()
+  }, []);
+
+  useEffect((): void => {
+
+  }, []);
+
+  let appIdStr: string = '';
+  let cycle: string = '';//榜单期数
+
+  if(!!param2 && param2.length > 0){
+
+    appIdStr = param2[0].toString();  //[1000,123190,""]   appId, blockNumber, modelId
+    param2[2] = "";  //把 modelId 去掉，只查全网榜单的记录
+
+  }
+  console.log("param2:"+JSON.stringify(param2))
+
+  const lb = useCall<DeriveLeaderboardData>(api.api.derive.kp.leaderboardRecord, [param2]);
+
+  let flag = false;
+  if( intoType == 'query' && param2[0] == appId && param2[1] == blockNumber && param2[2] == modelID){
+    flag = true;
+  }else if( intoType == 'default' ){
+    flag = true;
+  }
+  if(flag){
+    var board: Array=[];
+    var accounts: Array=[];
+
+    if( !!lb ){
+      if( !!lb.accounts && lb.accounts.length > 0){
+        accounts = lb.accounts;
+      }
+      if(!!lb.board && lb.board.length > 0){
+        board = lb.board;
+      }
+    }
+    console.log("board:"+JSON.stringify(board));
+    console.log("accounts:"+JSON.stringify(accounts));
+
+
+
+    const status = '正常';
+
+    let a: Number = 0;
+    if( !!board && board.length > 0){
+
+      for(a = 0 ; a < board.length ; a++){
+        let power: String = '';
+        if( board[a].power != 0){
+          power = parseFloat( Number( board[a].power ) / 100.00 ).toFixed(4).toString()
+        }else{
+          power = '0.0000'
+        }
+        let address: String = board[a].owner
+        return (
+          <tr className={className}>
+            <td className='favorite'>
+
+            </td>
+            <td className='address'>
+              { board[a].commodityId }
+            </td>
+            <td className='address'>
+              {  appIdStr }
+            </td>
+            <td className='address'>
+              <AddressSmall value={address} />
+            </td>
+            <td className='address'>
+             {cycle}
+            </td>
+            <td className='address'>
+             {a+1}
+            </td>
+            <td className='address'>
+             {status}
+            </td>
+            <td className='number'>
+             <FormatKP
+               value={power}
+               withSi
+             />
+            </td>
+            <td />
+            <td />
+            <td />
+          </tr>
+        );
+      }
+    }else{
+      return (
+        <></>
       );
     }
-  }, [address, api, balancesAll, setBalance]);
-
-  useEffect((): void => {
-    bestNumber && democracyLocks && setUnlockableIds(
-      (prev): DemocracyUnlockable => {
-        const ids = democracyLocks
-          .filter(({ isFinished, unlockAt }) => isFinished && bestNumber.gt(unlockAt))
-          .map(({ referendumId }) => referendumId);
-
-        if (JSON.stringify(prev.ids) === JSON.stringify(ids)) {
-          return prev;
-        }
-
-        return {
-          democracyUnlockTx: createClearDemocracyTx(api.api, address, ids),
-          ids
-        };
-      }
+  }else{
+    return (
+      <></>
     );
-  }, [address, api, bestNumber, democracyLocks]);
-
-  const isVisible = useMemo(
-    () => calcVisible(filter, accName, tags),
-    [accName, filter, tags]
-  );
-
-  const _onFavorite = useCallback(
-    () => toggleFavorite(address),
-    [address, toggleFavorite]
-  );
-
-  const _onForget = useCallback(
-    (): void => {
-      if (!address) {
-        return;
-      }
-
-      const status: Partial<ActionStatus> = {
-        account: address,
-        action: 'forget'
-      };
-
-      try {
-        keyring.forgetAccount(address);
-        status.status = 'success';
-        status.message = t<string>('account forgotten');
-      } catch (error) {
-        status.status = 'error';
-        status.message = (error as Error).message;
-      }
-    },
-    [address, t]
-  );
-
-  const _clearDemocracyLocks = useCallback(
-    () => democracyUnlockTx && queueExtrinsic({
-      accountId: address,
-      extrinsic: democracyUnlockTx
-    }),
-    [address, democracyUnlockTx, queueExtrinsic]
-  );
-
-  const _vestingVest = useCallback(
-    () => vestingVestTx && queueExtrinsic({
-      accountId: address,
-      extrinsic: vestingVestTx
-    }),
-    [address, queueExtrinsic, vestingVestTx]
-  );
-
-  const _showOnHardware = useCallback(
-    // TODO: we should check the hardwareType from metadata here as well,
-    // for now we are always assuming hardwareType === 'ledger'
-    (): void => {
-      getLedger()
-        .getAddress(true, meta.accountOffset as number || 0, meta.addressOffset as number || 0)
-        .catch((error): void => {
-          console.error(`ledger: ${(error as Error).message}`);
-        });
-    },
-    [meta]
-  );
-
-  if (!isVisible) {
-    return null;
   }
-  const goodsId='000033';
-  const appId='00010002';
-  const testValue1='20201123';
-  const testValue2='1';
-  const testValue3='正常';
-  const KP='99.77 KP';
-  return (
-    <tr className={className}>
-      <td className='favorite'>
-        <Icon
-          color={isFavorite ? 'orange' : 'gray'}
-          icon='star'
-          onClick={_onFavorite}
-        />
-      </td>
-      <td className='address'>
-        {goodsId}
-      </td>
-      <td className='address'>
-        {appId}
-      </td>
-      <td className='address'>
-        <AddressSmall value={address} />
-        {isBackupOpen && (
-          <Backup
-            address={address}
-            key='modal-backup-account'
-            onClose={toggleBackup}
-          />
-        )}
-        {isDelegateOpen && (
-          <DelegateModal
-            key='modal-delegate'
-            onClose={toggleDelegate}
-            previousAmount={delegation?.amount}
-            previousConviction={delegation?.conviction}
-            previousDelegatedAccount={delegation?.accountDelegated}
-            previousDelegatingAccount={address}
-          />
-        )}
-        {isDeriveOpen && (
-          <Derive
-            from={address}
-            key='modal-derive-account'
-            onClose={toggleDerive}
-          />
-        )}
-        {isForgetOpen && (
-          <Forget
-            address={address}
-            key='modal-forget-account'
-            onClose={toggleForget}
-            onForget={_onForget}
-          />
-        )}
-        {isIdentityMainOpen && (
-          <IdentityMain
-            address={address}
-            key='modal-identity-main'
-            onClose={toggleIdentityMain}
-          />
-        )}
-        {isIdentitySubOpen && (
-          <IdentitySub
-            address={address}
-            key='modal-identity-sub'
-            onClose={toggleIdentitySub}
-          />
-        )}
-        {isPasswordOpen && (
-          <ChangePass
-            address={address}
-            key='modal-change-pass'
-            onClose={togglePassword}
-          />
-        )}
-        {isTransferOpen && (
-          <Transfer
-            key='modal-transfer'
-            onClose={toggleTransfer}
-            senderId={address}
-          />
-        )}
-        {isProxyOverviewOpen && (
-          <ProxyOverview
-            key='modal-proxy-overview'
-            onClose={toggleProxyOverview}
-            previousProxy={proxy}
-            proxiedAccount={address}
-          />
-        )}
-        {isMultisigOpen && multiInfos && (
-          <MultisigApprove
-            address={address}
-            key='multisig-approve'
-            onClose={toggleMultisig}
-            ongoing={multiInfos}
-            threshold={meta.threshold as number}
-            who={meta.who as string[]}
-          />
-        )}
-        {isRecoverAccountOpen && (
-          <RecoverAccount
-            address={address}
-            key='recover-account'
-            onClose={toggleRecoverAccount}
-          />
-        )}
-        {isRecoverSetupOpen && (
-          <RecoverSetup
-            address={address}
-            key='recover-setup'
-            onClose={toggleRecoverSetup}
-          />
-        )}
-        {isUndelegateOpen && (
-          <UndelegateModal
-            accountDelegating={address}
-            key='modal-delegate'
-            onClose={toggleUndelegate}
-          />
-        )}
-      </td>
-      <td className='address'>
-       {testValue1}
-      </td>
-      <td className='address'>
-       {testValue2}
-      </td>
-      <td className='address'>
-       {testValue3}
-      </td>
-      <td className='number'>
-        <AddressInfo
-          address={address}
-          withBalance
-          withBalanceToggle
-          withExtended={false}
-        />
-      </td>
-      <td className='number'>
-       {KP}
-      </td>
-      <td />
-      <td />
-      <td />
-    </tr>
-  );
 }
 
 export default React.memo(styled(Account)`

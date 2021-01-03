@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { DeriveBalancesAll, DeriveDemocracyLock } from '@polkadot/api-derive/types';
+import { DeriveBalancesAll, DeriveDemocracyLock, DeriveAccountPowers } from '@polkadot/api-derive/types';
 import { ActionStatus } from '@polkadot/react-components/Status/types';
-import { ThemeDef } from '@polkadot/react-components/types';
+
+
+//import { ThemeDef } from '@polkadot/react-components/types';
 import { ProxyDefinition, RecoveryConfig } from '@polkadot/types/interfaces';
 import { KeyringAddress } from '@polkadot/ui-keyring/types';
 import { Delegation } from '../types';
@@ -14,7 +16,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import styled, { ThemeContext } from 'styled-components';
 import { ApiPromise } from '@polkadot/api';
 import { getLedger } from '@polkadot/react-api';
-import { AddressInfo, AddressMini, AddressSmall, Badge, Button, ChainLock, CryptoType, Forget, Icon, IdentityIcon, LinkExternal, Menu, Popup, StatusContext, Tags } from '@polkadot/react-components';
+import { AddressInfoKP,AddressInfo, AddressMini, AddressSmall, Badge, Button, ChainLock, CryptoType, Forget, Icon, IdentityIcon, LinkExternal, Menu, Popup, StatusContext, Tags } from '@polkadot/react-components';
 import { useAccountInfo, useApi, useCall, useToggle } from '@polkadot/react-hooks';
 import { Option } from '@polkadot/types';
 import keyring from '@polkadot/ui-keyring';
@@ -77,11 +79,13 @@ const transformRecovery = {
   transform: (opt: Option<RecoveryConfig>) => opt.unwrapOr(null)
 };
 
-function Account ({ account: { address, meta }, className = '', delegation, filter, isFavorite, proxy, setBalance, toggleFavorite }: Props): React.ReactElement<Props> | null {
+function Account ({ account: { address, meta },className = '', delegation, filter, isFavorite, proxy, setBalance, toggleFavorite }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
-  const { theme } = useContext<ThemeDef>(ThemeContext);
+  //const { theme } = useContext<ThemeDef>(ThemeContext);
   const { queueExtrinsic } = useContext(StatusContext);
   const api = useApi();
+
+
   const bestNumber = useCall<BN>(api.api.derive.chain.bestNumber);
   const balancesAll = useCall<DeriveBalancesAll>(api.api.derive.balances.all, [address]);
   const democracyLocks = useCall<DeriveDemocracyLock[]>(api.api.derive.democracy?.locks, [address]);
@@ -193,17 +197,67 @@ function Account ({ account: { address, meta }, className = '', delegation, filt
       getLedger()
         .getAddress(true, meta.accountOffset as number || 0, meta.addressOffset as number || 0)
         .catch((error): void => {
-          //console..error(`ledger: ${(error as Error).message}`);
+          console.error(`ledger: ${(error as Error).message}`);
         });
     },
     [meta]
   );
 
+  const params = useMemo(() => [address]);
+  const singlePower = useCall<PowerSize>(api.api.derive.kp.accountPower, params);
+
+  var createCommodityNum: Number=0;
+  var slashCommodityNum: Number=0;
+  var newStatistics: Array=[];
+  const statistics = useCall<AccountStatistics>(api.api.derive.kp.accountStatistics,params);
+  if (!!statistics) {
+    var newObj=statistics?.toJSON();
+    createCommodityNum=newObj.createCommodityNum;
+    slashCommodityNum=newObj.slashCommodityNum;
+    newStatistics.push(newObj);//这里要变成数组，下面才能用，现在statistics是个object
+  }
+  //下面要查询每个应用的 知识算力 和 算力罚没
+  var Value: Any;//知识算力
+  var Value2: Any;//算力罚没
+  if(!!singlePower){
+    Value=[
+      {
+      "appName":'减法app',
+      "appId":'1000',
+      "power":(parseFloat(singlePower)/100.00).toFixed(4)+'',
+      }
+    ];
+  }else{
+    Value=[
+      {
+      "appName":'减法app',
+      "appId":'1000',
+      "power":'0.0000',
+      }
+    ];
+  }
+  if(!!newStatistics&&newStatistics.length>0){
+    Value2=[
+      {
+      "appName":'减法app',
+      "appId":'1000',
+      "power":(parseFloat(newStatistics[0].slashKpTotal)/100.00).toFixed(4)+'',
+      }
+    ];
+  }else{
+    Value2=[
+      {
+      "appName":'减法app',
+      "appId":'1000',
+      "power":'0.0000',
+      }
+    ];
+  }
+
+
   if (!isVisible) {
     return null;
   }
-  const testValue1=22;
-  const testValue2=33;
   return (
     <tr className={className}>
       <td className='favorite'>
@@ -386,7 +440,7 @@ function Account ({ account: { address, meta }, className = '', delegation, filt
           />
         )}
       </td>
-      
+
       <td className='number'>
         <CryptoType accountId={address} />
       </td>
@@ -396,16 +450,17 @@ function Account ({ account: { address, meta }, className = '', delegation, filt
         </div>
       </td>
       <td className='number media--1500'>
-        {balancesAll?.accountNonce.gt(BN_ZERO) && formatNumber(balancesAll.accountNonce)}
+
       </td>
       <td className='number'>
-       {testValue1}
+       {createCommodityNum}
       </td>
       <td className='number'>
-       {testValue2}
+       {slashCommodityNum}
       </td>
       <td className='number'>
-        <AddressInfo
+        <AddressInfoKP
+          kpInfo={Value2}
           address={address}
           withBalance
           withBalanceToggle
@@ -413,7 +468,8 @@ function Account ({ account: { address, meta }, className = '', delegation, filt
         />
       </td>
       <td className='number'>
-        <AddressInfo
+        <AddressInfoKP
+          kpInfo={Value}
           address={address}
           withBalance
           withBalanceToggle

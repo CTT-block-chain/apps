@@ -13,7 +13,7 @@ import { formatNumber, stringToU8a } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
 
-const TREASURY_ACCOUNT = stringToU8a('modlpy/trfin'.padEnd(32, '\0'));//融资
+const TREASURY_ACCOUNT = stringToU8a('modlpy/trtch'.padEnd(32, '\0'));
 
 interface Props {
   approvalCount?: number;
@@ -26,86 +26,69 @@ function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<P
   const { t } = useTranslation();
   const { api } = useApi();
   const bestNumber = useCall<Balance>(api.derive.chain.bestNumber);
-  const totalProposals = useCall<BN>(api.query.treasuryFin.proposalCount);
+  const totalProposals = useCall<BN>(api.query.treasuryTech.proposalCount);
   const treasuryBalance = useCall<DeriveBalancesAccount>(api.derive.balances.account, [TREASURY_ACCOUNT]);
-  const spendPeriod = api.consts.treasuryFin.spendPeriod;
-  //console.log("treasuryBalance:"+JSON.stringify(treasuryBalance))
-
+  const spendPeriod = api.consts.treasuryTech.spendPeriod;
 
   const value = treasuryBalance?.freeBalance.gtn(0)
     ? treasuryBalance.freeBalance
     : null;
-  const burn = treasuryBalance?.freeBalance.gtn(0) && !api.consts.treasuryFin.burn.isZero()
-    ? api.consts.treasuryFin.burn.mul(treasuryBalance?.freeBalance).div(PM_DIV)
+  const burn = treasuryBalance?.freeBalance.gtn(0) && !api.consts.treasuryTech.burn.isZero()
+    ? api.consts.treasuryTech.burn.mul(treasuryBalance?.freeBalance).div(PM_DIV)
     : null;
-
-  //融资基金存量=融资余额
+//技术开发与管理基金存量=融资余额
   let fundStock = BigInt(1);
   if(!!value){
     fundStock=value.toBigInt();
     //console.log("fundStock:"+fundStock);
   }
-  //融资基金发行量=5亿-基金存量
-  let initial_issue_quantity = BigInt('50000000000000000000000');
+  //技术开发与管理基金发行量=1亿-基金存量
+  let initial_issue_quantity = BigInt('10000000000000000000000');
   if(!!fundStock){
     initial_issue_quantity=initial_issue_quantity-fundStock;
-   // console.log("initial_issue_quantity:"+initial_issue_quantity);
+    //console.log("initial_issue_quantity:"+initial_issue_quantity);
   }
-
   return (
     <SummaryBox>
       <section>
-        <CardSummary label={t<string>('proposals')}>
-          {formatNumber(proposalCount)}
-        </CardSummary>
-        <CardSummary label={t<string>('total')}>
-          {formatNumber(totalProposals || 0)}
-        </CardSummary>
-        <CardSummary label={t<string>('pass')}>
-          {formatNumber(approvalCount)}
-        </CardSummary>
+
       </section>
       <section>
-        {initial_issue_quantity && (
-          <CardSummary label={t<string>('Initial issue quantity')}>
+        {
+          initial_issue_quantity
+        ?
+        (''&& (
+          <CardSummary label={t<string>('Initial issue quantity of TechFund')}>
             <FormatBalance
               value={initial_issue_quantity}
               withSi
             />
           </CardSummary>
-        )}
+        ))
+        :
+        (
+          <CardSummary label={t<string>('Initial issue quantity of TechFund')}>
+            <FormatBalance
+              value={0}
+              withSi
+            />
+          </CardSummary>
+        )
+
+        }
         {value && (
-          <CardSummary label={t<string>('Fund stock')}>
+          <CardSummary label={t<string>('Fund stock of TechFund')}>
             <FormatBalance
               value={value}
               withSi
             />
           </CardSummary>
         )}
-        {burn && (
-          <CardSummary
-            className='media--1000'
-            label={t<string>('Surplus (kpt)')}
-          >
-            <FormatBalance
-              value={burn}
-              withSi
-            />
-          </CardSummary>
-        )}
+
       </section>
-      {bestNumber && spendPeriod?.gtn(0) && (
-        <section>
-          <CardSummary
-            label={t<string>('Start up period')}
-            progress={{
-              total: spendPeriod,
-              value: bestNumber.mod(spendPeriod),
-              withTime: true
-            }}
-          />
-        </section>
-      )}
+      <section>
+
+      </section>
     </SummaryBox>
   );
 }
