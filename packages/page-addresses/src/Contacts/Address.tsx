@@ -233,6 +233,14 @@ function Address ({ address, className = '', filter, isFavorite, toggleFavorite 
           withExtended={false}
         />
       </td>
+      <td className='number'>
+        <AddressInfo
+          address={address}
+          withBalance={WITH_BALANCE}
+          withBalanceToggle
+          withExtended={false}
+        />
+      </td>
       <td className='button'>
         {api.api.tx.balances?.transfer && (
           <Button
