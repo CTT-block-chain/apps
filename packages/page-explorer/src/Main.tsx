@@ -11,6 +11,7 @@ import BlockHeaders from './BlockHeaders';
 import Events from './Events';
 import Query from './Query';
 import Summary from './Summary';
+import Summary2 from './Summary2';
 
 interface Props {
   events: KeyedEvent[];
