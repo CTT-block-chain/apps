@@ -22,6 +22,7 @@ function Main ({ events, headers }: Props): React.ReactElement<Props> {
     <>
       <Query />
       <Summary />
+      <Summary2 />
       <Columar>
         <Column>
           <BlockHeaders headers={headers} />

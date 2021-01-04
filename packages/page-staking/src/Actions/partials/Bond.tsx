@@ -118,6 +118,22 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
     amountVote = convert.mul(REDUCE_FACTOR);
   }
 
+ /* <Static
+              children={<span >{t<string>('')}</span>}
+              isError={testError}
+              isDisabled={isDisabledInput}
+              value={kpFactor}
+              label={t<string>('KP Weight Param')}
+            />
+            <InputBalanceChanges
+              defaultValue={amountVote}
+              help={<span >{t<string>('')}</span>}
+              children={<span >{t<string>('')}</span>}
+              isError={testError}
+              isDisabled={isDisabledInput}
+              value={amountVote}
+              label={t<string>('Weighted value')}
+            /> */
   return (
     <div className={className}>
       <Modal.Columns>
@@ -178,22 +194,7 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
               value={controllerAccountKp?.toString()}
               label={t<string>('KP')}
             />
-            <Static
-              children={<span >{t<string>('')}</span>}
-              isError={testError}
-              isDisabled={isDisabledInput}
-              value={kpFactor}
-              label={t<string>('KP Weight Param')}
-            />
-            <InputBalanceChanges
-              defaultValue={amountVote}
-              help={<span >{t<string>('')}</span>}
-              children={<span >{t<string>('')}</span>}
-              isError={testError}
-              isDisabled={isDisabledInput}
-              value={amountVote}
-              label={t<string>('Weighted value')}
-            />
+
             {bondedBlocks?.gtn(0) && (
               <Static
                 help={t<string>('The bonding duration for any staked funds. Needs to be unlocked and withdrawn to become available.')}
@@ -204,8 +205,8 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
             )}
           </Modal.Column>
           <Modal.Column>
-            <p>{t<string>('The amount placed at-stake should not be your full available available amount to allow for transaction fees.')}</p>
-            <p>{t<string>('Once bonded, it wil need to be unlocked/withdrawn and will be locked for at least the bonding duration.')}</p>
+            <p>{t<string>('Chain ownership rights and interests is the KP weighting of KPT. The current computational power value is the current value, and the actual KP weighting is based on the actual occurrence time node.')}</p>
+            <p>{t<string>('')}</p>
           </Modal.Column>
         </Modal.Columns>
       )}

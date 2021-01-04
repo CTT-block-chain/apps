@@ -13,7 +13,7 @@ import { formatNumber, stringToU8a } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
 
-const TREASURY_ACCOUNT = stringToU8a('modlpy/trmod'.padEnd(32, '\0'));
+const ACMODEL_ACCOUNT = stringToU8a('modlpy/acmod'.padEnd(32, '\0'));//模型
 
 interface Props {
   approvalCount?: number;
@@ -27,75 +27,76 @@ function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<P
   const { api } = useApi();
   const bestNumber = useCall<Balance>(api.derive.chain.bestNumber);
   const totalProposals = useCall<BN>(api.query.treasuryMod.proposalCount);
-  const treasuryBalance = useCall<DeriveBalancesAccount>(api.derive.balances.account, [TREASURY_ACCOUNT]);
-  const spendPeriod = api.consts.treasuryMod.spendPeriod;
+  const acmodelBalance = useCall<DeriveBalancesAccount>(api.derive.balances.account, [ACMODEL_ACCOUNT]);
+ const spendPeriod = api.consts.treasuryMod.spendPeriod;
 
-  const value = treasuryBalance?.freeBalance.gtn(0)
-    ? treasuryBalance.freeBalance
+  const value_ac = acmodelBalance?.freeBalance.gtn(0)
+    ? acmodelBalance.freeBalance
     : null;
-  const burn = treasuryBalance?.freeBalance.gtn(0) && !api.consts.treasuryMod.burn.isZero()
+ /* const burn = treasuryBalance?.freeBalance.gtn(0) && !api.consts.treasuryMod.burn.isZero()
     ? api.consts.treasuryMod.burn.mul(treasuryBalance?.freeBalance).div(PM_DIV)
-    : null;
+    : null; */
+
+  //模型创建基金存量=融资余额
+  let fundStock_ac = BigInt(1);
+  if(!!value_ac){
+    fundStock_ac=value_ac.toBigInt();
+    //console.log("fundStock_ac:"+fundStock_ac);
+  }
+  //模型创建基金发行量=1亿-基金存量
+  let initial_issue_quantity_ac = BigInt('10000000000000000000000');
+  if(!!fundStock_ac){
+    initial_issue_quantity_ac=initial_issue_quantity_ac - fundStock_ac;
+    //console.log("initial_issue_quantity_ac:"+initial_issue_quantity_ac);
+  }
 
   return (
     <SummaryBox>
       <section>
-        <CardSummary label={t<string>('proposals')}>
-          {formatNumber(proposalCount)}
-        </CardSummary>
-        <CardSummary label={t<string>('total')}>
-          {formatNumber(totalProposals || 0)}
-        </CardSummary>
-        <CardSummary label={t<string>('pass')}>
-          {formatNumber(approvalCount)}
-        </CardSummary>
+
       </section>
 
       <section>
-        {value && (
-          <CardSummary label={t<string>('Total funds (kpt)')}>
+        {
+          initial_issue_quantity_ac
+        ?
+        (''&& (
+          <CardSummary className='media--1000' label={t<string>('Initial issue quantity of model creation')}>
             <FormatBalance
-              value={value}
+              value={initial_issue_quantity_ac}
               withSi
             />
           </CardSummary>
-        )}
-        {burn && (
-          <CardSummary
-            className='media--1000'
-            label={t<string>('Total model creation releases')}
-          >
+        ))
+        :
+        (
+          <CardSummary label={t<string>('Initial issue quantity of model creation')}>
             <FormatBalance
-              value={burn}
+              value={0}
               withSi
             />
           </CardSummary>
-        )}
-        {burn && (
+        )
+
+        }
+        {value_ac && (
           <CardSummary
             className='media--1000'
-            label={t<string>('Surplus (kpt)')}
+            label={t<string>('Total model creation balance')}
           >
             <FormatBalance
-              value={burn}
+              value={value_ac}
               withSi
             />
           </CardSummary>
         )}
       </section>
 
-      {bestNumber && spendPeriod?.gtn(0) && (
-        <section>
-          <CardSummary
-            label={t<string>('Start up period')}
-            progress={{
-              total: spendPeriod,
-              value: bestNumber.mod(spendPeriod),
-              withTime: true
-            }}
-          />
-        </section>
-      )}
+
+      <section>
+
+      </section>
+
     </SummaryBox>
   );
 }

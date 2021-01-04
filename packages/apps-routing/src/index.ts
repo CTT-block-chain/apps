@@ -32,7 +32,6 @@ import knowledge_power from './knowledge_power';
 import competitive_list from './competitive_list';
 import roles_and_role_groups from './roles_and_role_groups';
 import data_statistics from './data_statistics';
-import issuance_fund from './issuance_fund';
 
 export default function create (t: TFunction): Routes {
   return [
@@ -47,7 +46,6 @@ export default function create (t: TFunction): Routes {
     democracy(t),
     council(t),
     treasury(t),
-    issuance_fund(t),
     techcomm(t),
     parachains(t),
     society(t),

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { DeriveBalancesAll, DeriveDemocracyLock } from '@polkadot/api-derive/types';
+import { DeriveBalancesAll, DeriveDemocracyLock, DeriveAccountPowers } from '@polkadot/api-derive/types';
 import { ActionStatus } from '@polkadot/react-components/Status/types';
 import { ThemeDef } from '@polkadot/react-components/types';
 import { ProxyDefinition, RecoveryConfig } from '@polkadot/types/interfaces';
@@ -77,15 +77,12 @@ const transformRecovery = {
   transform: (opt: Option<RecoveryConfig>) => opt.unwrapOr(null)
 };
 
-function Account ({ account: { address, meta }, className = '', delegation, filter, isFavorite, proxy, setBalance, toggleFavorite }: Props): React.ReactElement<Props> | null {
-  console.log("Account--account:"+address)
+function Account ({account: { address, meta }, className = '', delegation, filter, isFavorite, proxy, setBalance, toggleFavorite }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const { theme } = useContext<ThemeDef>(ThemeContext);
   const { queueExtrinsic } = useContext(StatusContext);
   const api = useApi();
   const bestNumber = useCall<BN>(api.api.derive.chain.bestNumber);
-  console.log("Account--bestNumber:"+JSON.stringify(useCall<BN>(api.api.derive.chain.bestNumber)))
-  console.log("Account--balances.all:"+JSON.stringify(useCall<DeriveBalancesAll>(api.api.derive.balances.all, [address])))
   const balancesAll = useCall<DeriveBalancesAll>(api.api.derive.balances.all, [address]);
   const democracyLocks = useCall<DeriveDemocracyLock[]>(api.api.derive.democracy?.locks, [address]);
   const recoveryInfo = useCall<RecoveryConfig | null>(api.api.query.recovery?.recoverable, [address], transformRecovery);
@@ -202,14 +199,26 @@ function Account ({ account: { address, meta }, className = '', delegation, filt
     [meta]
   );
 
+  const params = useMemo(() => [address]);
+  var commentNum: Number=0;
+  var commentPositiveTrendNum: Number=0;
+  var commentCostTotal: string=0;
+  var commentCostMax: string=0;
+  var newStatistics: Array=[];
+  const statistics = useCall<AccountStatistics>(api.api.derive.kp.accountStatistics,params);
+  if (!!statistics) {
+    var newObj=statistics?.toJSON();
+    commentNum=newObj.commentNum;
+    commentPositiveTrendNum=newObj.commentPositiveTrendNum;
+    commentCostTotal=newObj.commentCostTotal;
+    commentCostMax=newObj.commentCostMax;
+    newStatistics.push(newObj);//这里要变成数组，下面才能用，现在statistics是个object
+  }
+
   if (!isVisible) {
     return null;
   }
-  const goodsId='000033';
-  const testValue1='25';
-  const testValue2='100';
-  const testValue3='15';
-  const testValue4='18';
+
   return (
     <tr className={className}>
       <td className='favorite'>
@@ -330,20 +339,20 @@ function Account ({ account: { address, meta }, className = '', delegation, filt
         </div>
       </td>
       <td className='address'>
-       {testValue1}
+       {commentNum}
       </td>
       <td className='address'>
-       {testValue2}
+       {commentCostTotal}
       </td>
       <td className='address'>
-       {testValue3}
+       {commentCostMax}
       </td>
       <td className='address'>
-       {testValue4}
+       {commentPositiveTrendNum}
       </td>
       <td className='number'/>
       <td className='number'>
-        
+
       </td>
       <td />
       <td />

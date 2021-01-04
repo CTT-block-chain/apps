@@ -7,6 +7,7 @@ export { default as AccountIndex } from './AccountIndex';
 export { default as AccountName } from './AccountName';
 export { default as ActionItem } from './ActionItem';
 export { default as AddressInfo } from './AddressInfo';
+export { default as AddressInfoKP } from './AddressInfoKP';
 export { default as AddressMini } from './AddressMini';
 export { default as AddressRow } from './AddressRow';
 export { default as AddressSmall } from './AddressSmall';

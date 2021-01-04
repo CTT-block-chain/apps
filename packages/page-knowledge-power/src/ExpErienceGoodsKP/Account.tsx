@@ -1,6 +1,8 @@
 // Copyright 2017-2020 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+import { DeriveAccountPowers } from '@polkadot/api-derive/types';
 
+import { FormatKP } from '@polkadot/react-query';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { DeriveBalancesAll, DeriveDemocracyLock } from '@polkadot/api-derive/types';
 import { ActionStatus } from '@polkadot/react-components/Status/types';
@@ -18,7 +20,7 @@ import { AddressInfo, AddressMini, AddressSmall, Badge, Button, ChainLock, Crypt
 import { useAccountInfo, useApi, useCall, useToggle } from '@polkadot/react-hooks';
 import { Option } from '@polkadot/types';
 import keyring from '@polkadot/ui-keyring';
-import { BN_ZERO, formatBalance, formatNumber } from '@polkadot/util';
+import { BN_ZERO,  formatBalance, formatNumber } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
 import { createMenuGroup } from '../util';
@@ -38,6 +40,7 @@ import useMultisigApprovals from './useMultisigApprovals';
 import useProxies from './useProxies';
 
 interface Props {
+  appId?: string;
   account: KeyringAddress;
   className?: string;
   delegation?: Delegation;
@@ -77,15 +80,12 @@ const transformRecovery = {
   transform: (opt: Option<RecoveryConfig>) => opt.unwrapOr(null)
 };
 
-function Account ({ account: { address, meta }, className = '', delegation, filter, isFavorite, proxy, setBalance, toggleFavorite }: Props): React.ReactElement<Props> | null {
-  console.log("Account--account:"+address)
+function Account ({ appId = '',account: { address, meta }, className = '', delegation, filter, isFavorite, proxy, setBalance, toggleFavorite }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const { theme } = useContext<ThemeDef>(ThemeContext);
   const { queueExtrinsic } = useContext(StatusContext);
   const api = useApi();
   const bestNumber = useCall<BN>(api.api.derive.chain.bestNumber);
-  console.log("Account--bestNumber:"+JSON.stringify(useCall<BN>(api.api.derive.chain.bestNumber)))
-  console.log("Account--balances.all:"+JSON.stringify(useCall<DeriveBalancesAll>(api.api.derive.balances.all, [address])))
   const balancesAll = useCall<DeriveBalancesAll>(api.api.derive.balances.all, [address]);
   const democracyLocks = useCall<DeriveDemocracyLock[]>(api.api.derive.democracy?.locks, [address]);
   const recoveryInfo = useCall<RecoveryConfig | null>(api.api.query.recovery?.recoverable, [address], transformRecovery);
@@ -205,146 +205,171 @@ function Account ({ account: { address, meta }, className = '', delegation, filt
   if (!isVisible) {
     return null;
   }
-  const goodsId='000033';
-  const testValue1='00010002';
   const testValue2='正常';
-  return (
-    <tr className={className}>
-      <td className='favorite'>
-        <Icon
-          color={isFavorite ? 'orange' : 'gray'}
-          icon='star'
-          onClick={_onFavorite}
-        />
-      </td>
-      <td className='address'>
-        {goodsId}
-      </td>
 
-      <td className='address'>
-        <AddressSmall value={address} />
-        {isBackupOpen && (
-          <Backup
-            address={address}
-            key='modal-backup-account'
-            onClose={toggleBackup}
-          />
-        )}
-        {isDelegateOpen && (
-          <DelegateModal
-            key='modal-delegate'
-            onClose={toggleDelegate}
-            previousAmount={delegation?.amount}
-            previousConviction={delegation?.conviction}
-            previousDelegatedAccount={delegation?.accountDelegated}
-            previousDelegatingAccount={address}
-          />
-        )}
-        {isDeriveOpen && (
-          <Derive
-            from={address}
-            key='modal-derive-account'
-            onClose={toggleDerive}
-          />
-        )}
-        {isForgetOpen && (
-          <Forget
-            address={address}
-            key='modal-forget-account'
-            onClose={toggleForget}
-            onForget={_onForget}
-          />
-        )}
-        {isIdentityMainOpen && (
-          <IdentityMain
-            address={address}
-            key='modal-identity-main'
-            onClose={toggleIdentityMain}
-          />
-        )}
-        {isIdentitySubOpen && (
-          <IdentitySub
-            address={address}
-            key='modal-identity-sub'
-            onClose={toggleIdentitySub}
-          />
-        )}
-        {isPasswordOpen && (
-          <ChangePass
-            address={address}
-            key='modal-change-pass'
-            onClose={togglePassword}
-          />
-        )}
-        {isTransferOpen && (
-          <Transfer
-            key='modal-transfer'
-            onClose={toggleTransfer}
-            senderId={address}
-          />
-        )}
-        {isProxyOverviewOpen && (
-          <ProxyOverview
-            key='modal-proxy-overview'
-            onClose={toggleProxyOverview}
-            previousProxy={proxy}
-            proxiedAccount={address}
-          />
-        )}
-        {isMultisigOpen && multiInfos && (
-          <MultisigApprove
-            address={address}
-            key='multisig-approve'
-            onClose={toggleMultisig}
-            ongoing={multiInfos}
-            threshold={meta.threshold as number}
-            who={meta.who as string[]}
-          />
-        )}
-        {isRecoverAccountOpen && (
-          <RecoverAccount
-            address={address}
-            key='recover-account'
-            onClose={toggleRecoverAccount}
-          />
-        )}
-        {isRecoverSetupOpen && (
-          <RecoverSetup
-            address={address}
-            key='recover-setup'
-            onClose={toggleRecoverSetup}
-          />
-        )}
-        {isUndelegateOpen && (
-          <UndelegateModal
-            accountDelegating={address}
-            key='modal-delegate'
-            onClose={toggleUndelegate}
-          />
-        )}
-      </td>
-      <td />
-      <td className='address'>
-       {testValue1}
-      </td>
-      <td className='address'>
-       {testValue2}
-      </td>
-      <td className='number'/>
-      <td className='number'>
-        <AddressInfo
-          address={address}
-          withBalance
-          withBalanceToggle
-          withExtended={false}
-        />
-      </td>
-      <td />
-      <td />
-      <td />
-      <td />
-    </tr>
+  //console.log("appId:"+appId);
+  let commodityPowers = useCall<DeriveCommodityPower[]>(
+      api.api.derive.kp.accountCommodities, [address, appId]
   );
+  //console.log("commodityPowers:"+commodityPowers);
+  if(!!commodityPowers){
+   // console.log("commodityPowers:"+JSON.stringify(commodityPowers));
+  }
+  let a: Number = 0;
+  if(!!commodityPowers&&commodityPowers.length>0){
+    for(a=0; a<commodityPowers.length; a++){
+      let power: string = '';
+     if(commodityPowers[a].power!=0){
+       power=parseFloat(Number(commodityPowers[a].power)/100.00).toFixed(4).toString()
+     }else{
+       power='0.0000'
+     }
+      return (
+        <tr className={className}>
+          <td className='favorite'>
+            <Icon
+              color={isFavorite ? 'orange' : 'gray'}
+              icon='star'
+              onClick={_onFavorite}
+            />
+          </td>
+          <td className='address'>
+            {commodityPowers[a].commodityId}
+          </td>
+
+          <td className='address'>
+            <AddressSmall value={address} />
+            {isBackupOpen && (
+              <Backup
+                address={address}
+                key='modal-backup-account'
+                onClose={toggleBackup}
+              />
+            )}
+            {isDelegateOpen && (
+              <DelegateModal
+                key='modal-delegate'
+                onClose={toggleDelegate}
+                previousAmount={delegation?.amount}
+                previousConviction={delegation?.conviction}
+                previousDelegatedAccount={delegation?.accountDelegated}
+                previousDelegatingAccount={address}
+              />
+            )}
+            {isDeriveOpen && (
+              <Derive
+                from={address}
+                key='modal-derive-account'
+                onClose={toggleDerive}
+              />
+            )}
+            {isForgetOpen && (
+              <Forget
+                address={address}
+                key='modal-forget-account'
+                onClose={toggleForget}
+                onForget={_onForget}
+              />
+            )}
+            {isIdentityMainOpen && (
+              <IdentityMain
+                address={address}
+                key='modal-identity-main'
+                onClose={toggleIdentityMain}
+              />
+            )}
+            {isIdentitySubOpen && (
+              <IdentitySub
+                address={address}
+                key='modal-identity-sub'
+                onClose={toggleIdentitySub}
+              />
+            )}
+            {isPasswordOpen && (
+              <ChangePass
+                address={address}
+                key='modal-change-pass'
+                onClose={togglePassword}
+              />
+            )}
+            {isTransferOpen && (
+              <Transfer
+                key='modal-transfer'
+                onClose={toggleTransfer}
+                senderId={address}
+              />
+            )}
+            {isProxyOverviewOpen && (
+              <ProxyOverview
+                key='modal-proxy-overview'
+                onClose={toggleProxyOverview}
+                previousProxy={proxy}
+                proxiedAccount={address}
+              />
+            )}
+            {isMultisigOpen && multiInfos && (
+              <MultisigApprove
+                address={address}
+                key='multisig-approve'
+                onClose={toggleMultisig}
+                ongoing={multiInfos}
+                threshold={meta.threshold as number}
+                who={meta.who as string[]}
+              />
+            )}
+            {isRecoverAccountOpen && (
+              <RecoverAccount
+                address={address}
+                key='recover-account'
+                onClose={toggleRecoverAccount}
+              />
+            )}
+            {isRecoverSetupOpen && (
+              <RecoverSetup
+                address={address}
+                key='recover-setup'
+                onClose={toggleRecoverSetup}
+              />
+            )}
+            {isUndelegateOpen && (
+              <UndelegateModal
+                accountDelegating={address}
+                key='modal-delegate'
+                onClose={toggleUndelegate}
+              />
+            )}
+          </td>
+          <td />
+          <td className='address'>
+           {appId}
+          </td>
+          <td className='address'>
+           {testValue2}
+          </td>
+          <td className='number'/>
+          <td className='number'>
+          {power && (
+            <FormatKP
+              value={power}
+              withSi
+            />
+          )}
+          </td>
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+
+      );
+
+    }
+  }else{
+    return (
+      <></>
+    );
+  }
+
 }
 
 export default React.memo(styled(Account)`

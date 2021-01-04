@@ -88,22 +88,17 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
     const sortedAccounts = sortAccounts(allAccounts, favorites);
     const sortedAddresses = sortedAccounts.map((a) => a.account.address);
-    console.log("sortedAccounts:"+JSON.stringify(sortedAccounts));
-    console.log("sortedAccountsWithDelegation:"+JSON.stringify(sortedAccountsWithDelegation));
 
     setSorted({ sortedAccounts, sortedAddresses });
   }, [allAccounts, favorites]);
 
   useEffect(() => {
-    console.log("delegations:"+delegations)
     if (api.query.democracy?.votingOf && !delegations?.length) {
       return;
     }
-
     setSortedAccountsWithDelegation(
       sortedAccounts?.map((account, index) => {
         let delegation: Delegation | undefined;
-        console.log("delegations2:"+delegations)
         if (delegations && delegations[index]?.isDelegating) {
           const { balance: amount, conviction, target } = delegations[index].asDelegating;
 
@@ -113,21 +108,21 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
             conviction
           };
         }
-      console.log("sortedAccountsWithDelegation2:"+JSON.stringify(sortedAccountsWithDelegation));
-        return ({
+      return ({
           ...account,
           delegation
         });
       })
     );
-  }, [api, delegations, sortedAccounts]);
 
+
+  }, [api, delegations, sortedAccounts]);
   const _setBalance = useCallback(
     (account: string, balance: BN) =>
       setBalances(({ accounts }: Balances): Balances => {
         accounts[account] = balance;
-        console.log("balance:"+balance)
-        console.log(" accounts[account]:"+ accounts[account])
+       // console.log("balance:"+balance)
+       // console.log(" accounts[account]:"+ accounts[account])
         return {
           accounts,
           balanceTotal: Object.values(accounts).reduce((total: BN, value: BN) => total.add(value), BN_ZERO)
@@ -145,10 +140,10 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
       <td />
       <td />
       <td className='number'>
-        
+
       </td>
       <td className='number'>
-       
+
       </td>
       <td />
     </tr>
@@ -166,6 +161,37 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     </div>
   ), [filterOn, t]);
 
+  //console.log("sortedAccountsWithDelegation:"+JSON.stringify(sortedAccountsWithDelegation));
+
+  const apps = useCall<DeriveAppInfos>(api.derive.members.apps);
+  
+  let appIdList: Array=[];
+  if (!!apps) {
+    apps.forEach(app => {
+      appIdList.push(app.appId+'');
+    });
+  }
+  
+  let a: Number = 0;
+
+  let newArray: Array =[];
+  if(!!sortedAccountsWithDelegation){
+    for(a=0; a<sortedAccountsWithDelegation.length; a++){
+      let b: Number = 0;
+      for(b=0; b<appIdList.length; b++){
+        let newObj={
+          "account":sortedAccountsWithDelegation[a].account,
+          "children":sortedAccountsWithDelegation[a].children,
+          "isFavorite":sortedAccountsWithDelegation[a].isFavorite,
+          "appId":"",
+        };
+        newObj.appId=appIdList[b];
+        newArray.push(newObj);
+      }
+    }
+  }
+  //console.log("newArray:"+JSON.stringify(newArray));
+
   return (
     <div className={className}>
       <Table
@@ -174,13 +200,14 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
         footer={footer}
         header={headerRef.current}
       >
-        {!isLoading && sortedAccountsWithDelegation?.map(({ account, delegation, isFavorite }, index): React.ReactNode => (
+        {!isLoading && newArray?.map(({ appId,account, delegation, isFavorite }, index): React.ReactNode => (
           <Account
+            appId={appId}
             account={account}
             delegation={delegation}
             filter={filterOn}
             isFavorite={isFavorite}
-            key={account.address}
+            key={index}
             proxy={proxies?.[index]}
             setBalance={_setBalance}
             toggleFavorite={toggleFavorite}
