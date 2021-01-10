@@ -6,7 +6,7 @@ import { KeyringAddress } from '@polkadot/ui-keyring/types';
 import { ActionStatus } from '@polkadot/react-components/Status/types';
 import { ThemeDef } from '@polkadot/react-components/types';
 
-import React, { useCallback, useContext, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useContext, useEffect, useState , useMemo} from 'react';
 import styled, { ThemeContext } from 'styled-components';
 import Transfer from '@polkadot/app-accounts/modals/Transfer';
 import { AddressInfoKP, AddressSmall, AddressInfo, Button, ChainLock, Icon, LinkExternal, Forget, Menu, Popup, Tags } from '@polkadot/react-components';
@@ -221,14 +221,6 @@ function Address ({ address, className = '', filter, isFavorite, toggleFavorite 
           kpInfo={Value}
           address={address}
           withBalance
-          withBalanceToggle
-          withExtended={false}
-        />
-      </td>
-      <td className='number'>
-        <AddressInfo
-          address={address}
-          withBalance={WITH_BALANCE}
           withBalanceToggle
           withExtended={false}
         />

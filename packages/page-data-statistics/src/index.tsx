@@ -32,7 +32,7 @@ function AccountsApp ({ basePath, onStatusChange }: Props): React.ReactElement<P
     },
     {
       name: 'kptRedemption',
-      text: t<string>('KPT redemption')
+      text: t<string>('Model create')
     }
     ,
     {

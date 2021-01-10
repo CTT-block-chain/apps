@@ -46,28 +46,28 @@ function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<P
   let initial_issue_quantity = BigInt('10000000000000000000000');
   if(!!fundStock){
     initial_issue_quantity=initial_issue_quantity-fundStock;
-    //console.log("initial_issue_quantity:"+initial_issue_quantity);
+   // console.log("initial_issue_quantity:"+initial_issue_quantity);
   }
   return (
     <SummaryBox>
       <section>
 
       </section>
-      <section>
+      <section className='media--1000 number'>
         {
           initial_issue_quantity
         ?
-        (''&& (
-          <CardSummary label={t<string>('Initial issue quantity of TechFund')}>
+        (
+          <CardSummary className='media--1000' label={t<string>('Initial issue quantity of TechFund')}>
             <FormatBalance
               value={initial_issue_quantity}
               withSi
             />
           </CardSummary>
-        ))
+        )
         :
         (
-          <CardSummary label={t<string>('Initial issue quantity of TechFund')}>
+          <CardSummary className='media--1000' label={t<string>('Initial issue quantity of TechFund')}>
             <FormatBalance
               value={0}
               withSi
@@ -76,14 +76,23 @@ function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<P
         )
 
         }
-        {value && (
-          <CardSummary label={t<string>('Fund stock of TechFund')}>
+      </section>
+      <section className='media--1000 number'>
+
+        {fundStock && (
+          <CardSummary className='media--1000' label={t<string>('Fund stock of TechFund')}>
             <FormatBalance
-              value={value}
+              value={fundStock}
               withSi
             />
           </CardSummary>
         )}
+
+      </section>
+      <section>
+
+      </section>
+      <section>
 
       </section>
       <section>

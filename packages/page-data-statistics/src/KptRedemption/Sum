@@ -31,8 +31,6 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
           {formatNumber(publicPropCount)}
         </CardSummary>
       </section>
-      
-
       <section>
         <CardSummary label={t<string>('referenda')}>
           {formatNumber(referendumCount || 0)}

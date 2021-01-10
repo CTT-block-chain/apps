@@ -135,6 +135,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
       <td className='media--1400' />
       <td colSpan={2} />
       <td className='media--1500' />
+      <td />
       <td className='number'>
         {balanceTotal && <FormatBalance value={balanceTotal} />}
       </td>
@@ -244,7 +245,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
             delegation={delegation}
             filter={filterOn}
             isFavorite={isFavorite}
-            key={account.address}
+            key={index}
             proxy={proxies?.[index]}
             setBalance={_setBalance}
             toggleFavorite={toggleFavorite}

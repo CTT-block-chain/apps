@@ -57,21 +57,21 @@ function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<P
       <section>
 
       </section>
-      <section>
+      <section className='media--1000 number'>
         {
           initial_issue_quantity_tr
         ?
-        (''&& (
+         (
           <CardSummary className='media--1000' label={t<string>('Initial issue quantity of model Additional')}>
             <FormatBalance
               value={initial_issue_quantity_tr}
               withSi
             />
           </CardSummary>
-        ))
+        )
         :
         (
-          <CardSummary label={t<string>('Initial issue quantity of model Additional')}>
+          <CardSummary className='media--1000' label={t<string>('Initial issue quantity of model Additional')}>
             <FormatBalance
               value={0}
               withSi
@@ -80,17 +80,26 @@ function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<P
         )
 
         }
-        {value_tr && (
+      </section>
+      <section className='media--1000 number'>
+
+        {fundStock_tr && (
           <CardSummary
             className='media--1000'
             label={t<string>('Total model Additional balance')}
           >
             <FormatBalance
-              value={value_tr}
+              value={fundStock_tr}
               withSi
             />
           </CardSummary>
         )}
+      </section>
+      <section>
+
+      </section>
+      <section>
+
       </section>
      <section>
 
