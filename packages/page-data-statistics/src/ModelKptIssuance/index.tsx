@@ -1,6 +1,8 @@
 // Copyright 2017-2020 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { DeriveAccountPowers} from '@polkadot/api-derive/types';
+
 import { ActionStatus } from '@polkadot/react-components/Status/types';
 import { AccountId, ProxyDefinition, ProxyType, Voting } from '@polkadot/types/interfaces';
 import { Delegation, SortedAccount } from '../types';
@@ -25,6 +27,7 @@ import Account from './Account';
 import BannerClaims from './BannerClaims';
 import BannerExtension from './BannerExtension';
 import { sortAccounts } from '../util';
+import Summary from './Summary';
 
 interface Balances {
   accounts: Record<string, BN>;
@@ -71,13 +74,11 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   const isLoading = useLoadingDelay();
 
   const headerRef = useRef([
-    [t('Experience goods id'), 'start', 2],
+    [t('Model id'), 'start', 2],
     [t('accounts'), 'start'],
     [t('AppId'), 'start'],
-    [t('KPT issuance year'), 'start'],
-    [t('Sales'), 'start'],
-    [t('state'), 'start'],
-    [t('Number of additional issuances (KPT)'), 'start'],
+    [t(''), 'start'],
+    [t('Number of additional issuances (KPT)'), 'expand'],
     [t(''), 'expand'],
     [],
     [],
@@ -88,7 +89,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
     const sortedAccounts = sortAccounts(allAccounts, favorites);
     const sortedAddresses = sortedAccounts.map((a) => a.account.address);
-    
+
     setSorted({ sortedAccounts, sortedAddresses });
   }, [allAccounts, favorites]);
 
@@ -100,7 +101,6 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     setSortedAccountsWithDelegation(
       sortedAccounts?.map((account, index) => {
         let delegation: Delegation | undefined;
-        //console..log("delegations2:"+delegations)
         if (delegations && delegations[index]?.isDelegating) {
           const { balance: amount, conviction, target } = delegations[index].asDelegating;
 
@@ -137,10 +137,6 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
       <td colSpan={2} />
       <td className='media--1500' />
       <td />
-      <td />
-      <td className='number'>
-
-      </td>
       <td className='number'>
 
       </td>
@@ -153,31 +149,37 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
       <Input
         autoFocus
         isFull
-        label={t<string>('filter by name or tags')}
+        label={t<string>('filter by number of additional issues')}
         onChange={setFilter}
         value={filterOn}
       />
     </div>
   ), [filterOn, t]);
 
+  const allRewardsRecord = useCall<DeriveModelRewardRecords[]>(api.derive.kp.allRewardsRecord);
+
+ // console.log("allRewardsRecord:" + JSON.stringify(allRewardsRecord));
+
+
   return (
     <div className={className}>
+      <div className={className} >
+       <Summary/>
+      </div>
       <Table
-        empty={(!hasAccounts || (!isLoading && sortedAccountsWithDelegation)) && t<string>("You don't have any accounts. Some features are currently hidden and will only become available once you have accounts.")}
+        empty={(!isLoading && allRewardsRecord) && t<string>("")}
         filter={filter}
         footer={footer}
         header={headerRef.current}
       >
-        {!isLoading && sortedAccountsWithDelegation?.map(({ account, delegation, isFavorite }, index): React.ReactNode => (
+        {!isLoading && allRewardsRecord?.map((models, index): React.ReactNode => (
           <Account
-            account={account}
-            delegation={delegation}
-            filter={filterOn}
-            isFavorite={isFavorite}
-            key={account.address}
-            proxy={proxies?.[index]}
-            setBalance={_setBalance}
-            toggleFavorite={toggleFavorite}
+            account={models.account}
+            appId={models.appId}
+            modelId={models.modelId}
+            status={models.status}
+            rewards={models.rewards?models.rewards:[]}
+            key={index}
           />
         ))}
       </Table>

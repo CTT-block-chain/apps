@@ -1,4 +1,3 @@
-
 // Copyright 2017-2020 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
@@ -75,20 +74,17 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   const isLoading = useLoadingDelay();
 
   const headerRef = useRef([
-    [t('Model id'), 'start', 2],
-    [t('accounts'), 'start'],
-    [t('AppId'), 'start'],
-    [t('state'), 'start'],
+    [t('accounts'), 'start', 3],
+    [t('parent'), 'address media--1400'],
+    [t('type')],
+    [t('tags'), 'start'],
+    [t('Redemption number'), 'expand'],
+    [t(''), 'media--1400']
     [t(''), 'start'],
-    [t('Total balances of models'), 'expand'],
-    [t(''), 'expand'],
-    [],
-    [],
-    [],
+    [t(''), 'start'],
   ]);
 
   useEffect((): void => {
-
     const sortedAccounts = sortAccounts(allAccounts, favorites);
     const sortedAddresses = sortedAccounts.map((a) => a.account.address);
 
@@ -103,6 +99,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     setSortedAccountsWithDelegation(
       sortedAccounts?.map((account, index) => {
         let delegation: Delegation | undefined;
+
         if (delegations && delegations[index]?.isDelegating) {
           const { balance: amount, conviction, target } = delegations[index].asDelegating;
 
@@ -112,7 +109,8 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
             conviction
           };
         }
-      return ({
+
+        return ({
           ...account,
           delegation
         });
@@ -124,6 +122,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     (account: string, balance: BN) =>
       setBalances(({ accounts }: Balances): Balances => {
         accounts[account] = balance;
+
         return {
           accounts,
           balanceTotal: Object.values(accounts).reduce((total: BN, value: BN) => total.add(value), BN_ZERO)
@@ -140,10 +139,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
       <td className='media--1500' />
       <td />
       <td />
-      <td className='number'>
-
-      </td>
-      <td />
+      <td className='media--1400' />
     </tr>
   ), [balanceTotal]);
 
@@ -152,14 +148,13 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
       <Input
         autoFocus
         isFull
-        label={t<string>('filter by number of additional issues')}
+        label={t<string>('filter by name or tags')}
         onChange={setFilter}
         value={filterOn}
       />
     </div>
   ), [filterOn, t]);
 
-  const allModels = useCall<DeriveModelData[]>(api.derive.kp.allModels);
 
 
   return (
@@ -168,19 +163,21 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
        <Summary/>
       </div>
       <Table
-        empty={(!isLoading && allModels) && t<string>("")}
+        empty={(!hasAccounts || (!isLoading && sortedAccountsWithDelegation)) && t<string>("You don't have any accounts. Some features are currently hidden and will only become available once you have accounts.")}
         filter={filter}
         footer={footer}
         header={headerRef.current}
       >
-        {!isLoading && allModels?.map((models, index): React.ReactNode => (
+        {!isLoading && sortedAccountsWithDelegation?.map(({ account, delegation, isFavorite }, index): React.ReactNode => (
           <Account
-            account={models.account}
-            appId={models.appId}
-            modelId={models.modelId}
-            status={models.status}
-            createReward={models.createReward?models.createReward:''}
+            account={account}
+            delegation={delegation}
+            filter={filterOn}
+            isFavorite={isFavorite}
             key={index}
+            proxy={proxies?.[index]}
+            setBalance={_setBalance}
+            toggleFavorite={toggleFavorite}
           />
         ))}
       </Table>

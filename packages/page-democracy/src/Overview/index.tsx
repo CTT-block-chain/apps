@@ -33,7 +33,7 @@ function Overview ({ className }: Props): React.ReactElement<Props> {
   return (
     <div className={className}>
       <Summary referendumCount={referendums?.length} />
-      <SummaryFinancingFund  />
+      <SummaryFinancingFund />
       <SummaryModelFund  />
       <SummaryModelFund2  />
       <SummaryTechFund  />

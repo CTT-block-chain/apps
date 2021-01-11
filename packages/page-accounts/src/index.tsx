@@ -13,6 +13,7 @@ import { useTranslation } from './translate';
 import useCounter from './useCounter';
 import Accounts from './Accounts';
 import Vanity from './Vanity';
+import KptRedemption from './KptRedemption';
 
 export { useCounter };
 
@@ -28,6 +29,10 @@ function AccountsApp ({ basePath, onStatusChange }: Props): React.ReactElement<P
       isRoot: true,
       name: 'overview',
       text: t<string>('My accounts')
+    },
+    {
+      name: 'kptRedemption2',
+      text: t<string>('KPT redemption')
     },
     {
       name: 'vanity',
@@ -48,6 +53,12 @@ function AccountsApp ({ basePath, onStatusChange }: Props): React.ReactElement<P
       <Switch>
         <Route path={`${basePath}/vanity`}>
           <Vanity
+            basePath={basePath}
+            onStatusChange={onStatusChange}
+          />
+        </Route>
+        <Route path={`${basePath}/kptRedemption2`}>
+          <KptRedemption
             basePath={basePath}
             onStatusChange={onStatusChange}
           />
