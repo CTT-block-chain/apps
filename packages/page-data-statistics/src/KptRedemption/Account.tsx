@@ -118,7 +118,7 @@ function Account ({ account = '', className = '', appId = '', modelId = '', stat
 
       </td>
       <td className='number'>
-         {createReward}
+         {<FormatBalance className='result' value={BigInt(createReward)} />}
 
       </td>
       <td className='number'>
