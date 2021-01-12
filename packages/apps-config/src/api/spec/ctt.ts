@@ -2,7 +2,7 @@ export default {
   PowerSize: 'u64',
   AccountID32: 'AccountId',
   AuthAccountId: 'AccountId',
-
+/* 
   KPProductPublishData: {
     paraIssueRate: 'PowerSize',
     selfIssueRate: 'PowerSize',
@@ -31,7 +31,7 @@ export default {
     producerCount: 'PowerSize',
     productCount: 'PowerSize',
   },
-
+ */
   LeaderBoardItem: {
     cartId: 'Vec<u8>',
     power: 'PowerSize',

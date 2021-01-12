@@ -4,7 +4,7 @@
 import { TFunction } from 'i18next';
 import { Route } from './types';
 
-import Component, { useCounter } from '@ctt/app-roles-and-role-groups';
+import Component from '@ctt/app-roles-and-role-groups';
 
 export default function create (t: TFunction): Route {
   return {

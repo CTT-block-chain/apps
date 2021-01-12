@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { DeriveBalancesAll } from '@polkadot/api-derive/types';
-import { PowerSize, Balance } from '@polkadot/types/interfaces';
+import { PowerSize } from '@polkadot/types/interfaces';
 import { AmountValidateState, DestinationType } from '../types';
 import { BondInfo } from './types';
 
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Dropdown, InputAddress, InputBalance, InputBalanceChanges, Modal, Static } from '@polkadot/react-components';
+import { Dropdown, InputAddress,InputBalance, Modal, Static } from '@polkadot/react-components';
 import { BalanceFree, BlockToTime } from '@polkadot/react-query';
 import { useApi, useCall } from '@polkadot/react-hooks';
 import { BN_ZERO } from '@polkadot/util';
@@ -90,33 +90,33 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
   const testError=false;
   const isDisabledInput=true;
 
-  let amountVote = new BN(0);
+  //let amountVote = new BN(0);
   let controllerAccountKp: number = 0;
   // default kp factor is 0.1;
-  let kpFactor = 0.1;
+  //let kpFactor = 0.1;
   let accountPower = new BN(0);
 
   const pow = useCall<PowerSize>(api.derive.kp.accountPower, [controllerId]);
   if (!!pow) {
     accountPower = pow;
     controllerAccountKp = Number(accountPower.toString()) / 100.0;
-    let reduceKpRange: number = controllerAccountKp / 100.0;
+    /* let reduceKpRange: number = controllerAccountKp / 100.0;
     if (reduceKpRange == 0) {
       kpFactor = 0.1;
     } else if (reduceKpRange <= 1 && reduceKpRange > 0) {
       kpFactor = reduceKpRange;
     } else {
       kpFactor = Math.sqrt(reduceKpRange);
-    }
+    } */
   }
 
-  const REDUCE_FACTOR = new BN(1e10);
+  /*const REDUCE_FACTOR = new BN(1e10);
   let reduce = amount?.div(REDUCE_FACTOR);
-  const convert = useCall<Balance>(api.derive.kp.stakeToVoteEvulate, [controllerId, reduce]);
+   const convert = useCall<Balance>(api.derive.kp.stakeToVoteEvulate, [controllerId, reduce]);
 
   if (convert != undefined) {
     amountVote = convert.mul(REDUCE_FACTOR);
-  }
+  } */
 
  /* <Static
               children={<span >{t<string>('')}</span>}

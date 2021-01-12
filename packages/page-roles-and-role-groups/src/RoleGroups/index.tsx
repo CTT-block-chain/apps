@@ -8,22 +8,12 @@ import { Delegation, SortedAccount } from '../types';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { isLedger } from '@polkadot/react-api';
-import { useApi, useAccounts, useCall, useFavorites, useIpfs, useLoadingDelay, useToggle } from '@polkadot/react-hooks';
-import { FormatBalance } from '@polkadot/react-query';
-import { Button, Input, Table } from '@polkadot/react-components';
+import { useApi, useAccounts, useCall, useFavorites, useLoadingDelay} from '@polkadot/react-hooks';
+import { Input, Table } from '@polkadot/react-components';
 import { BN_ZERO } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
-import CreateModal from '../modals/Create';
-import ImportModal from '../modals/Import';
-import Ledger from '../modals/Ledger';
-import Multisig from '../modals/MultisigCreate';
-import Proxy from '../modals/ProxiedAdd';
-import Qr from '../modals/Qr';
 import Account from './Account';
-import BannerClaims from './BannerClaims';
-import BannerExtension from './BannerExtension';
 import { sortAccounts } from '../util';
 
 interface Balances {
@@ -47,13 +37,6 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   const { t } = useTranslation();
   const { api } = useApi();
   const { allAccounts, hasAccounts } = useAccounts();
-  const { isIpfs } = useIpfs();
-  const [isCreateOpen, toggleCreate] = useToggle();
-  const [isImportOpen, toggleImport] = useToggle();
-  const [isLedgerOpen, toggleLedger] = useToggle();
-  const [isMultisigOpen, toggleMultisig] = useToggle();
-  const [isProxyOpen, toggleProxy] = useToggle();
-  const [isQrOpen, toggleQr] = useToggle();
   const [favorites, toggleFavorite] = useFavorites(STORE_FAVS);
   const [{ balanceTotal }, setBalances] = useState<Balances>({ accounts: {} });
   const [filterOn, setFilter] = useState<string>('');

@@ -2,16 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { DeriveBalancesAccount } from '@polkadot/api-derive/types';
-import { Balance } from '@polkadot/types/interfaces';
+//import { Balance } from '@polkadot/types/interfaces';
 
-import BN from 'bn.js';
+//import BN from 'bn.js';
 import React from 'react';
-import { SummaryBox, CardSummary,Button } from '@polkadot/react-components';
-import { useApi, useCall , useToggle} from '@polkadot/react-hooks';
+import { SummaryBox, CardSummary } from '@polkadot/react-components';
+import { useApi, useCall } from '@polkadot/react-hooks';
 import { FormatBalance } from '@polkadot/react-query';
-import { formatNumber, stringToU8a } from '@polkadot/util';
-import ProposalCreate from './ProposalCreate';
-import Proposals from './Proposals';
+import {  stringToU8a } from '@polkadot/util';
+//import ProposalCreate from './ProposalCreate';
+//import Proposals from './Proposals';
 
 import { useTranslation } from '../translate';
 
@@ -23,16 +23,16 @@ interface Props {
   proposalCount?: number;
 }
 
-const PM_DIV = new BN(1000000);
+//const PM_DIV = new BN(1000000);
 
 function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
-  const bestNumber = useCall<Balance>(api.derive.chain.bestNumber);
-  const totalProposals = useCall<BN>(api.query.treasury.proposalCount);
+  //const bestNumber = useCall<Balance>(api.derive.chain.bestNumber);
+  //const totalProposals = useCall<BN>(api.query.treasury.proposalCount);
   const trmodelBalance = useCall<DeriveBalancesAccount>(api.derive.balances.account, [TRMODEL_ACCOUNT]);
-  const spendPeriod = api.consts.treasury.spendPeriod;
-  const [isPreimageOpen, togglePreimage] = useToggle();
+  //const spendPeriod = api.consts.treasury.spendPeriod;
+  //const [isPreimageOpen, togglePreimage] = useToggle();
 
   const value_tr = trmodelBalance?.freeBalance.gtn(0)
     ? trmodelBalance.freeBalance
@@ -43,7 +43,7 @@ function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<P
  //模型增发基存量=模型创建基金余额
     let fundStock_tr = BigInt(1);
     if(!!value_tr){
-      fundStock_tr=value_tr.toBigInt();
+      fundStock_tr=BigInt(value_tr+'');
       //console.log("fundStock:"+fundStock);
     }
     //模型增发基金发行量=3亿-基金存量

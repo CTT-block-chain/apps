@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { DeriveBalancesAccount } from '@polkadot/api-derive/types';
-import { Balance } from '@polkadot/types/interfaces';
+//import { Balance } from '@polkadot/types/interfaces';
 
-import BN from 'bn.js';
+//import BN from 'bn.js';
 import React from 'react';
 import { SummaryBox, CardSummary } from '@polkadot/react-components';
 import { useApi, useCall } from '@polkadot/react-hooks';
 import { FormatBalance } from '@polkadot/react-query';
-import { formatNumber, stringToU8a } from '@polkadot/util';
+import { stringToU8a } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
 
@@ -20,15 +20,15 @@ interface Props {
   proposalCount?: number;
 }
 
-const PM_DIV = new BN(1000000);
+//const PM_DIV = new BN(1000000);
 
 function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
-  const bestNumber = useCall<Balance>(api.derive.chain.bestNumber);
-  const totalProposals = useCall<BN>(api.query.treasuryMod.proposalCount);
+ // const bestNumber = useCall<Balance>(api.derive.chain.bestNumber);
+  //const totalProposals = useCall<BN>(api.query.treasuryMod.proposalCount);
   const acmodelBalance = useCall<DeriveBalancesAccount>(api.derive.balances.account, [ACMODEL_ACCOUNT]);
- const spendPeriod = api.consts.treasuryMod.spendPeriod;
+ //const spendPeriod = api.consts.treasuryMod.spendPeriod;
 
   const value_ac = acmodelBalance?.freeBalance.gtn(0)
     ? acmodelBalance.freeBalance
@@ -40,7 +40,7 @@ function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<P
   //模型创建基金存量=融资余额
   let fundStock_ac = BigInt(1);
   if(!!value_ac){
-    fundStock_ac=value_ac.toBigInt();
+    fundStock_ac=BigInt(value_ac+'');
     //console.log("fundStock_ac:"+fundStock_ac);
   }
   //模型创建基金发行量=1亿-基金存量

@@ -1,73 +1,31 @@
 // Copyright 2017-2020 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { DeriveAppInfos } from '@polkadot/api-derive/types';
+
 import { ActionStatus } from '@polkadot/react-components/Status/types';
-import { AccountId, ProxyDefinition, ProxyType, Voting } from '@polkadot/types/interfaces';
-import { Delegation, SortedAccount } from '../types';
 
-import BN from 'bn.js';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { isLedger } from '@polkadot/react-api';
-import { useApi, useAccounts, useCall, useFavorites, useIpfs, useLoadingDelay, useToggle } from '@polkadot/react-hooks';
-import { FormatBalance } from '@polkadot/react-query';
-import { Button, Input, Table } from '@polkadot/react-components';
-import { BN_ZERO } from '@polkadot/util';
-
+import { useApi, useCall, useLoadingDelay } from '@polkadot/react-hooks';
+import { Input, Table } from '@polkadot/react-components';
+//import { BN_ZERO } from '@polkadot/util';
 import { useTranslation } from '../translate';
-import CreateModal from '../modals/Create';
-import ImportModal from '../modals/Import';
-import Ledger from '../modals/Ledger';
-import Multisig from '../modals/MultisigCreate';
-import Proxy from '../modals/ProxiedAdd';
-import Qr from '../modals/Qr';
+
 import Account from './Account';
-import BannerClaims from './BannerClaims';
-import BannerExtension from './BannerExtension';
-import { sortAccounts } from '../util';
 
-interface Balances {
-  accounts: Record<string, BN>;
-  balanceTotal?: BN;
-}
-
-interface Sorted {
-  sortedAccounts: SortedAccount[];
-  sortedAddresses: string[];
-}
 
 interface Props {
   className?: string;
   onStatusChange: (status: ActionStatus) => void;
 }
 
-const STORE_FAVS = 'accounts:favorites';
 
 function Overview ({ className = '', onStatusChange }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
-  const { allAccounts, hasAccounts } = useAccounts();
-  const { isIpfs } = useIpfs();
-  const [isCreateOpen, toggleCreate] = useToggle();
-  const [isImportOpen, toggleImport] = useToggle();
-  const [isLedgerOpen, toggleLedger] = useToggle();
-  const [isMultisigOpen, toggleMultisig] = useToggle();
-  const [isProxyOpen, toggleProxy] = useToggle();
-  const [isQrOpen, toggleQr] = useToggle();
-  const [favorites, toggleFavorite] = useFavorites(STORE_FAVS);
-  const [{ balanceTotal }, setBalances] = useState<Balances>({ accounts: {} });
   const [filterOn, setFilter] = useState<string>('');
-  const [sortedAccountsWithDelegation, setSortedAccountsWithDelegation] = useState<SortedAccount[] | undefined>();
-  const [{ sortedAccounts, sortedAddresses }, setSorted] = useState<Sorted>({ sortedAccounts: [], sortedAddresses: [] });
-  const delegations = useCall<Voting[]>(api.query.democracy?.votingOf?.multi, [sortedAddresses]);
-  const proxies = useCall<[ProxyDefinition[], BN][]>(api.query.proxy?.proxies.multi, [sortedAddresses], {
-    transform: (result: [([AccountId, ProxyType] | ProxyDefinition)[], BN][]): [ProxyDefinition[], BN][] =>
-      api.tx.proxy.addProxy.meta.args.length === 3
-        ? result as [ProxyDefinition[], BN][]
-        : (result as [[AccountId, ProxyType][], BN][]).map(([arr, bn]): [ProxyDefinition[], BN] =>
-          [arr.map(([delegate, proxyType]): ProxyDefinition => api.createType('ProxyDefinition', { delegate, proxyType })), bn]
-        )
-  });
+
   const isLoading = useLoadingDelay();
 
   const headerRef = useRef([
@@ -84,48 +42,13 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
   useEffect((): void => {
 
-    const sortedAccounts = sortAccounts(allAccounts, favorites);
-    const sortedAddresses = sortedAccounts.map((a) => a.account.address);
-
-    setSorted({ sortedAccounts, sortedAddresses });
-  }, [allAccounts, favorites]);
+  }, []);
 
   useEffect(() => {
-    if (api.query.democracy?.votingOf && !delegations?.length) {
-      return;
-    }
 
-    setSortedAccountsWithDelegation(
-      sortedAccounts?.map((account, index) => {
-        let delegation: Delegation | undefined;
-        if (delegations && delegations[index]?.isDelegating) {
-          const { balance: amount, conviction, target } = delegations[index].asDelegating;
+  }, []);
 
-          delegation = {
-            accountDelegated: target.toString(),
-            amount,
-            conviction
-          };
-        }
-      return ({
-          ...account,
-          delegation
-        });
-      })
-    );
-  }, [api, delegations, sortedAccounts]);
 
-  const _setBalance = useCallback(
-    (account: string, balance: BN) =>
-      setBalances(({ accounts }: Balances): Balances => {
-        accounts[account] = balance;
-        return {
-          accounts,
-          balanceTotal: Object.values(accounts).reduce((total: BN, value: BN) => total.add(value), BN_ZERO)
-        };
-      }),
-    []
-  );
 
   const footer = useMemo(() => (
     <tr>
@@ -140,7 +63,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
       <td />
       <td />
     </tr>
-  ), [balanceTotal]);
+  ), []);
 
   const filter = useMemo(() => (
     <div className='filter--tags'>
@@ -165,7 +88,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   return (
     <div className={className}>
       <Table
-        empty={(!hasAccounts || (!isLoading && apps)) && t<string>("You don't have any accounts. Some features are currently hidden and will only become available once you have accounts.")}
+        empty={(!isLoading && apps) && t<string>("")}
         filter={filter}
         footer={footer}
         header={headerRef.current}

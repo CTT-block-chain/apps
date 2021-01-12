@@ -1,8 +1,8 @@
 // Copyright 2017-2020 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { DeriveBalancesAll, DeriveDemocracyLock, DeriveAccountPowers } from '@polkadot/api-derive/types';
+import { DeriveBalancesAll, DeriveDemocracyLock } from '@polkadot/api-derive/types';
+import { AccountStatistics, PowerSize } from '@polkadot/types/interfaces';
 import { ActionStatus } from '@polkadot/react-components/Status/types';
 
 
@@ -12,18 +12,15 @@ import { KeyringAddress } from '@polkadot/ui-keyring/types';
 import { Delegation } from '../types';
 
 import BN from 'bn.js';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import styled, { ThemeContext } from 'styled-components';
-import { ApiPromise } from '@polkadot/api';
-import { getLedger } from '@polkadot/react-api';
-import { AddressInfoKP,AddressInfo, AddressMini, AddressSmall, Badge, Button, ChainLock, CryptoType, Forget, Icon, IdentityIcon, LinkExternal, Menu, Popup, StatusContext, Tags } from '@polkadot/react-components';
+import React, { useCallback, useEffect, useMemo} from 'react';
+import styled from 'styled-components';
+import { AddressInfoKP, AddressSmall, Badge, CryptoType, Forget, Icon, IdentityIcon, Tags } from '@polkadot/react-components';
 import { useAccountInfo, useApi, useCall, useToggle } from '@polkadot/react-hooks';
 import { Option } from '@polkadot/types';
 import keyring from '@polkadot/ui-keyring';
-import { BN_ZERO, formatBalance, formatNumber } from '@polkadot/util';
+import { formatBalance, formatNumber } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
-import { createMenuGroup } from '../util';
 import Backup from '../modals/Backup';
 import ChangePass from '../modals/ChangePass';
 import DelegateModal from '../modals/Delegate';
@@ -50,10 +47,6 @@ interface Props {
   toggleFavorite: (address: string) => void;
 }
 
-interface DemocracyUnlockable {
-  democracyUnlockTx: SubmittableExtrinsic<'promise'> | null;
-  ids: BN[];
-}
 
 function calcVisible (filter: string, name: string, tags: string[]): boolean {
   if (filter.length === 0) {
@@ -67,13 +60,6 @@ function calcVisible (filter: string, name: string, tags: string[]): boolean {
   }, name.toLowerCase().includes(_filter));
 }
 
-function createClearDemocracyTx (api: ApiPromise, address: string, unlockableIds: BN[]): SubmittableExtrinsic<'promise'> {
-  return api.tx.utility.batch(
-    unlockableIds
-      .map((id) => api.tx.democracy.removeVote(id))
-      .concat(api.tx.democracy.unlock(address))
-  );
-}
 
 const transformRecovery = {
   transform: (opt: Option<RecoveryConfig>) => opt.unwrapOr(null)
@@ -81,8 +67,6 @@ const transformRecovery = {
 
 function Account ({ account: { address, meta },className = '', delegation, filter, isFavorite, proxy, setBalance, toggleFavorite }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
-  //const { theme } = useContext<ThemeDef>(ThemeContext);
-  const { queueExtrinsic } = useContext(StatusContext);
   const api = useApi();
 
 
@@ -92,9 +76,7 @@ function Account ({ account: { address, meta },className = '', delegation, filte
   const recoveryInfo = useCall<RecoveryConfig | null>(api.api.query.recovery?.recoverable, [address], transformRecovery);
   const multiInfos = useMultisigApprovals(address);
   const proxyInfo = useProxies(address);
-  const { flags: { isDevelopment, isExternal, isHardware, isInjected, isMultisig, isProxied }, genesisHash, identity, name: accName, onSetGenesisHash, tags } = useAccountInfo(address);
-  const [{ democracyUnlockTx }, setUnlockableIds] = useState<DemocracyUnlockable>({ democracyUnlockTx: null, ids: [] });
-  const [vestingVestTx, setVestingTx] = useState<SubmittableExtrinsic<'promise'> | null>(null);
+  const { flags: {  isProxied }, name: accName, tags } = useAccountInfo(address);
   const [isBackupOpen, toggleBackup] = useToggle();
   const [isDeriveOpen, toggleDerive] = useToggle();
   const [isForgetOpen, toggleForget] = useToggle();
@@ -105,7 +87,6 @@ function Account ({ account: { address, meta },className = '', delegation, filte
   const [isPasswordOpen, togglePassword] = useToggle();
   const [isRecoverAccountOpen, toggleRecoverAccount] = useToggle();
   const [isRecoverSetupOpen, toggleRecoverSetup] = useToggle();
-  const [isSettingsOpen, toggleSettings] = useToggle();
   const [isTransferOpen, toggleTransfer] = useToggle();
   const [isDelegateOpen, toggleDelegate] = useToggle();
   const [isUndelegateOpen, toggleUndelegate] = useToggle();
@@ -114,31 +95,12 @@ function Account ({ account: { address, meta },className = '', delegation, filte
     if (balancesAll) {
       setBalance(address, balancesAll.freeBalance.add(balancesAll.reservedBalance));
 
-      api.api.tx.vesting?.vest && setVestingTx(() =>
-        balancesAll.vestingLocked.isZero()
-          ? null
-          : api.api.tx.vesting.vest()
-      );
+
     }
   }, [address, api, balancesAll, setBalance]);
 
   useEffect((): void => {
-    bestNumber && democracyLocks && setUnlockableIds(
-      (prev): DemocracyUnlockable => {
-        const ids = democracyLocks
-          .filter(({ isFinished, unlockAt }) => isFinished && bestNumber.gt(unlockAt))
-          .map(({ referendumId }) => referendumId);
 
-        if (JSON.stringify(prev.ids) === JSON.stringify(ids)) {
-          return prev;
-        }
-
-        return {
-          democracyUnlockTx: createClearDemocracyTx(api.api, address, ids),
-          ids
-        };
-      }
-    );
   }, [address, api, bestNumber, democracyLocks]);
 
   const isVisible = useMemo(
@@ -174,81 +136,50 @@ function Account ({ account: { address, meta },className = '', delegation, filte
     [address, t]
   );
 
-  const _clearDemocracyLocks = useCallback(
-    () => democracyUnlockTx && queueExtrinsic({
-      accountId: address,
-      extrinsic: democracyUnlockTx
-    }),
-    [address, democracyUnlockTx, queueExtrinsic]
-  );
 
-  const _vestingVest = useCallback(
-    () => vestingVestTx && queueExtrinsic({
-      accountId: address,
-      extrinsic: vestingVestTx
-    }),
-    [address, queueExtrinsic, vestingVestTx]
-  );
-
-  const _showOnHardware = useCallback(
-    // TODO: we should check the hardwareType from metadata here as well,
-    // for now we are always assuming hardwareType === 'ledger'
-    (): void => {
-      getLedger()
-        .getAddress(true, meta.accountOffset as number || 0, meta.addressOffset as number || 0)
-        .catch((error): void => {
-          console.error(`ledger: ${(error as Error).message}`);
-        });
-    },
-    [meta]
-  );
-
-  const params = useMemo(() => [address]);
-  const singlePower = useCall<PowerSize>(api.api.derive.kp.accountPower, params);
+  //const params = useMemo(() => [address]);
+  const singlePower = useCall<PowerSize>(api.api.derive.kp.accountPower, [address]);
 
   var createCommodityNum: Number=0;
   var slashCommodityNum: Number=0;
-  var newStatistics: Array=[];
-  const statistics = useCall<AccountStatistics>(api.api.derive.kp.accountStatistics,params);
+  const statistics = useCall<AccountStatistics>(api.api.derive.kp.accountStatistics,[address]);
   if (!!statistics) {
-    var newObj=statistics?.toJSON();
-    createCommodityNum=newObj.createCommodityNum;
-    slashCommodityNum=newObj.slashCommodityNum;
-    newStatistics.push(newObj);//这里要变成数组，下面才能用，现在statistics是个object
+    createCommodityNum=statistics.createCommodityNum.toNumber();
+    slashCommodityNum=statistics.slashCommodityNum.toNumber();
   }
   //下面要查询每个应用的 知识算力 和 算力罚没
-  var Value: Any;//知识算力
-  var Value2: Any;//算力罚没
+  var Value: any;//知识算力
+  var Value2: any;//算力罚没
   if(!!singlePower){
     Value=[
       {
       "appName":'减法app',
-      "appId":'1000',
-      "power":(parseFloat(singlePower)/100.00).toFixed(4)+'',
+      "appId":'10000001',
+      "power":(parseFloat(singlePower+'')/100.00).toFixed(4)+'',
       }
     ];
   }else{
     Value=[
       {
       "appName":'减法app',
-      "appId":'1000',
+      "appId":'10000001',
       "power":'0.0000',
       }
     ];
   }
-  if(!!newStatistics&&newStatistics.length>0){
+  if(!!statistics){
     Value2=[
       {
       "appName":'减法app',
-      "appId":'1000',
-      "power":(parseFloat(newStatistics[0].slashKpTotal)/100.00).toFixed(4)+'',
+      "appId":'10000001',
+      "power":(parseFloat(statistics.slashKpTotal+'')/100.00).toFixed(4)+'',
       }
     ];
   }else{
     Value2=[
       {
       "appName":'减法app',
-      "appId":'1000',
+      "appId":'10000001',
       "power":'0.0000',
       }
     ];

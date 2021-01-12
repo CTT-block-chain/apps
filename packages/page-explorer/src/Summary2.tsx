@@ -1,22 +1,18 @@
 // Copyright 2017-2020 @polkadot/app-explorer authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { DeriveBalancesAccount } from '@polkadot/api-derive/types';
-import { Balance } from '@polkadot/types/interfaces';
+//import { DeriveBalancesAccount } from '@polkadot/api-derive/types';
+import { PowerSize } from '@polkadot/types/interfaces';
 
 import React from 'react';
 import { useApi, useCall} from '@polkadot/react-hooks';
 
 import { SummaryBox, CardSummary } from '@polkadot/react-components';
-import { BestFinalized, BestNumber, BlockToTime, TimeNow, TotalKP , TotalIssuance, FormatBalance } from '@polkadot/react-query';
-import { BN_ONE } from '@polkadot/util';
+import {  TotalKP  } from '@polkadot/react-query';
 
-import { formatNumber, stringToU8a } from '@polkadot/util';
-
-import SummarySession from './SummarySession';
 import { useTranslation } from './translate';
 
-import { DeriveAccountPowers } from '@polkadot/api-derive/types';
+//import { DeriveAccountPowers } from '@polkadot/api-derive/types';
 
 function Summary (): React.ReactElement {
   const { t } = useTranslation();

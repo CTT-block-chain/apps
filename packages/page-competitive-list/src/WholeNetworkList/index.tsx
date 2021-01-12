@@ -1,83 +1,65 @@
 // Copyright 2017-2020 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { DeriveAccountPowers} from '@polkadot/api-derive/types';
+import { DeriveLeaderboardKeys} from '@polkadot/api-derive/types';
 
 import { ActionStatus } from '@polkadot/react-components/Status/types';
-import { AccountId, ProxyDefinition, ProxyType, Voting } from '@polkadot/types/interfaces';
-import { Delegation, SortedAccount } from '../types';
+//import { Voting } from '@polkadot/types/interfaces';
+//import { Delegation, SortedAccount } from '../types';
 
-import BN from 'bn.js';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+//import BN from 'bn.js';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { isLedger } from '@polkadot/react-api';
-import { useApi, useAccounts, useCall, useFavorites, useIpfs, useLoadingDelay, useToggle } from '@polkadot/react-hooks';
-import { FormatBalance } from '@polkadot/react-query';
+import { useApi, useCall, useLoadingDelay, useToggle } from '@polkadot/react-hooks';
 import { Button, Input, Table } from '@polkadot/react-components';
-import { BN_ZERO } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
-import CreateModal from '../modals/Create';
-import ImportModal from '../modals/Import';
-import Ledger from '../modals/Ledger';
-import Multisig from '../modals/MultisigCreate';
 import Proxy from '../modals/ProxiedAdd';
-import Qr from '../modals/Qr';
 import Account from './Account';
-import BannerClaims from './BannerClaims';
-import BannerExtension from './BannerExtension';
-import { sortAccounts } from '../util';
+//import { sortAccounts } from '../util';
 
-interface Balances {
+/* interface Balances {
   accounts: Record<string, BN>;
   balanceTotal?: BN;
-}
+} */
 
-interface Sorted {
+/* interface Sorted {
   sortedAccounts: SortedAccount[];
   sortedAddresses: string[];
-}
+} */
 
 interface Props {
   className?: string;
   onStatusChange: (status: ActionStatus) => void;
 }
 
-const STORE_FAVS = 'accounts:favorites';
+//const STORE_FAVS = 'accounts:favorites';
 
 function Overview ({ className = '', onStatusChange }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
-  const { allAccounts, hasAccounts } = useAccounts();
-  const { isIpfs } = useIpfs();
-  const [isCreateOpen, toggleCreate] = useToggle();
-  const [isImportOpen, toggleImport] = useToggle();
-  const [isLedgerOpen, toggleLedger] = useToggle();
-  const [isMultisigOpen, toggleMultisig] = useToggle();
   const [isProxyOpen, toggleProxy] = useToggle();
-  const [isQrOpen, toggleQr] = useToggle();
-  const [favorites, toggleFavorite] = useFavorites(STORE_FAVS);
-  const [{ balanceTotal }, setBalances] = useState<Balances>({ accounts: {} });
+ // const { allAccounts, hasAccounts } = useAccounts();
   const [filterOn, setFilter] = useState<string>('');
-  const [sortedAccountsWithDelegation, setSortedAccountsWithDelegation] = useState<SortedAccount[] | undefined>();
-  const [{ sortedAccounts, sortedAddresses }, setSorted] = useState<Sorted>({ sortedAccounts: [], sortedAddresses: [] });
-  const delegations = useCall<Voting[]>(api.query.democracy?.votingOf?.multi, [sortedAddresses]);
+  //const [sortedAccountsWithDelegation, setSortedAccountsWithDelegation] = useState<SortedAccount[] | undefined>();
+ // const [{ sortedAccounts, sortedAddresses }, setSorted] = useState<Sorted>({ sortedAccounts: [], sortedAddresses: [] });
+  //const delegations = useCall<Voting[]>(api.query.democracy?.votingOf?.multi, [sortedAddresses]);
 
   //新增的
-  const [queryLbParam, setQueryLbParam] = useState<Any[] | undefined>();
+  const [queryLbParam, setQueryLbParam] = useState<any[] | undefined>();
   const [queryStatus, setQueryStatus] = useState<boolean>(false);
-  const [appId, setAppId] = useState<int>(0);
+  const [appId, setAppId] = useState<Number>(0);
   const [blockNumber, setBlockNumber] = useState<string>('');
   const [modelID, setModelID] = useState<string>('');
 
-  const proxies = useCall<[ProxyDefinition[], BN][]>(api.query.proxy?.proxies.multi, [sortedAddresses], {
+ /* const proxies = useCall<[ProxyDefinition[], BN][]>(api.query.proxy?.proxies.multi, [sortedAddresses], {
     transform: (result: [([AccountId, ProxyType] | ProxyDefinition)[], BN][]): [ProxyDefinition[], BN][] =>
       api.tx.proxy.addProxy.meta.args.length === 3
         ? result as [ProxyDefinition[], BN][]
         : (result as [[AccountId, ProxyType][], BN][]).map(([arr, bn]): [ProxyDefinition[], BN] =>
           [arr.map(([delegate, proxyType]): ProxyDefinition => api.createType('ProxyDefinition', { delegate, proxyType })), bn]
         )
-  });
+  }); */
   const isLoading = useLoadingDelay();
 
   const headerRef = useRef([
@@ -95,16 +77,13 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
   useEffect((): void => {
 
-    const sortedAccounts = sortAccounts(allAccounts, favorites);
-    const sortedAddresses = sortedAccounts.map((a) => a.account.address);
 
-    setSorted({ sortedAccounts, sortedAddresses });
-  }, [allAccounts, favorites]);
+  }, []);
 
   useEffect(() => {
-    if (api.query.democracy?.votingOf && !delegations?.length) {
+   /* if (api.query.democracy?.votingOf && !delegations?.length) {
       return;
-    }
+    } */
     console.log(appId + ', ' + blockNumber + ', ' + modelID);
     if(appId!=0){
       setFilter(appId + ', ' + blockNumber + ', ' + modelID);
@@ -112,27 +91,9 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
     setQueryLbParam(lbKeys);
 
-    setSortedAccountsWithDelegation(
-      sortedAccounts?.map((account, index) => {
-        let delegation: Delegation | undefined;
-        if (delegations && delegations[index]?.isDelegating) {
-          const { balance: amount, conviction, target } = delegations[index].asDelegating;
+  }, [api, appId, blockNumber, modelID]);
 
-          delegation = {
-            accountDelegated: target.toString(),
-            amount,
-            conviction
-          };
-        }
-      return ({
-          ...account,
-          delegation
-        });
-      })
-    );
-  }, [api, delegations, sortedAccounts, appId, blockNumber, modelID]);
-
-  const _setBalance = useCallback(
+ /* const _setBalance = useCallback(
     (account: string, balance: BN) =>
       setBalances(({ accounts }: Balances): Balances => {
         accounts[account] = balance;
@@ -142,7 +103,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
         };
       }),
     []
-  );
+  ); */
 
   const lbKeys = useCall<DeriveLeaderboardKeys>(api.derive.kp.leaderboardKeys);
 
@@ -164,7 +125,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
       </td>
       <td />
     </tr>
-  ), [balanceTotal]);
+  ), []);
 
   const filter = useMemo(() => (
     <div className='filter--tags'>
@@ -178,13 +139,13 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     </div>
   ), [filterOn, t]);
 
-  //默认显示榜单最新一期：queryLbParam[queryLbParam.length-1]
-   let displayIndex: Number=0;
-
+  //默认显示榜单最新一期：
+   let queryLbParamItem: any;
    if( !!queryLbParam && queryLbParam.length > 0 ){
+     queryLbParam.forEach((val, idx, array) => {
+      queryLbParamItem = val;
 
-     displayIndex = queryLbParam.length;
-
+     });
    }
     /*
     */
@@ -224,14 +185,14 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     <div className={className} >
     </div>
       <Table
-        empty={(!hasAccounts || (!isLoading && queryLbParam)) && t<string>("You don't have any accounts. Some features are currently hidden and will only become available once you have accounts.")}
+        empty={( (!isLoading && queryLbParam)) && t<string>("You don't have any accounts. Some features are currently hidden and will only become available once you have accounts.")}
         filter={filter}
         footer={footer}
         header={headerRef.current}
       >
         {!isLoading && !queryStatus && queryLbParam&&
          <Account
-            param2={queryLbParam[displayIndex-1]}
+            param2={queryLbParamItem}
             intoType='default'
             appId={appId}
             blockNumber={blockNumber}

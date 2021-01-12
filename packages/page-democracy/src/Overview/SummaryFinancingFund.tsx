@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { DeriveBalancesAccount } from '@polkadot/api-derive/types';
-import { Balance } from '@polkadot/types/interfaces';
+//import { Balance } from '@polkadot/types/interfaces';
 
-import BN from 'bn.js';
+//import BN from 'bn.js';
 import React from 'react';
 import { SummaryBox, CardSummary } from '@polkadot/react-components';
 import { useApi, useCall } from '@polkadot/react-hooks';
 import { FormatBalance } from '@polkadot/react-query';
-import { formatNumber, stringToU8a } from '@polkadot/util';
+import { stringToU8a } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
 
@@ -20,29 +20,29 @@ interface Props {
   proposalCount?: number;
 }
 
-const PM_DIV = new BN(1000000);
+//const PM_DIV = new BN(1000000);
 
 function Summary ({ approvalCount, proposalCount }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
-  const bestNumber = useCall<Balance>(api.derive.chain.bestNumber);
-  const totalProposals = useCall<BN>(api.query.treasuryFin.proposalCount);
+  //const bestNumber = useCall<Balance>(api.derive.chain.bestNumber);
+  //const totalProposals = useCall<BN>(api.query.treasuryFin.proposalCount);
   const treasuryBalance = useCall<DeriveBalancesAccount>(api.derive.balances.account, [TREASURY_ACCOUNT]);
-  const spendPeriod = api.consts.treasuryFin.spendPeriod;
+  //const spendPeriod = api.consts.treasuryFin.spendPeriod;
   //console.log("treasuryBalance:"+JSON.stringify(treasuryBalance))
 
 
   const value = treasuryBalance?.freeBalance.gtn(0)
     ? treasuryBalance.freeBalance
     : null;
-  const burn = treasuryBalance?.freeBalance.gtn(0) && !api.consts.treasuryFin.burn.isZero()
+  /* const burn = treasuryBalance?.freeBalance.gtn(0) && !api.consts.treasuryFin.burn.isZero()
     ? api.consts.treasuryFin.burn.mul(treasuryBalance?.freeBalance).div(PM_DIV)
-    : null;
+    : null; */
 
   //融资基金存量=融资余额
   let fundStock = BigInt(1);
   if(!!value){
-    fundStock=value.toBigInt();
+    fundStock=BigInt(value+'');
     //console.log("fundStock:"+fundStock);
   }
   //融资基金发行量=5亿-基金存量

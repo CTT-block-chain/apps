@@ -1,9 +1,9 @@
 // Copyright 2017-2020 @polkadot/app-democracy authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 import { DeriveBalancesAccount } from '@polkadot/api-derive/types';
-import { Balance } from '@polkadot/types/interfaces';
+//import { Balance } from '@polkadot/types/interfaces';
 
-import BN from 'bn.js';
+//import BN from 'bn.js';
 import React from 'react';
 import { SummaryBox, CardSummary } from '@polkadot/react-components';
 import { useApi, useCall } from '@polkadot/react-hooks';
@@ -22,9 +22,9 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
   const activeProposals = useCall<unknown[]>(api.derive.democracy.proposals);
-  const bestNumber = useCall<BN>(api.derive.chain.bestNumber);
-  const publicPropCount = useCall<BN>(api.query.democracy.publicPropCount);
-  const referendumTotal = useCall<BN>(api.query.democracy.referendumCount);
+ // const bestNumber = useCall<BN>(api.derive.chain.bestNumber);
+  //const publicPropCount = useCall<BN>(api.query.democracy.publicPropCount);
+  //const referendumTotal = useCall<BN>(api.query.democracy.referendumCount);
 
   const acmodelBalance = useCall<DeriveBalancesAccount>(api.derive.balances.account, [ACMODEL_ACCOUNT]);
 
@@ -38,7 +38,7 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
    //模型创建基金存量=融资余额
    let fundStock_ac = BigInt(1);
    if(!!value_ac){
-     fundStock_ac=value_ac.toBigInt();
+     fundStock_ac=BigInt(value_ac+'');
      //console.log("fundStock_ac:"+fundStock_ac);
    }
    //模型创建基金发行量=1亿-基金存量
