@@ -5,12 +5,12 @@ import { ActionStatus } from '@polkadot/react-components/Status/types';
 import { ModalProps } from '../types';
 
 import React, { useCallback, useState } from 'react';
-import { Button, Input, InputAddressSimple, Modal } from '@polkadot/react-components';
+import { Button, Input, Modal } from '@polkadot/react-components';
 import { useApi } from '@polkadot/react-hooks';
-import keyring from '@polkadot/ui-keyring';
+//import keyring from '@polkadot/ui-keyring';
 
 import { useTranslation } from '../translate';
-import useProxies from '../Accounts/useProxies';
+//import useProxies from '../Accounts/useProxies';
 
 interface Props extends ModalProps {
   className?: string;
@@ -18,12 +18,12 @@ interface Props extends ModalProps {
   onStatusChange: (status: ActionStatus) => void;
 
   changeQueryStatus: (status: boolean) => void;
-  changeAppId: (appId: int) => void;
+  changeAppId: (appId: Number) => void;
   changeBlockNumber: (blockNumber: string) => void;
   changeModelID: (modelID: string) => void;
 }
 
-interface CreateOptions {
+/* interface CreateOptions {
   genesisHash?: string;
   name: string;
   tags?: string[];
@@ -45,31 +45,32 @@ function createProxy (address: string, { genesisHash, name, tags = [] }: CreateO
   }
 
   return status;
-}
+} */
 
 function ProxyAdd ({ className = '', onClose, onStatusChange, changeQueryStatus, changeAppId, changeBlockNumber, changeModelID}: Props): React.ReactElement<Props> {
   const { api, isDevelopment } = useApi();
   const { t } = useTranslation();
 
-  const [{ isAppIdValid, appId }, setAppId] = useState({ isAppIdValid: false, appId: 0 });
-  const [{ isBlockNumberValid, blockNumber }, setBlockNumber] = useState({ isBlockNumberValid: false, blockNumber: '' });
-  const [{ isModelIDValid, modelID }, setModelID] = useState({ isModelIDValid: false, modelID: '' });
+ const [{ isAppIdValid, appId }, setAppId] = useState({ isAppIdValid: false, appId: 0 });
+ const [{ isBlockNumberValid, blockNumber }, setBlockNumber] = useState({ isBlockNumberValid: false, blockNumber: '' });
+ const [{ isModelIDValid, modelID }, setModelID] = useState({ isModelIDValid: false, modelID: '' });
 
-  const [stashAddress, setStashAddress] = useState<string | null>(null);
-  const { hasOwned } = useProxies(stashAddress);
+ //const [stashAddress, setStashAddress] = useState<string | null>(null);
+ // const { hasOwned } = useProxies(stashAddress);
 
   const _createProxied = useCallback(
     (): void => {
       onClose();
     },
-    [api.genesisHash, isDevelopment, name, onClose, onStatusChange, changeQueryStatus, changeAppId, changeBlockNumber, changeModelID, stashAddress, t]
+    [api.genesisHash, isDevelopment, name, onClose, onStatusChange, changeQueryStatus, changeAppId, changeBlockNumber, changeModelID, t]
   );
 
   const _onChangeAppId = useCallback(
-    (appId: int): void=> {
+    (appId: string): void=> {
       changeQueryStatus(true);
-      changeAppId(appId);
-      setAppId({ isAppIdValid: true, appId })
+      var appId_num = (Number)(appId+'');
+      changeAppId(appId_num);
+      setAppId({ isAppIdValid: true, appId: appId_num })
     },
     []
   );
@@ -77,7 +78,7 @@ function ProxyAdd ({ className = '', onClose, onStatusChange, changeQueryStatus,
     (blockNumber: string) : void=> {
       changeQueryStatus(true);
       changeBlockNumber(blockNumber);
-      setBlockNumber({ isBlockNumberValid: true, blockNumber })
+      setBlockNumber({ isBlockNumberValid: true, blockNumber: blockNumber })
     },
     []
   );
@@ -85,7 +86,7 @@ function ProxyAdd ({ className = '', onClose, onStatusChange, changeQueryStatus,
     (modelID: string) : void=> {
       changeQueryStatus(true);
       changeModelID(modelID);
-      setModelID({ isModelIDValid: true, modelID })
+      setModelID({ isModelIDValid: true, modelID: modelID })
     },
     []
   );
@@ -99,9 +100,10 @@ function ProxyAdd ({ className = '', onClose, onStatusChange, changeQueryStatus,
         <Modal.Columns>
           <Modal.Column>
             <Input
+              value={appId+''}
               className='full'
               help={t<string>('Enter the Application ID of the token you want to search.')}
-              isError={false}
+              isError={isAppIdValid}
               label={t<string>('AppId')}
               onChange={_onChangeAppId}
               placeholder={t<string>('AppId')}
@@ -114,9 +116,11 @@ function ProxyAdd ({ className = '', onClose, onStatusChange, changeQueryStatus,
         <Modal.Columns>
           <Modal.Column>
             <Input
+              value={blockNumber}
               className='full'
               help={t<string>('Enter the Block Number of the token you want to search.')}
               label={t<string>('Block Number')}
+              isError={isBlockNumberValid}
               onChange={_onChangeBlockNumber}
               placeholder={t<string>('Block Number')}
             />
@@ -128,9 +132,10 @@ function ProxyAdd ({ className = '', onClose, onStatusChange, changeQueryStatus,
         <Modal.Columns>
           <Modal.Column>
             <Input
+              value={modelID}
               className='full'
               help={t<string>('Enter the Model ID of the token you want to search.')}
-              isError={false}
+              isError={isModelIDValid}
               label={t<string>('Model ID')}
               onChange={_onChangeModelID}
               placeholder={t<string>('Model ID')}

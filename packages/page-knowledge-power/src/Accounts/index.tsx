@@ -10,7 +10,7 @@ import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useApi, useAccounts, useCall, useFavorites, useLoadingDelay} from '@polkadot/react-hooks';//, useIpfs, useToggle
-import { Button, Input, Table } from '@polkadot/react-components';
+import { Input, Table } from '@polkadot/react-components';
 import { BN_ZERO } from '@polkadot/util';
 
 import { useTranslation } from '../translate';

@@ -7,9 +7,6 @@ import BN from 'bn.js';
 import React from 'react';
 import styled from 'styled-components';
 import { Compact } from '@polkadot/types';
-import { formatBalance } from '@polkadot/util';
-
-import { useTranslation } from './translate';
 
 interface Props {
   children?: React.ReactNode;
@@ -22,21 +19,9 @@ interface Props {
   withSi?: boolean;
 }
 
-// for million, 2 * 3-grouping + comma
-const M_LENGTH = 6 + 1;
-const K_LENGTH = 3 + 1;
-
-function format (value: Compact<any> | BN | string, withCurrency = true, withSi?: boolean, _isShort?: boolean, labelPost?: string): React.ReactNode {
-  const [prefix, postfix] = formatBalance(value, { forceUnit: '-', withSi: false }).split('.');
-  const isShort = _isShort || (withSi && prefix.length >= K_LENGTH);
-  const unitPost = withCurrency ? 'KP' : '';
-
- return <><span className='ui--FormatBalance-postfix'>{value}{unitPost}</span></>;
-}
-
 function FormatBalance ({ children, className = '', isShort, label, labelPost, value, withCurrency, withSi }: Props): React.ReactElement<Props> {
-  const { t } = useTranslation();
-  const newValue=value+' KP';
+
+   const newValue=value+' KP';
   // labelPost here looks messy, however we ensure we have one less text node
   return (
     <div className={`ui--FormatBalance ${className}`}>

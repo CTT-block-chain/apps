@@ -1,10 +1,8 @@
 // Copyright 2017-2020 @polkadot/react-query authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-import React, { useCallback } from 'react';
+import { PowerSize} from '@polkadot/types/interfaces';
+import React from 'react';
 import { useApi, useCall } from '@polkadot/react-hooks';
-import FormatKP from './FormatKP';
-import { DeriveAccountPowers } from '@polkadot/api-derive/types';
 
 interface Props {
   children?: React.ReactNode;
@@ -16,18 +14,18 @@ function TotalIssuance ({ children, className = '', label }: Props): React.React
   const { api } = useApi();
   const totalPower = useCall<PowerSize>(api.query.kp.totalPower);
   console.log('totalPower:', totalPower?.toJSON());
-  /*const totalValue=Number("1");
-   if(!!totalPower){
-    totalValue=Number(totalPower)/100;
-    console.log('totalPower22:', totalValue);
-  } */
+
+  let totalValue: number=0;
+  if(!!totalPower){
+      totalValue=Number(totalPower.toString()) / 100.0;
+  }
+  let totalValueStr: String = parseFloat(totalValue+'').toFixed().toString()+' KP';
+
   return (
     <div className={className}>
       {label || ''}
-      <FormatKP
-        value={totalPower}
-        withSi
-      />
+      {totalValue ? totalValueStr:'0.00KP'}
+
       {children}
     </div>
   );

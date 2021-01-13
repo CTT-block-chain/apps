@@ -1,16 +1,16 @@
 // Copyright 2017-2020 @polkadot/app-democracy authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { DeriveAccountPowers} from '@polkadot/api-derive/types';
+import { DeriveAppFinanceCountInfo} from '@polkadot/api-derive/types';
 
-import { DeriveBalancesAccount } from '@polkadot/api-derive/types';
-import { Balance } from '@polkadot/types/interfaces';
+//import { DeriveBalancesAccount } from '@polkadot/api-derive/types';
+//import { Balance } from '@polkadot/types/interfaces';
 
 import BN from 'bn.js';
 import React from 'react';
 import { SummaryBox, CardSummary } from '@polkadot/react-components';
 import { useApi, useCall } from '@polkadot/react-hooks';
-import { formatNumber , stringToU8a} from '@polkadot/util';
+import { formatNumber } from '@polkadot/util';
 import { FormatBalance } from '@polkadot/react-query';
 
 import { useTranslation } from '../translate';
@@ -24,10 +24,10 @@ interface Props {
 function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
-  const activeProposals = useCall<unknown[]>(api.derive.democracy.proposals);
+ // const activeProposals = useCall<unknown[]>(api.derive.democracy.proposals);
   const bestNumber = useCall<BN>(api.derive.chain.bestNumber);
-  const publicPropCount = useCall<BN>(api.query.democracy.publicPropCount);
-  const referendumTotal = useCall<BN>(api.query.democracy.referendumCount);
+  //const publicPropCount = useCall<BN>(api.query.democracy.publicPropCount);
+  //const referendumTotal = useCall<BN>(api.query.democracy.referendumCount);
 
 
   var totalSeconds = new BN(300);//当前周期设置为30分钟
@@ -36,16 +36,16 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
  console.log("appFinanceCountInfo:" + JSON.stringify(appFinanceCountInfo));
 
   var currentSeconds = new BN(1);
-  var count: int = 0;
+  var count: number = 0;
   var totalBurn = BigInt(1);
   if(!!appFinanceCountInfo){
      currentSeconds = new BN((300-appFinanceCountInfo.leftSeconds)+'');
-     count = appFinanceCountInfo.count;
+     count = (Number)(appFinanceCountInfo.count+'');
      totalBurn = BigInt(appFinanceCountInfo.totalBurn+'');
-
+/*
      console.log("currentSeconds:" + currentSeconds);
      console.log("count:" + count);
-     console.log("totalBurn:" + totalBurn);
+     console.log("totalBurn:" + totalBurn); */
   }
 
 

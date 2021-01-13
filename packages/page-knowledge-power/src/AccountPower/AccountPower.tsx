@@ -3,25 +3,25 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { AddressMini, Button, Expander, LinkExternal } from '@polkadot/react-components';
-import { FormatBalance } from '@polkadot/react-query';
-import { formatNumber } from '@polkadot/util';
+//import { AddressMini, Button, Expander, LinkExternal } from '@polkadot/react-components';
+//import { FormatBalance } from '@polkadot/react-query';
+//import { formatNumber } from '@polkadot/util';
 
-import { useTranslation } from '../translate';
+//import { useTranslation } from '../translate';
 
 interface Props {
   className?: string;
 	// TODO: DeriveAccountPower
   //value: DeriveProposal;
 }
+// , value: { power, index, account, }
+function AccountPower ({ className = ''}: Props): React.ReactElement<Props> {
+//  const { t } = useTranslation();
 
-function AccountPower ({ className = '', value: { power, index, account, } }: Props): React.ReactElement<Props> {
-  const { t } = useTranslation();
-  
   return (
     <tr className={className}>
-      <td className='number'><h1>{formatNumber(index)}</h1></td>
-      
+      <td className='number'><h1>{}</h1></td>
+
     </tr>
   );
 }

@@ -1,8 +1,8 @@
 // Copyright 2017-2020 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
+import { PowerSize} from '@polkadot/types/interfaces';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { DeriveBalancesAll, DeriveDemocracyLock, DeriveAccountPowers } from '@polkadot/api-derive/types';
+import { DeriveBalancesAll, DeriveDemocracyLock } from '@polkadot/api-derive/types';
 import { ActionStatus } from '@polkadot/react-components/Status/types';
 
 
@@ -203,23 +203,23 @@ function Account ({ account: { address, meta }, className = '', delegation, filt
     [meta]
   );
 
-  const params = useMemo(() => [address]);
-  const singlePower = useCall<PowerSize>(api.api.derive.kp.accountPower, params);
-  var newStatistics: Array=[];
+  //const params = useMemo(() => [address]);
+  const singlePower = useCall<PowerSize>(api.api.derive.kp.accountPower, [address]);
+  /* var newStatistics: Array=[];
   const statistics = useCall<AccountStatistics>(api.api.derive.kp.accountStatistics,params);
   if (!!statistics) {
     var newObj=statistics?.toJSON();
     newStatistics.push(newObj);//这里要变成数组，下面才能用，现在statistics是个object
-  }
+  } */
 
   //下面要查询每个应用的 知识算力
-  var Value: Any;//知识算力
+  var Value: any;//知识算力
   if(!!singlePower){
     Value=[
       {
       "appName":'减法app',
       "appId":'10000001',
-      "power":( parseFloat(singlePower) / 100.00 ).toFixed(4) + '',
+      "power":( parseFloat(singlePower+'') / 100.00 ).toFixed(4) + '',
       }
     ];
   }else{

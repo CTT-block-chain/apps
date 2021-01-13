@@ -2,16 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { DeriveBalancesAccount } from '@polkadot/api-derive/types';
-import { Balance } from '@polkadot/types/interfaces';
 
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useApi, useCall } from '@polkadot/react-hooks';
 
 import { SummaryBox, CardSummary } from '@polkadot/react-components';
-import { BestFinalized, BestNumber, BlockToTime, TimeNow, TotalKP , TotalIssuance, FormatBalance } from '@polkadot/react-query';
+import { TimeNow, BlockToTime, FormatBalance } from '@polkadot/react-query';
 import { BN_ONE } from '@polkadot/util';
 
-import { formatNumber, stringToU8a } from '@polkadot/util';
+import { stringToU8a } from '@polkadot/util';
 
 import SummarySession from './SummarySession';
 import { useTranslation } from './translate';
@@ -56,7 +55,7 @@ function Summary (): React.ReactElement {
    //基金存量=融资余额+模型余额+技术开发余额
    let fundStock = BigInt(1);
    if(!!value_fin&&!!value_trmodel&&!!value_acmodel&&!!value_tech){
-     fundStock=value_fin.toBigInt()+value_trmodel.toBigInt()+value_acmodel.toBigInt()+value_tech.toBigInt();
+     fundStock=BigInt(value_fin+'')+(BigInt(value_trmodel+''))+(BigInt(value_acmodel+''))+(BigInt(value_tech+''));
      //console.log("fundStock:"+fundStock);
    }
    //基金发行量=10亿-基金存量
@@ -69,7 +68,7 @@ function Summary (): React.ReactElement {
    let block_issue = BigInt('100000000000000000000000');
    if(!!totalIssuance){
      console.log("totalIssuance:"+totalIssuance);
-     block_issue=totalIssuance.toBigInt()-block_issue;
+     block_issue=BigInt(totalIssuance+'')-block_issue;
      console.log("block_issue:"+block_issue);
    }
 
@@ -127,17 +126,10 @@ function Summary (): React.ReactElement {
 
       </section>
       <section className='media--1200'>
-        <SummarySession withEra={false} />
+
       </section>
       <section>
-        {api.query.grandpa && (
-          <CardSummary label={t<string>('finalized')}>
-            <BestFinalized />
-          </CardSummary>
-        )}
-        <CardSummary label={t<string>('best')}>
-          <BestNumber />
-        </CardSummary>
+        <SummarySession withEra={false} />
       </section>
     </SummaryBox>
   );

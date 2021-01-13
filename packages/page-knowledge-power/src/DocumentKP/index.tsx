@@ -1,30 +1,30 @@
 // Copyright 2017-2020 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { DeriveAppInfos } from '@polkadot/api-derive/types';
+
 import { ActionStatus } from '@polkadot/react-components/Status/types';
 import { AccountId, ProxyDefinition, ProxyType, Voting } from '@polkadot/types/interfaces';
 import { Delegation, SortedAccount } from '../types';
+import { KeyringAddress } from '@polkadot/ui-keyring/types';
 
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { isLedger } from '@polkadot/react-api';
-import { useApi, useAccounts, useCall, useFavorites, useIpfs, useLoadingDelay, useToggle } from '@polkadot/react-hooks';
-import { FormatBalance } from '@polkadot/react-query';
-import { Button, Input, Table } from '@polkadot/react-components';
+import { useApi, useAccounts, useCall, useFavorites, useLoadingDelay } from '@polkadot/react-hooks';
+import { Input, Table } from '@polkadot/react-components';
 import { BN_ZERO } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
-import CreateModal from '../modals/Create';
-import ImportModal from '../modals/Import';
-import Ledger from '../modals/Ledger';
-import Multisig from '../modals/MultisigCreate';
-import Proxy from '../modals/ProxiedAdd';
-import Qr from '../modals/Qr';
 import Account from './Account';
-import BannerClaims from './BannerClaims';
-import BannerExtension from './BannerExtension';
 import { sortAccounts } from '../util';
+
+interface newArrayValue {
+	appId: String;
+	account: KeyringAddress;
+  //delegation:Delegation;
+  isFavorite:boolean;
+}
 
 interface Balances {
   accounts: Record<string, BN>;
@@ -47,13 +47,6 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   const { t } = useTranslation();
   const { api } = useApi();
   const { allAccounts, hasAccounts } = useAccounts();
-  const { isIpfs } = useIpfs();
-  const [isCreateOpen, toggleCreate] = useToggle();
-  const [isImportOpen, toggleImport] = useToggle();
-  const [isLedgerOpen, toggleLedger] = useToggle();
-  const [isMultisigOpen, toggleMultisig] = useToggle();
-  const [isProxyOpen, toggleProxy] = useToggle();
-  const [isQrOpen, toggleQr] = useToggle();
   const [favorites, toggleFavorite] = useFavorites(STORE_FAVS);
   const [{ balanceTotal }, setBalances] = useState<Balances>({ accounts: {} });
   const [filterOn, setFilter] = useState<string>('');
@@ -160,32 +153,32 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   ), [filterOn, t]);
 
   //console.log("sortedAccountsWithDelegation:"+JSON.stringify(sortedAccountsWithDelegation));
-  const apps = useCall<DeriveAppInfos>(api.derive.members.apps);
-  
-  let appIdList: Array=[];
-  if (!!apps) {
-    apps.forEach(app => {
-      appIdList.push(app.appId+'');
-    });
-  }
-  
-   let a: Number = 0;
 
-   let newArray: Array =[];
+   const apps = useCall<DeriveAppInfos>(api.derive.members.apps);
+   //console.log("apps:"+JSON.stringify(apps));
+   let appIdList: Array<string>=[];
+   if (!!apps) {
+     apps.forEach(app => {
+       appIdList.push(app.appId+'');
+     });
+   }
+
+   let newArray: Array<newArrayValue> =[];
    if(!!sortedAccountsWithDelegation){
-     for(a=0; a<sortedAccountsWithDelegation.length; a++){
-       let b: Number = 0;
-       for(b=0; b<appIdList.length; b++){
-         let newObj={
-           "account":sortedAccountsWithDelegation[a].account,
-           "children":sortedAccountsWithDelegation[a].children,
-           "isFavorite":sortedAccountsWithDelegation[a].isFavorite,
-           "appId":"",
-         };
-         newObj.appId=appIdList[b];
-         newArray.push(newObj);
-       }
-     }
+     sortedAccountsWithDelegation.forEach((val, idx, array) => {
+         // val: 当前值
+         // idx：当前index
+         // array: Array
+         appIdList.forEach((val2, idx2, array2) => {
+             let newObj={
+               "account":sortedAccountsWithDelegation[idx].account,
+               "isFavorite":sortedAccountsWithDelegation[idx].isFavorite,
+               "appId":"",
+             };
+             newObj.appId=appIdList[idx2];
+             newArray.push(newObj);
+         });
+     });
    }
    //console.log("newArray:"+JSON.stringify(newArray));
 
@@ -197,11 +190,11 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
         footer={footer}
         header={headerRef.current}
       >
-        {!isLoading && newArray?.map(({ appId, account, delegation, isFavorite }, index): React.ReactNode => (
+        {!isLoading && newArray?.map(({ appId, account, isFavorite }, index): React.ReactNode => (
           <Account
             appId={appId}
             account={account}
-            delegation={delegation}
+            //delegation={delegation}
             filter={filterOn}
             isFavorite={isFavorite}
             key={index}

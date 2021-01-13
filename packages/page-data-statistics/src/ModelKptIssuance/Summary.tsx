@@ -1,7 +1,7 @@
 // Copyright 2017-2020 @polkadot/app-democracy authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-import { DeriveBalancesAccount } from '@polkadot/api-derive/types';
-import { Balance } from '@polkadot/types/interfaces';
+import { DeriveBalancesAccount,DeriveModelCycleRewardTime } from '@polkadot/api-derive/types';
+//import { Balance } from '@polkadot/types/interfaces';
 
 import BN from 'bn.js';
 import React from 'react';
@@ -24,8 +24,8 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
   const { api } = useApi();
   const activeProposals = useCall<unknown[]>(api.derive.democracy.proposals);
   const bestNumber = useCall<BN>(api.derive.chain.bestNumber);
-  const publicPropCount = useCall<BN>(api.query.democracy.publicPropCount);
-  const referendumTotal = useCall<BN>(api.query.democracy.referendumCount);
+  //const publicPropCount = useCall<BN>(api.query.democracy.publicPropCount);
+ // const referendumTotal = useCall<BN>(api.query.democracy.referendumCount);
 
   const trmodelBalance = useCall<DeriveBalancesAccount>(api.derive.balances.account, [TRMODEL_ACCOUNT]);
 
@@ -38,7 +38,7 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
   //模型增发基存量=模型创建基金余额
      let fundStock_tr = BigInt(1);
      if(!!value_tr){
-       fundStock_tr=value_tr.toBigInt();
+       fundStock_tr=BigInt(value_tr+'');
        //console.log("fundStock:"+fundStock);
      }
      //模型增发基金发行量=3亿-基金存量
@@ -51,15 +51,15 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
   var total2 = new BN(600);//当前周期设置为1小时
   const modelCycleRewardStage = useCall<DeriveModelCycleRewardTime>(api.derive.kp.modelCycleRewardStage);
 
-  //console.log("modelCycleRewardStage:" + JSON.stringify(modelCycleRewardStage));
+  console.log("modelCycleRewardStage:" + JSON.stringify(modelCycleRewardStage));
 
   var total = new BN(1);
-  let stage: Int = 0;
+  let stage: Number = 0;
   if(!!modelCycleRewardStage){
      total = new BN((600-modelCycleRewardStage.leftSeconds)+'');
-     stage = modelCycleRewardStage.stage;
-   //  console.log("total:" + total);
-    // console.log("stage:" + stage);
+     stage = modelCycleRewardStage.stage.toNumber();
+     console.log("total:" + total);
+     console.log("stage:" + stage);
   }
 
 
