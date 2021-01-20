@@ -117,156 +117,170 @@ function Account ({ appId = '',account: { address, meta }, className = '', filte
     console.log("commodityPowers:"+JSON.stringify(commodityPowers));
   }*/
   if(!!commodityPowers){
-    commodityPowers.forEach((val, idx, array) => {
-      let power: string = '';
-      power=(parseFloat(val.power+'')/100.00).toFixed(4).toString();
+    if(commodityPowers.length>0){
+      commodityPowers.forEach((val, idx, array) => {
+        let power: string = '';
+        power=(parseFloat(val.power+'')/100.00).toFixed(4).toString();
+        return (
+          <tr className={className}>
+            <td className='favorite'>
+              <Icon
+                color={isFavorite ? 'orange' : 'gray'}
+                icon='star'
+                onClick={_onFavorite}
+              />
+            </td>
+            <td className='address'>
+              {val.commodityId+''}
+            </td>
+
+            <td className='address'>
+              <AddressSmall value={address} />
+              {isBackupOpen && (
+                <Backup
+                  address={address}
+                  key='modal-backup-account'
+                  onClose={toggleBackup}
+                />
+              )}
+              {isDelegateOpen && (
+                <DelegateModal
+                  key='modal-delegate'
+                  onClose={toggleDelegate}
+                  previousAmount={delegation?.amount}
+                  previousConviction={delegation?.conviction}
+                  previousDelegatedAccount={delegation?.accountDelegated}
+                  previousDelegatingAccount={address}
+                />
+              )}
+              {isDeriveOpen && (
+                <Derive
+                  from={address}
+                  key='modal-derive-account'
+                  onClose={toggleDerive}
+                />
+              )}
+              {isForgetOpen && (
+                <Forget
+                  address={address}
+                  key='modal-forget-account'
+                  onClose={toggleForget}
+                  onForget={_onForget}
+                />
+              )}
+              {isIdentityMainOpen && (
+                <IdentityMain
+                  address={address}
+                  key='modal-identity-main'
+                  onClose={toggleIdentityMain}
+                />
+              )}
+              {isIdentitySubOpen && (
+                <IdentitySub
+                  address={address}
+                  key='modal-identity-sub'
+                  onClose={toggleIdentitySub}
+                />
+              )}
+              {isPasswordOpen && (
+                <ChangePass
+                  address={address}
+                  key='modal-change-pass'
+                  onClose={togglePassword}
+                />
+              )}
+              {isTransferOpen && (
+                <Transfer
+                  key='modal-transfer'
+                  onClose={toggleTransfer}
+                  senderId={address}
+                />
+              )}
+              {isProxyOverviewOpen && (
+                <ProxyOverview
+                  key='modal-proxy-overview'
+                  onClose={toggleProxyOverview}
+                  previousProxy={proxy}
+                  proxiedAccount={address}
+                />
+              )}
+              {isMultisigOpen && multiInfos && (
+                <MultisigApprove
+                  address={address}
+                  key='multisig-approve'
+                  onClose={toggleMultisig}
+                  ongoing={multiInfos}
+                  threshold={meta.threshold as number}
+                  who={meta.who as string[]}
+                />
+              )}
+              {isRecoverAccountOpen && (
+                <RecoverAccount
+                  address={address}
+                  key='recover-account'
+                  onClose={toggleRecoverAccount}
+                />
+              )}
+              {isRecoverSetupOpen && (
+                <RecoverSetup
+                  address={address}
+                  key='recover-setup'
+                  onClose={toggleRecoverSetup}
+                />
+              )}
+              {isUndelegateOpen && (
+                <UndelegateModal
+                  accountDelegating={address}
+                  key='modal-delegate'
+                  onClose={toggleUndelegate}
+                />
+              )}
+            </td>
+            <td />
+            <td className='address'>
+             {appId}
+            </td>
+            <td className='address'>
+             {testValue2}
+            </td>
+            <td className='number'/>
+            <td className='number'>
+            {power && (
+              <FormatKP
+                value={power}
+                withSi
+              />
+            )}
+            </td>
+            <td />
+            <td />
+            <td />
+            <td />
+          </tr>
+
+        );
+
+      });
+    }else{
       return (
-        <tr className={className}>
-          <td className='favorite'>
-            <Icon
-              color={isFavorite ? 'orange' : 'gray'}
-              icon='star'
-              onClick={_onFavorite}
-            />
-          </td>
-          <td className='address'>
-            {val.commodityId+''}
-          </td>
+       <tr className={className}>
 
-          <td className='address'>
-            <AddressSmall value={address} />
-            {isBackupOpen && (
-              <Backup
-                address={address}
-                key='modal-backup-account'
-                onClose={toggleBackup}
-              />
-            )}
-            {isDelegateOpen && (
-              <DelegateModal
-                key='modal-delegate'
-                onClose={toggleDelegate}
-                previousAmount={delegation?.amount}
-                previousConviction={delegation?.conviction}
-                previousDelegatedAccount={delegation?.accountDelegated}
-                previousDelegatingAccount={address}
-              />
-            )}
-            {isDeriveOpen && (
-              <Derive
-                from={address}
-                key='modal-derive-account'
-                onClose={toggleDerive}
-              />
-            )}
-            {isForgetOpen && (
-              <Forget
-                address={address}
-                key='modal-forget-account'
-                onClose={toggleForget}
-                onForget={_onForget}
-              />
-            )}
-            {isIdentityMainOpen && (
-              <IdentityMain
-                address={address}
-                key='modal-identity-main'
-                onClose={toggleIdentityMain}
-              />
-            )}
-            {isIdentitySubOpen && (
-              <IdentitySub
-                address={address}
-                key='modal-identity-sub'
-                onClose={toggleIdentitySub}
-              />
-            )}
-            {isPasswordOpen && (
-              <ChangePass
-                address={address}
-                key='modal-change-pass'
-                onClose={togglePassword}
-              />
-            )}
-            {isTransferOpen && (
-              <Transfer
-                key='modal-transfer'
-                onClose={toggleTransfer}
-                senderId={address}
-              />
-            )}
-            {isProxyOverviewOpen && (
-              <ProxyOverview
-                key='modal-proxy-overview'
-                onClose={toggleProxyOverview}
-                previousProxy={proxy}
-                proxiedAccount={address}
-              />
-            )}
-            {isMultisigOpen && multiInfos && (
-              <MultisigApprove
-                address={address}
-                key='multisig-approve'
-                onClose={toggleMultisig}
-                ongoing={multiInfos}
-                threshold={meta.threshold as number}
-                who={meta.who as string[]}
-              />
-            )}
-            {isRecoverAccountOpen && (
-              <RecoverAccount
-                address={address}
-                key='recover-account'
-                onClose={toggleRecoverAccount}
-              />
-            )}
-            {isRecoverSetupOpen && (
-              <RecoverSetup
-                address={address}
-                key='recover-setup'
-                onClose={toggleRecoverSetup}
-              />
-            )}
-            {isUndelegateOpen && (
-              <UndelegateModal
-                accountDelegating={address}
-                key='modal-delegate'
-                onClose={toggleUndelegate}
-              />
-            )}
-          </td>
-          <td />
-          <td className='address'>
-           {appId}
-          </td>
-          <td className='address'>
-           {testValue2}
-          </td>
-          <td className='number'/>
-          <td className='number'>
-          {power && (
-            <FormatKP
-              value={power}
-              withSi
-            />
-          )}
-          </td>
-          <td />
-          <td />
-          <td />
-          <td />
-        </tr>
-
+       </tr>
       );
-
-    });
+    }
   }else{
     return (
-      <></>
+     <tr className={className}>
+
+      </tr>
     );
   }
 
+  return (
+     <tr className={className}>
 
+      </tr>
+  );
 }
 
 export default React.memo(styled(Account)`

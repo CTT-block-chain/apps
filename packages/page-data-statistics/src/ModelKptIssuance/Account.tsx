@@ -65,6 +65,7 @@ function Account ({ account = '', className = '', appId = '', modelId = '', stat
         {rewards&&
         (
         <AddressInfoKPT
+          isformat={false}
           kptInfo={rewards}
           address={account}
           withBalance
