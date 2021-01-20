@@ -38,6 +38,7 @@ export interface ValidatorPrefsType {
 }
 
 interface Props {
+  isformat?: false;
   kptInfo?: string[];
   address: string;
   balancesAll?: DeriveBalancesAll;
@@ -55,24 +56,40 @@ interface Props {
 }
 
 function renderBalances (props: Props, allAccounts: string[], bestNumber: BlockNumber | undefined): React.ReactNode {
-  const { kptInfo=[], withBalanceToggle = false } = props;
-
-  console.log("kptInfo:"+JSON.stringify(kptInfo));
+  const { isformat = false,kptInfo=[], withBalanceToggle = false } = props;
+  //console.log("isformat:"+isformat);
+  //console.log("kptInfo:"+JSON.stringify(kptInfo));
   var total = BigInt(0);
+  var total2: number =0;
   if(kptInfo.length>0){
     for(var a = 0; a < kptInfo.length; a++){
-      total = BigInt(kptInfo[a]);
+      if(isformat){
+        //console.log("kptInfo[a].substring(0,kptInfo[a].length-4):"+kptInfo[a].substring(0,kptInfo[a].length-4));
+        total2 = total2 + Number(kptInfo[a].substring(0,kptInfo[a].length-4));
+      }else{
+        total = total + BigInt(kptInfo[a]);
+      }
     }
   }
-  console.log("total:"+total);
+  //console.log("total:"+total);
+  //console.log("total2:"+total2);
 
   const allItems = (
     <>
-      {kptInfo?.map(( kpt, index): React.ReactNode => (
+      {!isformat && kptInfo?.map(( kpt, index): React.ReactNode => (
         <>
           <Label
           label={
             <FormatBalance className='result' value={BigInt(kpt)} />
+          }
+          />
+        </>
+      ))}
+      {isformat && kptInfo?.map(( kpt, index): React.ReactNode => (
+        <>
+          <Label
+          label={
+            kpt
           }
           />
         </>
@@ -83,7 +100,7 @@ function renderBalances (props: Props, allAccounts: string[], bestNumber: BlockN
   if (withBalanceToggle) {
     return (
       <>
-        <Expander summary={<FormatBalance value={total} />}>
+        <Expander summary={ isformat ? total2+' KPT' : <FormatBalance value={total} />}>
           <div className='body column'>
             {allItems}
           </div>

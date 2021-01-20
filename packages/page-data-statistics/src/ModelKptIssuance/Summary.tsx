@@ -56,8 +56,14 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
   var total = new BN(1);
   let stage: Number = 0;
   if(!!modelCycleRewardStage){
-     total = new BN((600-modelCycleRewardStage.leftSeconds)+'');
      stage = modelCycleRewardStage.stage.toNumber();
+     if(stage==0){
+       total = new BN((300-modelCycleRewardStage.leftSeconds)+'');
+       total2 = new BN(300);
+     }else if(stage==1 || stage==2){
+       total = new BN((100-modelCycleRewardStage.leftSeconds)+'');
+       total2 = new BN(100);
+     }
      console.log("total:" + total);
      console.log("stage:" + stage);
   }

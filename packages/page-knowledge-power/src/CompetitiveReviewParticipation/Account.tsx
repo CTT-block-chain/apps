@@ -120,9 +120,16 @@ function Account ({account: { address, meta }, className = '', delegation, filte
     commentNum=newObj.commentNum.toNumber();
     commentPositiveTrendNum=newObj.commentPositiveTrendNum.toNumber();
     commentCostTotal=newObj.commentCostTotal.toNumber();
+    if(commentCostTotal!=0){
+      commentCostTotal = (Number(commentCostTotal)/100);
+    }
     commentCostMax=newObj.commentCostMax.toNumber();
+    if(commentCostMax!=0){
+      commentCostMax = (Number(commentCostMax)/100);
+    }
     //newStatistics.push(newObj);
   }
+  console.log("statistics:"+JSON.stringify(statistics))
 
   return (
     <tr className={className}>
