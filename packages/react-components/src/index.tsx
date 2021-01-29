@@ -79,6 +79,7 @@ export { default as Popup } from './Popup';
 export { default as Progress } from './Progress';
 export { default as ProposedAction } from './ProposedAction';
 export { default as Row } from './Row';
+export { default as Select } from './Select';
 export { default as Sidebar } from './Sidebar';
 export { default as Spinner } from './Spinner';
 export { default as StakingBonded } from './StakingBonded';

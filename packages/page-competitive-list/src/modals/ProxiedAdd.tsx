@@ -5,7 +5,7 @@ import { ActionStatus } from '@polkadot/react-components/Status/types';
 import { ModalProps } from '../types';
 
 import React, { useCallback, useState } from 'react';
-import { Button, Input, Modal } from '@polkadot/react-components';
+import { Button, Input, Select, Modal } from '@polkadot/react-components';
 import { useApi } from '@polkadot/react-hooks';
 //import keyring from '@polkadot/ui-keyring';
 
@@ -13,6 +13,7 @@ import { useTranslation } from '../translate';
 //import useProxies from '../Accounts/useProxies';
 
 interface Props extends ModalProps {
+  valueList?: Array<string>;
   className?: string;
   onClose: () => void;
   onStatusChange: (status: ActionStatus) => void;
@@ -47,7 +48,12 @@ function createProxy (address: string, { genesisHash, name, tags = [] }: CreateO
   return status;
 } */
 
-function ProxyAdd ({ className = '', onClose, onStatusChange, changeQueryStatus, changeAppId, changeBlockNumber, changeModelID}: Props): React.ReactElement<Props> {
+function handleChange(event) {
+  console.log(event.target.value)
+}
+
+
+function ProxyAdd ({ valueList = [''], className = '', onClose, onStatusChange, changeQueryStatus, changeAppId, changeBlockNumber, changeModelID}: Props): React.ReactElement<Props> {
   const { api, isDevelopment } = useApi();
   const { t } = useTranslation();
 
@@ -57,6 +63,7 @@ function ProxyAdd ({ className = '', onClose, onStatusChange, changeQueryStatus,
 
  //const [stashAddress, setStashAddress] = useState<string | null>(null);
  // const { hasOwned } = useProxies(stashAddress);
+  //changeBlockNumber(valueList[0]);
 
   const _createProxied = useCallback(
     (): void => {
@@ -90,6 +97,7 @@ function ProxyAdd ({ className = '', onClose, onStatusChange, changeQueryStatus,
     },
     []
   );
+
   return (
     <Modal
       className={className}
@@ -115,15 +123,17 @@ function ProxyAdd ({ className = '', onClose, onStatusChange, changeQueryStatus,
         </Modal.Columns>
         <Modal.Columns>
           <Modal.Column>
-            <Input
-              value={blockNumber}
-              className='full'
-              help={t<string>('Enter the Block Number of the token you want to search.')}
-              label={t<string>('Block Number')}
-              isError={isBlockNumberValid}
-              onChange={_onChangeBlockNumber}
-              placeholder={t<string>('Block Number')}
-            />
+              <Select
+                valueList={valueList}
+                className='full'
+                help={t<string>('Enter the Block Number of the token you want to search.')}
+                label={t<string>('Block Number')}
+                isError={isBlockNumberValid}
+                onChange={_onChangeBlockNumber}
+              >
+
+              </Select>
+
           </Modal.Column>
           <Modal.Column>
             <p>{t<string>('')}</p>

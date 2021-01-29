@@ -94,6 +94,7 @@ function CardSummary ({ children, className = '', help, label, progress }: Props
 }
 
 export default React.memo(styled(CardSummary)(({ theme }: ThemeProps) => `
+  width:'600px';
   align-items: center;
   background: transparent !important;
   border: none !important;

@@ -157,7 +157,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   //console.log("sortedAccountsWithDelegation:"+JSON.stringify(sortedAccountsWithDelegation));
 
   const apps = useCall<DeriveAppInfos>(api.derive.members.apps);
-  //console.log("apps:"+JSON.stringify(apps));
+  console.log("apps:"+JSON.stringify(apps));
   let appIdList: Array<string>=[];
   if (!!apps) {
     apps.forEach(app => {
@@ -183,7 +183,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     });
   }
 
-  //console.log("newArray:"+JSON.stringify(newArray));
+  console.log("newArray:"+JSON.stringify(newArray));
 
   return (
     <div className={className}>

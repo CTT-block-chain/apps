@@ -42,10 +42,9 @@ function Summary (): React.ReactElement {
       </section>
       <section className='media--1200'>
       </section>
-      <section className='media--1200'>
+      <section >
       </section>
-      <section className='media--1200'>
-      </section>
+
     </SummaryBox>
   );
 }

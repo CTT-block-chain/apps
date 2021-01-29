@@ -215,7 +215,7 @@
   "Enter the Asset ID of the token you want to manage.": "输入要管理的代币的资产 ID。",
   "Enter the Asset ID of the token you want to transfer.": "输入要转账的代币的资产 ID。",
   "Enter the Application ID of the token you want to search.": "输入要查询的榜单的应用ID。",
-  "Enter the Block Number of the token you want to search.": "输入要查询的榜单的区块号。",
+  "Enter the Block Number of the token you want to search.": "选择要查询的榜单的区块号。",
   "Enter the Model ID of the token you want to search.": "输入要查询的榜单的模型ID。",
   "Erroneous": "错误的",
   "Evaluated {{count}} keys in {{elapsed}}s ({{avg}} keys/s)": "在 {{elapsed}}秒，生成 {{count}} 个 秘钥 （平均{{avg}}个秘钥/秒）",
