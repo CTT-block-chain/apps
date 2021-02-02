@@ -69,7 +69,7 @@ function Summary ({ avgStaked, lastReward, lowStaked, numNominators, numValidato
       <section className='media--800'>
         {totalCash && (
           <CardSummary
-            label={`${totalStaked?.gtn(0) ? `${t<string>('total staked')} / ` : ''}${t<string>('Number of block issues')}`}
+            label={`${totalStaked?.gtn(0) ? `${t<string>('total staked')} / ` : ''}${t<string>('circulation')}`}
             progress={progressStake}
           >
             <div>
