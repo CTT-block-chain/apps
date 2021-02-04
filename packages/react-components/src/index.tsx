@@ -7,6 +7,7 @@ export { default as AccountIndex } from './AccountIndex';
 export { default as AccountName } from './AccountName';
 export { default as ActionItem } from './ActionItem';
 export { default as AddressInfo } from './AddressInfo';
+export { default as AddressInfoAddress } from './AddressInfoAddress';
 export { default as AddressInfoKP } from './AddressInfoKP';
 export { default as AddressInfoKPT } from './AddressInfoKPT';
 export { default as AddressMini } from './AddressMini';
@@ -101,6 +102,7 @@ export { default as TxModal } from './TxModal';
 export { default as TxModalNew } from './TxModalNew';
 export { default as VoteAccount } from './VoteAccount';
 export { default as VoteValue } from './VoteValue';
+export { default as VoteValue2 } from './VoteValue2';
 export { default as TextArea } from './TextArea';
 
 export { default as media } from './media';

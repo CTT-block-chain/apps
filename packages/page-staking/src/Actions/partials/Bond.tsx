@@ -8,7 +8,7 @@ import { BondInfo } from './types';
 
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Dropdown, InputAddress,InputBalance, Modal, Static } from '@polkadot/react-components';
+import { Dropdown, InputAddress, InputBalance, InputBalanceChanges, Modal, Static } from '@polkadot/react-components';
 import { BalanceFree, BlockToTime } from '@polkadot/react-query';
 import { useApi, useCall } from '@polkadot/react-hooks';
 import { BN_ZERO } from '@polkadot/util';
@@ -38,6 +38,31 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
   const stashBalance = useCall<DeriveBalancesAll>(api.derive.balances.all, [stashId]);
   const bondedBlocks = useUnbondDuration();
 
+  let powerRatio = useCall<string>(api.derive.kp.powerRatio, [controllerId]);
+  console.log("powerRatio:"+powerRatio);
+  //console.log("startBalance:"+startBalance);
+  let powerWeighted : BN = new BN(0);
+  if(!!powerRatio && !!startBalance){
+    var a: BigInt;
+    if(Number(powerRatio)!=1){
+      a= BigInt(startBalance+'') * BigInt((parseFloat(powerRatio+'').toFixed(2) * 10000 ) + '') ;
+      a = a / BigInt(10000+'');
+    }else{
+      a = BigInt(startBalance+'') * BigInt(Number(powerRatio) + '') ;
+    }
+    powerWeighted = new BN(a+'');
+    //powerWeighted =  new BN(startBalance+'').muln(Number(powerRatio));
+  }
+  //console.log("powerWeighted:"+powerWeighted);
+
+  if(!!powerRatio && !!amount){
+    var a: BigInt = BigInt(amount+'') * BigInt((parseFloat(powerRatio+'').toFixed(2) * 10000 ) + '') ;
+    a = a / BigInt(10000+'');
+    powerWeighted = new BN(a+'');
+   //powerWeighted = new BN(amount+'').muln(Number(powerRatio));
+   console.log("powerWeighted2:"+powerWeighted);
+  }
+
   const options = useMemo(
     () => createDestCurr(t),
     [t]
@@ -59,6 +84,10 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
   useEffect((): void => {
     setStartBalance(null);
   }, [stashId]);
+
+  useEffect((): void => {
+
+  }, [amount]);
 
   useEffect((): void => {
     const bondDest = destination === 'Account'
@@ -87,13 +116,18 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
   const hasValue = !!amount?.gtn(0);
   const isAccount = destination === 'Account';
 
-  const testError=false;
-  const isDisabledInput=true;
+ // const testError=false;
+  //const isDisabledInput=true;
 
   //let amountVote = new BN(0);
-  let controllerAccountKp: number = 0;
-  // default kp factor is 0.1;
+  //default kp factor is 0.1;
   //let kpFactor = 0.1;
+
+
+
+  let controllerAccountKp: number = 0;
+
+
   let accountPower = new BN(0);
 
   const pow = useCall<PowerSize>(api.derive.kp.accountPower, [controllerId]);
@@ -118,22 +152,7 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
     amountVote = convert.mul(REDUCE_FACTOR);
   } */
 
- /* <Static
-              children={<span >{t<string>('')}</span>}
-              isError={testError}
-              isDisabled={isDisabledInput}
-              value={kpFactor}
-              label={t<string>('KP Weight Param')}
-            />
-            <InputBalanceChanges
-              defaultValue={amountVote}
-              help={<span >{t<string>('')}</span>}
-              children={<span >{t<string>('')}</span>}
-              isError={testError}
-              isDisabled={isDisabledInput}
-              value={amountVote}
-              label={t<string>('Weighted value')}
-            /> */
+
   return (
     <div className={className}>
       <Modal.Columns>
@@ -186,13 +205,17 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
               stashId={stashId}
               value={amount}
             />
-            <Static
-              defaultValue={0}
-              children={<span >{t<string>('')}</span>}
-              isError={testError}
-              isDisabled={isDisabledInput}
-              value={controllerAccountKp?.toString()}
-              label={t<string>('KP')}
+
+            <InputBalanceChanges
+              autoFocus
+              defaultValue={powerWeighted}
+              isDisabled={true}
+              help={t<string>("The calculation power weighted value refers to the final value of the mortgage's KPT after calculation power weighted, which is calculated by multiplying the number of KPT by the calculation power weighted multiple.")}
+              isError={false}
+              label={t<string>('KP weighted value')}
+              labelExtra={
+                <span className='label'>{t<string>('KPValue')} {controllerAccountKp?.toString()+' KP'} </span>
+              }
             />
 
             {bondedBlocks?.gtn(0) && (

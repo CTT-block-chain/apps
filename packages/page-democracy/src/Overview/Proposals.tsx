@@ -19,6 +19,8 @@ function Proposals ({ className }: Props): React.ReactElement<Props> {
   const { api } = useApi();
   const proposals = useCall<DeriveProposal[]>(api.derive.democracy.proposals);
 
+  console.log("proposals:"+JSON.stringify(proposals));
+
   const headerRef = useRef([
     [t('proposals'), 'start', 2],
     [t('proposer'), 'address'],

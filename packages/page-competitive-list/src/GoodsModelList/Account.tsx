@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { FormatKP } from '@polkadot/react-query';
-import { AccountId } from '@polkadot/types/interfaces';
+//import { AccountId } from '@polkadot/types/interfaces';
 import { DeriveLeaderboardData, DeriveLeaderBoardItem } from '@polkadot/api-derive/types';
 
 
@@ -40,10 +40,10 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
   }, []);
 
   let appIdStr: string = '';
-  let cycle: string = '';//榜单期数
+  //let cycle: string = '';//榜单期数
 
   let queryFlag = true;
-  var newParam2 : array=[];
+  var newParam2 : Array<number|string>=[];
   newParam2.push(param2[0]);
   newParam2.push(param2[1]);
   newParam2.push(param2[2]);
@@ -56,7 +56,7 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
 
       appIdStr = newParam2[0].toString();
 
-      cycle = newParam2[1].toString();
+      //cycle = newParam2[1].toString();
 
     }else{//清空数据，modelId为空的不查,只查模型榜单
       queryFlag = false;

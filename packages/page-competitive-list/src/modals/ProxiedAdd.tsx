@@ -48,9 +48,9 @@ function createProxy (address: string, { genesisHash, name, tags = [] }: CreateO
   return status;
 } */
 
-function handleChange(event) {
+/* function handleChange(event) {
   console.log(event.target.value)
-}
+} */
 
 
 function ProxyAdd ({ valueList = [''], className = '', onClose, onStatusChange, changeQueryStatus, changeAppId, changeBlockNumber, changeModelID}: Props): React.ReactElement<Props> {
@@ -97,7 +97,7 @@ function ProxyAdd ({ valueList = [''], className = '', onClose, onStatusChange, 
     },
     []
   );
-
+console.log("blockNumber:"+blockNumber);
   return (
     <Modal
       className={className}

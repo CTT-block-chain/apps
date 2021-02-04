@@ -36,7 +36,7 @@ function StakeOther ({ nominators, stakeOther }: Props): React.ReactElement<Prop
     },
     [api, nominators, stakeOther]
   );
-
+  var type = 'StakeOther';
   return (
     <td className='expand all'>
       {!!rewarded.length && (
@@ -49,6 +49,7 @@ function StakeOther ({ nominators, stakeOther }: Props): React.ReactElement<Prop
           }>
             {rewarded.map(([who, bonded]): React.ReactNode =>
               <AddressMini
+                intoType={type}
                 bonded={bonded}
                 key={who}
                 value={who}

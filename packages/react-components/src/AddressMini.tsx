@@ -14,8 +14,11 @@ import BalanceDisplay from './Balance';
 import BondedDisplay from './Bonded';
 import IdentityIcon from './IdentityIcon';
 import LockedVote from './LockedVote';
+import { useCall, useApi} from '@polkadot/react-hooks';
+import Label from './Label';
 
 interface Props {
+  intoType?: string;
   balance?: BN | BN[];
   bonded?: BN | BN[];
   children?: React.ReactNode;
@@ -38,64 +41,349 @@ interface Props {
   withShrink?: boolean;
 }
 
-function AddressMini ({ balance, bonded, children, className = '', iconInfo, isHighlight, isPadded = true, label, labelBalance, summary, value, withAddress = true, withBalance = false, withBonded = false, withLockedVote = false, withName = true, withShrink = false, withSidebar = true }: Props): React.ReactElement<Props> | null {
+function AddressMini ({ intoType = '', balance, bonded, children, className = '', iconInfo, isHighlight, isPadded = true, label, labelBalance, summary, value, withAddress = true, withBalance = false, withBonded = false, withLockedVote = false, withName = true, withShrink = false, withSidebar = true }: Props): React.ReactElement<Props> | null {
+  const { api } = useApi();
   if (!value) {
     return null;
   }
 
-  return (
-    <div className={classes('ui--AddressMini', isHighlight ? 'isHighlight' : '', isPadded ? 'padded' : '', withShrink ? 'withShrink' : '', className)}>
-      {label && (
-        <label className='ui--AddressMini-label'>{label}</label>
-      )}
-      <div className='ui--AddressMini-icon'>
-        <IdentityIcon value={value as Uint8Array} />
-        {iconInfo && (
-          <div className='ui--AddressMini-icon-info'>
-            {iconInfo}
-          </div>
+  if(!!value && !!intoType && intoType=='StakeOther'){
+    console.log("value:"+value);
+    var powerRatio = useCall<string>(api.derive.kp.powerRatio, [value+'']);
+    console.log("powerRatio:"+powerRatio);
+    var newBonded = new BN(0);
+    if(!!powerRatio){
+      var a: BN = new BN((bonded+'')).idivn(Number(powerRatio));
+      newBonded = a;
+    }
+    console.log("newBonded:"+newBonded);
+
+    return (
+      <div className={classes('ui--AddressMini', isHighlight ? 'isHighlight' : '', isPadded ? 'padded' : '', withShrink ? 'withShrink' : '', className)}>
+        {label && (
+          <label className='ui--AddressMini-label'>{label}</label>
         )}
+        <div className='ui--AddressMini-icon'>
+          <IdentityIcon value={value as Uint8Array} />
+          {iconInfo && (
+            <div className='ui--AddressMini-icon-info'>
+              {iconInfo}
+            </div>
+          )}
+        </div>
+        <div className='ui--AddressMini-info'>
+          {withAddress && (
+            <div className='ui--AddressMini-address'>
+              {withName
+                ? (
+                  <AccountName
+                    value={value}
+                    withSidebar={withSidebar}
+                  />
+                )
+                : toShortAddress(value)
+              }
+            </div>
+          )}
+          {children}
+        </div>
+        <div className='ui--AddressMini-balances' style={{display:'flex',flexDirection:'row'}}>
+          {withBalance && (
+            <BalanceDisplay
+              balance={balance}
+              label={labelBalance}
+              params={value}
+            />
+          )}
+          {withBonded && <div className='ui--Bonded' style={{alignItems:'flex-end'}}><Label label={powerRatio?powerRatio+'x-':''} /></div>}
+          {withBonded && (
+            <BondedDisplay
+              bonded={newBonded}
+              label=''
+              params={value}
+            />
+          )}
+          {withLockedVote && (
+            <LockedVote params={value} />
+          )}
+          {summary && (
+            <div className='ui--AddressMini-summary'>{summary}</div>
+          )}
+        </div>
       </div>
-      <div className='ui--AddressMini-info'>
-        {withAddress && (
-          <div className='ui--AddressMini-address'>
-            {withName
-              ? (
-                <AccountName
-                  value={value}
-                  withSidebar={withSidebar}
-                />
-              )
-              : toShortAddress(value)
-            }
-          </div>
+    );
+
+ }else if(!!value && !!intoType && intoType=='ActiveNominations'){
+   console.log("value:"+value);
+   var powerRatio = useCall<string>(api.derive.kp.powerRatio, [value+'']);
+   console.log("powerRatio:"+powerRatio);
+   var newBalance = new BN(0);
+   if(!!powerRatio && !!balance){
+     var a: BN = new BN((balance+'')).idivn(Number(powerRatio));
+     newBalance = a;
+   }
+   console.log("newBalance:"+newBalance);
+
+   return (
+     <div className={classes('ui--AddressMini', isHighlight ? 'isHighlight' : '', isPadded ? 'padded' : '', withShrink ? 'withShrink' : '', className)}>
+       {label && (
+         <label className='ui--AddressMini-label'>{label}</label>
+       )}
+       <div className='ui--AddressMini-icon'>
+         <IdentityIcon value={value as Uint8Array} />
+         {iconInfo && (
+           <div className='ui--AddressMini-icon-info'>
+             {iconInfo}
+           </div>
+         )}
+       </div>
+       <div className='ui--AddressMini-info'>
+         {withAddress && (
+           <div className='ui--AddressMini-address'>
+             {withName
+               ? (
+                 <AccountName
+                   value={value}
+                   withSidebar={withSidebar}
+                 />
+               )
+               : toShortAddress(value)
+             }
+           </div>
+         )}
+         {children}
+       </div>
+       <div className='ui--AddressMini-balances' style={{display:'flex',flexDirection:'row'}}>
+         {withBalance && <div className='ui--Bonded' style={{alignItems:'flex-end'}}><Label label={powerRatio?powerRatio+'x-':''} /></div>}
+         {withBalance && (
+           <BalanceDisplay
+             balance={newBalance}
+             label={labelBalance}
+             params={value}
+           />
+         )}
+
+         {withBonded && (
+           <BondedDisplay
+             bonded={newBonded}
+             label=''
+             params={value}
+           />
+         )}
+         {withLockedVote && (
+           <LockedVote params={value} />
+         )}
+         {summary && (
+           <div className='ui--AddressMini-summary'>{summary}</div>
+         )}
+       </div>
+     </div>
+   );
+
+
+
+
+
+
+
+
+
+
+
+ }else if(!!value && !!intoType && intoType=='ReferendumVote'){
+   console.log("value:"+value);
+   var powerRatio = useCall<string>(api.derive.kp.powerRatio, [value+'']);
+   console.log("powerRatio:"+powerRatio);
+   var newBalance = new BN(0);
+   if(!!powerRatio && !!balance){
+     var a: BigInt = BigInt(0);
+     if(Number(powerRatio)!=1){
+       a = BigInt(balance+'') * BigInt((parseFloat(powerRatio+'').toFixed(4) * 10000  ) + '') ;
+       a = a / BigInt(10000+'');
+     }else{
+       a = BigInt(balance+'') * BigInt(Number(powerRatio) + '') ;
+     }
+     newBalance = new BN(a+'');
+   }
+   console.log("newBalance:"+newBalance);
+
+   return (
+     <div className={classes('ui--AddressMini', isHighlight ? 'isHighlight' : '', isPadded ? 'padded' : '', withShrink ? 'withShrink' : '', className)}>
+       {label && (
+         <label className='ui--AddressMini-label'>{label}</label>
+       )}
+       <div className='ui--AddressMini-icon'>
+         <IdentityIcon value={value as Uint8Array} />
+         {iconInfo && (
+           <div className='ui--AddressMini-icon-info'>
+             {iconInfo}
+           </div>
+         )}
+       </div>
+       <div className='ui--AddressMini-info'>
+         {withAddress && (
+           <div className='ui--AddressMini-address'>
+             {withName
+               ? (
+                 <AccountName
+                   value={value}
+                   withSidebar={withSidebar}
+                 />
+               )
+               : toShortAddress(value)
+             }
+           </div>
+         )}
+         {children}
+       </div>
+       <div className='ui--AddressMini-balances' style={{display:'flex',flexDirection:'row'}}>
+         {withBalance && <div className='ui--Bonded' style={{alignItems:'flex-end'}}><Label label={powerRatio?(parseFloat(powerRatio+'').toFixed(2))+'x-':''} /></div>}
+         {withBalance && (
+           <BalanceDisplay
+             balance={newBalance}
+             label={labelBalance}
+             params={value}
+           />
+         )}
+
+         {withBonded && (
+           <BondedDisplay
+             bonded={newBonded}
+             label=''
+             params={value}
+           />
+         )}
+         {withLockedVote && (
+           <LockedVote params={value} />
+         )}
+         {summary && (
+           <div className='ui--AddressMini-summary'>{summary}</div>
+         )}
+       </div>
+     </div>
+   );
+
+
+
+
+
+
+
+ }else if(!!value && !!intoType && intoType=='Voters'){
+   var powerRatio = useCall<string>(api.derive.kp.powerRatio, [value+'']);
+   return (
+     <div className={classes('ui--AddressMini', isHighlight ? 'isHighlight' : '', isPadded ? 'padded' : '', withShrink ? 'withShrink' : '', className)}>
+       {label && (
+         <label className='ui--AddressMini-label'>{label}</label>
+       )}
+       <div className='ui--AddressMini-icon'>
+         <IdentityIcon value={value as Uint8Array} />
+         {iconInfo && (
+           <div className='ui--AddressMini-icon-info'>
+             {iconInfo}
+           </div>
+         )}
+       </div>
+       <div className='ui--AddressMini-info'>
+         {withAddress && (
+           <div className='ui--AddressMini-address'>
+             {withName
+               ? (
+                 <AccountName
+                   value={value}
+                   withSidebar={withSidebar}
+                 />
+               )
+               : toShortAddress(value)
+             }
+           </div>
+         )}
+         {children}
+       </div>
+       <div className='ui--AddressMini-balances' style={{display:'flex',flexDirection:'row'}}>
+         {withBalance && <div className='ui--Bonded' style={{alignItems:'flex-end'}}><Label label={powerRatio?powerRatio+'x-':''} /></div>}
+         {withBalance && (
+           <BalanceDisplay
+             balance={newBalance}
+             label={labelBalance}
+             params={value}
+           />
+         )}
+
+         {withBonded && (
+           <BondedDisplay
+             bonded={newBonded}
+             label=''
+             params={value}
+           />
+         )}
+         {withLockedVote && (
+           <LockedVote params={value} intoType={intoType} powerRatio={powerRatio}/>
+         )}
+         {summary && (
+           <div className='ui--AddressMini-summary'>{summary}</div>
+         )}
+       </div>
+     </div>
+   );
+
+ }else{
+
+    return (
+      <div className={classes('ui--AddressMini', isHighlight ? 'isHighlight' : '', isPadded ? 'padded' : '', withShrink ? 'withShrink' : '', className)}>
+        {label && (
+          <label className='ui--AddressMini-label'>{label}</label>
         )}
-        {children}
+        <div className='ui--AddressMini-icon'>
+          <IdentityIcon value={value as Uint8Array} />
+          {iconInfo && (
+            <div className='ui--AddressMini-icon-info'>
+              {iconInfo}
+            </div>
+          )}
+        </div>
+        <div className='ui--AddressMini-info'>
+          {withAddress && (
+            <div className='ui--AddressMini-address'>
+              {withName
+                ? (
+                  <AccountName
+                    value={value}
+                    withSidebar={withSidebar}
+                  />
+                )
+                : toShortAddress(value)
+              }
+            </div>
+          )}
+          {children}
+        </div>
+        <div className='ui--AddressMini-balances'>
+          {withBalance && (
+            <BalanceDisplay
+              balance={balance}
+              label={labelBalance}
+              params={value}
+            />
+          )}
+          {withBonded && (
+            <BondedDisplay
+              bonded={bonded}
+              label=''
+              params={value}
+            />
+          )}
+          {withLockedVote && (
+            <LockedVote params={value} />
+          )}
+          {summary && (
+            <div className='ui--AddressMini-summary'>{summary}</div>
+          )}
+        </div>
       </div>
-      <div className='ui--AddressMini-balances'>
-        {withBalance && (
-          <BalanceDisplay
-            balance={balance}
-            label={labelBalance}
-            params={value}
-          />
-        )}
-        {withBonded && (
-          <BondedDisplay
-            bonded={bonded}
-            label=''
-            params={value}
-          />
-        )}
-        {withLockedVote && (
-          <LockedVote params={value} />
-        )}
-        {summary && (
-          <div className='ui--AddressMini-summary'>{summary}</div>
-        )}
-      </div>
-    </div>
-  );
+    );
+
+  }
 }
 
 export default React.memo(styled(AddressMini)`
@@ -179,7 +467,7 @@ export default React.memo(styled(AddressMini)`
     .ui--Bonded,
     .ui--LockedVote {
       font-size: 0.75rem;
-      margin-left: 2.25rem;
+      margin-left: 0.25rem;
       margin-top: -0.5rem;
       text-align: left;
     }

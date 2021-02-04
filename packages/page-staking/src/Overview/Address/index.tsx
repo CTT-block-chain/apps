@@ -8,7 +8,7 @@ import { ValidatorInfo } from '../../types';
 import BN from 'bn.js';
 import React, { useCallback, useMemo } from 'react';
 import { ApiPromise } from '@polkadot/api';
-import { AddressSmall, Icon, LinkExternal } from '@polkadot/react-components';
+import { AddressSmall, Icon, LinkExternal, Label , Expander} from '@polkadot/react-components';
 import { checkVisibility } from '@polkadot/react-components/util';
 import { useApi, useCall } from '@polkadot/react-hooks';
 import { FormatBalance } from '@polkadot/react-query';
@@ -105,7 +105,23 @@ function Address ({ address, className = '', filterName, hasQueries, isElected, 
   if (!isVisible) {
     return null;
   }
-
+ // console.log("stakeOwn:"+stakeOwn);
+ // console.log("address:"+address);
+  var newStakeOwn = new BN(0);
+  var powerRatio = useCall<string>(api.derive.kp.powerRatio, [address]);
+  if(!!stakeOwn && !!address){
+    //console.log("powerRatio:"+powerRatio);
+    if(!!powerRatio){
+      /* var t: Number = Number(stakeOwn)/Number(powerRatio);
+      newStakeOwn = new BN(t+''); */
+      var t: BN = new BN((stakeOwn+'')).idivn(Number(powerRatio));
+      newStakeOwn = t;
+    }
+   // console.log("newStakeOwn:"+newStakeOwn);
+  }
+/* {newStakeOwn?.gtn(0) && (
+              <FormatBalance value={newStakeOwn} />
+            )} */
   return (
     <tr className={className}>
       <td className='badge together'>
@@ -140,10 +156,15 @@ function Address ({ address, className = '', filterName, hasQueries, isElected, 
         )
       }
       {isMain && (
-        <td className='number media--1100'>
-          {stakeOwn?.gtn(0) && (
-            <FormatBalance value={stakeOwn} />
-          )}
+        <td className='number media--1100' style={{display:'flex',flexDirection:'row'}}>
+          <Expander summary={<FormatBalance value={stakeOwn} />}>
+            {newStakeOwn?.gtn(0) && (
+             <div className='ui--Bonded' style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+               <Label label={powerRatio?powerRatio+'x-':''}/>
+               <FormatBalance value={newStakeOwn} />
+             </div>
+            )}
+          </Expander>
         </td>
       )}
       <td className='number'>

@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { DeriveElectionsInfo } from '@polkadot/api-derive/types';
+import { PowerSize } from '@polkadot/types/interfaces';
+import BN from 'bn.js';
 
 import React, { useEffect, useState } from 'react';
-import { Button, InputAddress, InputAddressMulti, Modal, TxButton, VoteValue } from '@polkadot/react-components';
-import { useApi, useToggle } from '@polkadot/react-hooks';
+import { Button, InputAddress, InputAddressMulti, Modal, TxButton, VoteValue , InputBalanceChanges} from '@polkadot/react-components';
+import { useApi, useToggle , useCall} from '@polkadot/react-hooks';
 import { BN_ZERO } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
@@ -27,6 +29,8 @@ function Vote ({ electionsInfo }: Props): React.ReactElement<Props> {
   const [votes, setVotes] = useState<string[]>([]);
   const [voteValue, setVoteValue] = useState(BN_ZERO);
 
+
+
   useEffect((): void => {
     if (electionsInfo) {
       const { candidates, members, runnersUp } = electionsInfo;
@@ -40,6 +44,24 @@ function Vote ({ electionsInfo }: Props): React.ReactElement<Props> {
     }
   }, [electionsInfo]);
 
+  let powerRatio = '';
+  let powerWeighted : BN = new BN(0);
+  powerRatio = useCall<string>(api.derive.kp.powerRatio, [accountId?accountId:'']);
+  console.log("powerRatio:"+powerRatio);
+  console.log("voteValue:"+voteValue);
+
+  if(!!powerRatio && !!voteValue){
+    var a: BigInt;
+    if(Number(powerRatio)!=1){
+      a= BigInt(voteValue+'') * BigInt((parseFloat(powerRatio+'').toFixed(4) * 10000 ) + '') ;
+      a = a / BigInt(10000+'');
+    }else{
+      a = BigInt(voteValue+'') * BigInt(Number(powerRatio) + '') ;
+    }
+    powerWeighted = new BN(a+'');
+  }
+  console.log("powerWeighted:"+powerWeighted);
+
   useEffect((): void => {
     accountId && api.derive.council.votesOf(accountId).then(({ votes }): void => {
       setDefaultVotes(
@@ -48,8 +70,18 @@ function Vote ({ electionsInfo }: Props): React.ReactElement<Props> {
           .filter((accountId): boolean => available.includes(accountId))
       );
     });
+
+
   }, [api, accountId, available]);
 
+  let controllerAccountKp: number = 0;
+  var newAccountId = accountId?accountId:'';
+  var pow = useCall<PowerSize>(api.derive.kp.accountPower, [newAccountId]);
+  if(!!accountId){
+    if (!!pow) {
+      controllerAccountKp = Number(pow+'') / 100.0;
+    }
+  }
   return (
     <>
       <Button
@@ -87,6 +119,25 @@ function Vote ({ electionsInfo }: Props): React.ReactElement<Props> {
               </Modal.Column>
               <Modal.Column>
                 <p>{t<string>('The value associated with this vote. The amount will be locked (not available for transfer) and used in all subsequent elections.')}</p>
+              </Modal.Column>
+            </Modal.Columns>
+            <Modal.Columns>
+              <Modal.Column>
+                <InputBalanceChanges
+                  autoFocus
+                  defaultValue={powerWeighted}
+                  isDisabled={true}
+                  help={t<string>("The calculation power weighted value refers to the final value of the mortgage's KPT after calculation power weighted, which is calculated by multiplying the number of KPT by the calculation power weighted multiple.")}
+                  isError={false}
+                  label={t<string>('KP weighted value')}
+                  labelExtra={
+                    <span className='label'>{t<string>('KPValue')}{controllerAccountKp?controllerAccountKp+' KP':''} </span>
+                  }
+                />
+              </Modal.Column>
+              <Modal.Column>
+                <p>{t<string>('The balance associated with the vote will be locked as per the conviction specified and will not be available for transfer during this period.')}</p>
+                <p>{t<string>('Conviction locks do overlap and is additive, meaning that funds locked during a previous vote can be locked again.')}</p>
               </Modal.Column>
             </Modal.Columns>
             <Modal.Columns>

@@ -44,7 +44,7 @@ function ListNominees ({ nominating, stashId }: Props): React.ReactElement<Props
   }, [eraExposure, nomsActive, stashId]);
 
   const max = api.consts.staking?.maxNominatorRewardedPerValidator?.toString();
-
+  var intoType='ActiveNominations';
   return (
     <>
       {nomsOver && nomsOver.length !== 0 && (
@@ -69,6 +69,7 @@ function ListNominees ({ nominating, stashId }: Props): React.ReactElement<Props
         >
           {nomsActive.map((nomineeId, index): React.ReactNode => (
             <AddressMini
+              intoType={intoType}
               balance={nomBalanceMap[nomineeId]}
               key={index}
               value={nomineeId}

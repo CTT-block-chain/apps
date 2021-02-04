@@ -16,7 +16,6 @@ interface Props {
   isError?: boolean;
   isFull?: boolean;
   isHidden?: boolean;
-  isReadOnly?: boolean;
   isWarning?: boolean;
   label?: React.ReactNode;
   labelExtra?: React.ReactNode;
@@ -29,7 +28,7 @@ interface Props {
 
 function Select ({ valueList = [''], children, className, defaultValue, help, icon, inputClassName,
  isAction = false, isDisabled = false, isEditable = false,
- isError = false, isFull = false, isHidden = false,  isReadOnly = false, isWarning = false, label,
+ isError = false, isFull = false, isHidden = false, isWarning = false, label,
  labelExtra, name,  onChange,  value, withEllipsis, withLabel }: Props): React.ReactElement<Props> {
 
   console.log("valueList:" + JSON.stringify(valueList));
@@ -56,10 +55,8 @@ function Select ({ valueList = [''], children, className, defaultValue, help, ic
     >
       <select
         style={{ width: '100%',height:'70px',padding:'0em 1em',}}
-        className={className}
         onChange={_onChange}
         hidden={isHidden}
-        readOnly={isReadOnly}
         name={name || stateName}
         disabled={isDisabled}
         defaultValue={

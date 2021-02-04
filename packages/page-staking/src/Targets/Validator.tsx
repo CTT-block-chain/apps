@@ -8,7 +8,7 @@ import { ValidatorInfo } from '../types';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { ApiPromise } from '@polkadot/api';
-import { AddressSmall, Badge, Checkbox, Icon } from '@polkadot/react-components';
+import { AddressSmall, Badge, Checkbox, Icon, Label , Expander} from '@polkadot/react-components';
 import { checkVisibility } from '@polkadot/react-components/util';
 import { FormatBalance } from '@polkadot/react-query';
 import { useApi, useCall } from '@polkadot/react-hooks';
@@ -93,10 +93,33 @@ function Validator ({ allSlashes, canSelect, filterName, info, isNominated, isSe
 
   const { accountId, bondOther, bondOwn, bondTotal, commissionPer, isCommission, isElected, isFavorite, key, numNominators, rankOverall, rewardPayout, validatorPayment } = info;
 
-  const testValue1='0.00';
-  const testValue2='0.00';
-  const testValue3='26345.66';
-  const testValue4='26345.66';
+  var powerRatio = useCall<string>(api.derive.kp.powerRatio, [accountId]);
+  var newBondTotal = new BN(0);
+  var newBondOwn = new BN(0);
+  if(!!powerRatio){
+    if(isElected){
+      var a: BN = new BN((bondTotal+'')).idivn(Number(powerRatio));
+      var b: BN = new BN((bondOwn+'')).idivn(Number(powerRatio));
+      newBondTotal = a;
+      newBondOwn = b;
+    }else{
+      var a: BigInt = BigInt(0);
+      var b: BigInt = BigInt(0);
+      if(Number(powerRatio)!=1){
+        a = BigInt(bondTotal+'') * BigInt((parseFloat(powerRatio+'').toFixed(4) * 10000 ) + '') ;
+        a = a / BigInt(10000+'');
+        b = BigInt(bondOwn+'') * BigInt((parseFloat(powerRatio+'').toFixed(4) * 10000  ) + '') ;
+        b = b / BigInt(10000+'');
+      }else{
+        a = BigInt(bondTotal+'') * BigInt(Number(powerRatio) + '') ;
+        b = BigInt(bondOwn+'') * BigInt(Number(powerRatio) + '') ;
+      }
+
+      newBondTotal = new BN(a+'');
+      newBondOwn = new BN(b+'');
+
+    }
+  }
   return (
     <tr>
       <td className='badge together'>
@@ -140,9 +163,7 @@ function Validator ({ allSlashes, canSelect, filterName, info, isNominated, isSe
       <td className='address all'>
         <AddressSmall value={accountId} />
       </td>
-      <td className='number media--1200'>{testValue1}</td>
       <td className='number media--1200'>{numNominators || ''}</td>
-      <td className='number'>{testValue2}</td>
       <td className='number'>
         {
           isCommission
@@ -150,10 +171,27 @@ function Validator ({ allSlashes, canSelect, filterName, info, isNominated, isSe
             : <FormatBalance value={validatorPayment} />
         }
       </td>
-      <td className='number'>{testValue3}</td>
-      <td className='number together'>{!bondTotal.isZero() && <FormatBalance value={bondTotal} />}</td>
-       <td className='number'>{testValue4}</td>
-      <td className='number together'>{!bondOwn.isZero() && <FormatBalance value={bondOwn} />}</td>
+      <td className='number together'>
+        <Expander summary={<FormatBalance value={bondTotal} />}>
+          {newBondTotal && (
+           <div className='ui--Bonded' style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+             <Label label={powerRatio?(parseFloat(powerRatio+'').toFixed(2))+'x-':''}/>
+             <FormatBalance value={newBondTotal} />
+           </div>
+          )}
+        </Expander>
+      </td>
+
+      <td className='number together'>
+        <Expander summary={<FormatBalance value={bondOwn} />}>
+          {newBondOwn&& (
+           <div className='ui--Bonded' style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+             <Label label={powerRatio?(parseFloat(powerRatio+'').toFixed(2))+'x-':''}/>
+             <FormatBalance value={newBondOwn} />
+           </div>
+          )}
+        </Expander>
+      </td>
       <td className='number together media--1600'>{!bondOther.isZero() && <FormatBalance value={bondOther} />}</td>
       <td className='number together'>{!rewardPayout.isZero() && <FormatBalance value={rewardPayout} />}</td>
       <td>

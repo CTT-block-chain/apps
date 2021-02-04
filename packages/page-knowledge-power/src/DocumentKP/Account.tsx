@@ -112,20 +112,22 @@ function Account ({ appId = '', account: { address, meta }, className = '', filt
  const docPowers = useCall<DeriveDocumentPower[]>(
      api.api.derive.kp.accountDocuments, [address, appId]
  );
+ var docTypeList: Array<String>=[];
  if(!!docPowers){
    // console.log("docPowers11:"+JSON.stringify(docPowers));
     if(docPowers.length>0){
       docPowers.forEach((val, idx, array) => {
         const typesMap: string[] = ['参数发布', '鉴别', '品鉴', '选品', '模型创建'];
         const docType = typesMap[val.documentType.toNumber()];
-        docPowers[idx].docType = docType;
+       // docPowers[idx].docType = docType;
+        docTypeList.push(docType);
       });
       //console.log("docPowers:"+JSON.stringify(docPowers));
     }
  }
   return (
     <>
-      {docPowers?.map(({ documentId, appId, docType, power }, index): React.ReactNode => (
+      {docPowers?.map(({ documentId, appId, power }, index): React.ReactNode => (
           <tr className={className}>
            <td className='favorite'>
              <Icon
@@ -245,7 +247,7 @@ function Account ({ appId = '', account: { address, meta }, className = '', filt
             {appId}
            </td>
            <td className='address'>
-            {docType}
+            {docTypeList[index]}
            </td>
            <td className='address'>
             {testValue2}

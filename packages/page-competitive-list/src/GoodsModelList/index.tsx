@@ -129,7 +129,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     </div>
   ), [filterOn, t]);
 
-  var valueList: array=[];
+  var valueList: Array<string>=[];
   //默认显示榜单最新一期：
    let queryLbParamItem: any;
    if( !!queryLbParam && queryLbParam.length > 0 ){

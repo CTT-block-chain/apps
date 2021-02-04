@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { FormatKP } from '@polkadot/react-query';
-import { AccountId } from '@polkadot/types/interfaces';
+//import { AccountId } from '@polkadot/types/interfaces';
 import { DeriveLeaderboardData, DeriveLeaderBoardItem } from '@polkadot/api-derive/types';
 
 import React, { useEffect} from 'react';
@@ -41,7 +41,7 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
   }, []);
 
   let appIdStr: string = '';
-  let cycle: string = '';//榜单期数
+  //let cycle: string = '';//榜单期数
 
   if(!!param2 && param2.length > 0){
 
