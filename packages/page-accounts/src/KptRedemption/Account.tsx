@@ -1,7 +1,7 @@
 // Copyright 2017-2020 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//import { DeriveBalancesAll, DeriveDemocracyLock } from '@polkadot/api-derive/types';
+import { DeriveAccountFinanceRecord } from '@polkadot/api-derive/types';
 import { ActionStatus } from '@polkadot/react-components/Status/types';
 
 
@@ -12,7 +12,7 @@ import { Delegation } from '../types';
 import BN from 'bn.js';
 import React, { useCallback, useEffect } from 'react';
 import styled from 'styled-components';
-import { AddressInfoKPT, AddressMini, AddressSmall, Badge, CryptoType, Forget, Icon, IdentityIcon, Tags } from '@polkadot/react-components';
+import { AddressInfo, AddressInfoKPT, AddressMini, AddressSmall, Badge, CryptoType, Forget, Icon, IdentityIcon, Tags } from '@polkadot/react-components';
 import { useAccountInfo, useApi, useCall, useToggle } from '@polkadot/react-hooks';
 import { Option } from '@polkadot/types';
 import keyring from '@polkadot/ui-keyring';
@@ -35,6 +35,7 @@ import useMultisigApprovals from './useMultisigApprovals';
 import useProxies from './useProxies';
 
 interface Props {
+  param2: Array<string>;
   account: KeyringAddress;
   className?: string;
   delegation?: Delegation;
@@ -52,10 +53,19 @@ const transformRecovery = {
   transform: (opt: Option<RecoveryConfig>) => opt.unwrapOr(null)
 };
 
-function Account ({ account: { address, meta }, className = '', delegation, filter, isFavorite, proxy, setBalance, toggleFavorite }: Props): React.ReactElement<Props> | null {
+function Account ({  param2 = [], account: { address, meta }, className = '', delegation, filter, isFavorite, proxy, setBalance, toggleFavorite }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const api = useApi();
 
+  var newParam2: Array<string|number>=[];
+  if(!!param2 && param2.length > 0){
+    newParam2.push(address+'');
+    newParam2.push(Number(param2[0]));
+    newParam2.push(param2[2]);
+  }
+  console.log("newParam2:"+JSON.stringify(newParam2))
+  const redemptionInfo = useCall<DeriveAccountFinanceRecord>(api.api.derive.kp.accountFinanceRecord, newParam2);
+  console.log("redemptionInfo:"+JSON.stringify(redemptionInfo));
 
   const recoveryInfo = useCall<RecoveryConfig | null>(api.api.query.recovery?.recoverable, [address], transformRecovery);
   const multiInfos = useMultisigApprovals(address);
@@ -314,9 +324,22 @@ function Account ({ account: { address, meta }, className = '', delegation, filt
         </div>
       </td>
       <td className='number'>
+        <AddressInfo
+          address={address}
+          withBalance
+          withBalanceToggle
+          withExtended={false}
+        />
+      </td>
+      <td className='number'>
+        {redemptionInfo?redemptionInfo.actuallyAmount+' KPT':'0 KPT'}
+      </td>
+      
+      <td className='number'>
         {appFinanceAccountExchangeRecords&&
         (
         <AddressInfoKPT
+          key={address}
           kptInfo={appFinanceAccountExchangeRecords}
           address={address}
           withBalance

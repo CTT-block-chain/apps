@@ -29,7 +29,9 @@ function Overview ({ className }: Props): React.ReactElement<Props> {
   const [isPreimageOpen, togglePreimage] = useToggle();
   const [isProposeOpen, togglePropose] = useToggle();
   const referendums = useCall<DeriveReferendumExt[]>(api.derive.democracy.referendums);
-
+  
+  console.log("referendums:"+JSON.stringify(referendums));
+  
   return (
     <div className={className}>
       <Summary referendumCount={referendums?.length} />

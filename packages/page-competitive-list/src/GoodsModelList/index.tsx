@@ -63,6 +63,9 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   }); */
   const isLoading = useLoadingDelay();
 
+  const lbKeys = useCall<DeriveLeaderboardKeys>(api.derive.kp.leaderboardKeys);
+  console.log("lbKeys:" + JSON.stringify(lbKeys));
+
   const headerRef = useRef([
     [t('Experience goods id'), 'start', 2],
     [t('AppId'), 'start'],
@@ -91,12 +94,10 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
     setQueryLbParam(lbKeys);
 
-  }, [api, appId, blockNumber, modelID]);
+  }, [api, appId, blockNumber, modelID, lbKeys]);
 
 
-  const lbKeys = useCall<DeriveLeaderboardKeys>(api.derive.kp.leaderboardKeys);
-
-  console.log("queryLbParam2:" + JSON.stringify(queryLbParam));
+ // console.log("queryLbParam2:" + JSON.stringify(queryLbParam));
 
   const footer = useMemo(() => (
     <tr>
@@ -128,12 +129,24 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     </div>
   ), [filterOn, t]);
 
+  var valueList: Array<string>=[];
   //默认显示榜单最新一期：
    let queryLbParamItem: any;
    if( !!queryLbParam && queryLbParam.length > 0 ){
-	   queryLbParam.forEach((val, idx, array) => {
-       queryLbParamItem = val;
-
+     queryLbParam.forEach((val, idx, array) => {
+        if(blockNumber!=''){
+          if(val[1]+''== blockNumber+''){
+            queryLbParamItem = val;
+          }
+          if(val[0]!='' && val[1]!=''){
+            valueList.push(val[1]+'');
+          }
+        }else{
+          if(val[0]!='' && val[1]!=''){
+            valueList.push(val[1]+'');
+            queryLbParamItem = val;
+          }
+        }
      });
    }
     /*
@@ -157,6 +170,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     <div className={className}>
       {isProxyOpen && (
         <Proxy
+          valueList={valueList}
           onClose={toggleProxy}
           onStatusChange={onStatusChange}
           changeQueryStatus={setQueryStatus}
@@ -182,7 +196,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
         {!isLoading && !queryStatus && queryLbParam&&
          <Account
             param2={queryLbParamItem}
-            intoType='default'
+            intoType={'default'}
             appId={appId}
             blockNumber={blockNumber}
             modelID={modelID}
@@ -190,8 +204,9 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
         }
         {queryStatus && queryLbParam &&queryLbParam.map((pa, index): React.ReactNode => (
          <Account
+            key={index}
             param2={pa}
-            intoType='query'
+            intoType={'query'}
             appId={appId}
             blockNumber={blockNumber}
             modelID={modelID}

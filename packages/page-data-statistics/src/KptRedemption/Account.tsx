@@ -6,8 +6,7 @@ import styled from 'styled-components';
 import BN from 'bn.js';
 import React, {  useEffect} from 'react';
 //import styledfrom 'styled-components';
-import { FormatBalance } from '@polkadot/react-query';
-import { AddressSmall} from '@polkadot/react-components';
+import { AddressSmall, AddressInfoAddress} from '@polkadot/react-components';
 import {  useApi, useCall } from '@polkadot/react-hooks';
 import { useTranslation } from '../translate';
 
@@ -16,13 +15,15 @@ interface Props {
   account: string;
   appId?: string;
   modelId?: string;
+  commodityName?: string;
+  experts?: Array<string>;
+  deposit?: string;
   status?: string;
   className?: string;
   filter?: string;
   createReward: string;
 }
-
-function Account ({ account = '', className = '', appId = '', modelId = '', status = '', createReward = '', filter }: Props): React.ReactElement<Props> | null {
+function Account ({ account = '', className = '', appId = '', modelId = '', commodityName = '', experts = [''], deposit = '', status = '', createReward = '', filter }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   //const { theme } = useContext<ThemeDef>(ThemeContext);
  // const { queueExtrinsic } = useContext(StatusContext); */
@@ -37,7 +38,10 @@ function Account ({ account = '', className = '', appId = '', modelId = '', stat
 
   }, [account, api, bestNumber]);
 
-
+ /* console.log("commodityName:" + commodityName);
+  console.log("experts:" + JSON.stringify(experts));
+  console.log("deposit:" + deposit);
+  console.log("createReward:" + createReward); */
 
  /*  */
   return (
@@ -59,15 +63,27 @@ function Account ({ account = '', className = '', appId = '', modelId = '', stat
         {t<string>(status)}
       </td>
       <td className='address'>
-
+        {commodityName&&
+        (
+        <AddressInfoAddress
+          isformat={false}
+          displayName={commodityName}
+          addressInfo={experts}
+          address={account}
+          withBalance
+          withBalanceToggle
+          withExtended={false}
+        />
+        )
+        }
       </td>
       <td className='number'>
-         {<FormatBalance className='result' value={BigInt(createReward)} />}
-
+        {deposit+' KPT'}
       </td>
       <td className='number'>
-
+         {createReward+' KPT'}
       </td>
+
       <td />
       <td />
       <td />

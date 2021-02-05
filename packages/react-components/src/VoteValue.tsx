@@ -13,6 +13,7 @@ import InputBalance from './InputBalance';
 import { useTranslation } from './translate';
 
 interface Props {
+  newIsDisabled?: boolean;
   accountId?: string | null;
   autoFocus?: boolean;
   isCouncil?: boolean;
@@ -25,7 +26,7 @@ interface ValueState {
   value: BN;
 }
 
-function getValues (selectedId: string | null | undefined, isCouncil: boolean | undefined, allBalances: DeriveBalancesAll, existential: BN): ValueState {
+function getValues ( selectedId: string | null | undefined, isCouncil: boolean | undefined, allBalances: DeriveBalancesAll, existential: BN): ValueState {
   const value = allBalances.lockedBalance;
   const maxValue = allBalances.votingBalance.add(isCouncil ? allBalances.reservedBalance : BN_ZERO);
 
@@ -40,7 +41,7 @@ function getValues (selectedId: string | null | undefined, isCouncil: boolean | 
   };
 }
 
-function VoteValue ({ accountId, autoFocus, isCouncil, onChange }: Props): React.ReactElement<Props> | null {
+function VoteValue ({ newIsDisabled, accountId, autoFocus, isCouncil, onChange }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const { api } = useApi();
   const allBalances = useCall<DeriveBalancesAll>(api.derive.balances.all, [accountId]);
@@ -69,8 +70,10 @@ function VoteValue ({ accountId, autoFocus, isCouncil, onChange }: Props): React
     [accountId]
   );
 
-  const isDisabled = accountId !== selectedId;
-
+  var isDisabled = accountId !== selectedId;
+  if(!!newIsDisabled){
+    isDisabled = newIsDisabled;
+  }
   return (
     <InputBalance
       autoFocus={autoFocus}

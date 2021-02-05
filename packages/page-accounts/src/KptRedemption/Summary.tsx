@@ -33,19 +33,18 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
   var totalSeconds = new BN(300);//当前周期设置为30分钟
 
  const appFinanceCountInfo = useCall<DeriveAppFinanceCountInfo>(api.derive.kp.appFinanceCountInfo);
- console.log("appFinanceCountInfo:" + JSON.stringify(appFinanceCountInfo));
+ //console.log("appFinanceCountInfo:" + JSON.stringify(appFinanceCountInfo));
 
   var currentSeconds = new BN(1);
   var count: number = 0;
-  var totalBurn = BigInt(1);
+  var totalBurn = new BN(0);
   if(!!appFinanceCountInfo){
-     currentSeconds = new BN((300-appFinanceCountInfo.leftSeconds)+'');
-     count = (Number)(appFinanceCountInfo.count+'');
-     totalBurn = BigInt(appFinanceCountInfo.totalBurn+'');
-/*
-     console.log("currentSeconds:" + currentSeconds);
-     console.log("count:" + count);
-     console.log("totalBurn:" + totalBurn); */
+     currentSeconds = new BN((300-Number(appFinanceCountInfo.leftSeconds+''))+'');
+     count = Number(appFinanceCountInfo.count+'');
+   //  totalBurn = new BN(appFinanceCountInfo.totalBurn+'');//未格式化
+    var a: string = appFinanceCountInfo.totalBurn.toString().substring(0,appFinanceCountInfo.totalBurn.toString().length-4)+'';
+  //  console.log("a:"+a);
+    totalBurn = new BN(Number(a)+'');
   }
 
 
@@ -90,7 +89,7 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
             label={t<string>('Redemption period')}
             progress={{
               total: totalSeconds ,
-              value: bestNumber.mod(currentSeconds).addn(1),
+              value: bestNumber.mod(currentSeconds?currentSeconds:new BN(0)).addn(1),
               withTime: true
             }}
           />

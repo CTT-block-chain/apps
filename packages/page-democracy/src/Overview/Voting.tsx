@@ -5,7 +5,7 @@ import { PropIndex, Proposal } from '@polkadot/types/interfaces';
 
 import BN from 'bn.js';
 import React, { useMemo, useState } from 'react';
-import { Button, ConvictionDropdown, Modal, ProposedAction, TxButton, VoteAccount, VoteValue } from '@polkadot/react-components';
+import { Button, ConvictionDropdown, Modal, ProposedAction, TxButton, VoteAccount, VoteValue, VoteValue2 } from '@polkadot/react-components';
 import { useAccounts, useApi, useToggle } from '@polkadot/react-hooks';
 
 import { useTranslation } from '../translate';
@@ -33,7 +33,14 @@ function Voting ({ proposal, referendumId }: Props): React.ReactElement<Props> |
     return null;
   }
 
+  /* useEffect((): void => {
+
+  }, [balance]); */
+
   const isDisabled = isCurrentVote ? !balance : false;
+
+
+
 
   return (
     <>
@@ -62,6 +69,7 @@ function Voting ({ proposal, referendumId }: Props): React.ReactElement<Props> |
                 <p>{t<string>('The vote will be recorded for this account. If another account delegated to this one, the delegated votes will also be counted.')}</p>
               </Modal.Column>
             </Modal.Columns>
+
             <Modal.Columns>
               <Modal.Column>
                 {isCurrentVote && (
@@ -76,6 +84,18 @@ function Voting ({ proposal, referendumId }: Props): React.ReactElement<Props> |
                   label={t<string>('conviction')}
                   onChange={setConviction}
                   value={conviction}
+                />
+              </Modal.Column>
+              <Modal.Column>
+                <p>{t<string>('The balance associated with the vote will be locked as per the conviction specified and will not be available for transfer during this period.')}</p>
+                <p>{t<string>('Conviction locks do overlap and is additive, meaning that funds locked during a previous vote can be locked again.')}</p>
+              </Modal.Column>
+            </Modal.Columns>
+            <Modal.Columns>
+              <Modal.Column>
+                <VoteValue2
+                  balance={balance?balance:new BN(0)}
+                  accountId={accountId}
                 />
               </Modal.Column>
               <Modal.Column>

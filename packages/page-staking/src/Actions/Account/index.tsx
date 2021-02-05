@@ -100,7 +100,7 @@ function Account ({ allSlashes, className = '', info: { controllerId, destinatio
   );
 
   const hasBonded = !!stakingAccount?.stakingLedger && !stakingAccount.stakingLedger.active.isEmpty;
-
+  
   return (
     <tr className={className}>
       <td className='badge together'>
@@ -177,16 +177,14 @@ function Account ({ allSlashes, className = '', info: { controllerId, destinatio
         )}
       </td>
       <td className='address'>
-        <AddressMini value={controllerId} />
+        <AddressMini value={controllerId}/>
       </td>
       <td className='start media--1200'>
         {destination?.isAccount
-          ? <AddressMini value={destination.asAccount} />
+          ? <AddressMini value={destination.asAccount}/>
           : destination?.toString()
         }
       </td>
-      <td/>
-      <td/>
       <td className='number'>
         <StakingBonded stakingInfo={stakingAccount} />
         <StakingUnbonding stakingInfo={stakingAccount} />

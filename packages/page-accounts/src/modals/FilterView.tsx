@@ -5,7 +5,7 @@ import { ActionStatus } from '@polkadot/react-components/Status/types';
 import { ModalProps } from '../types';
 
 import React, { useCallback, useState } from 'react';
-import { Button, Input, Select, Modal } from '@polkadot/react-components';
+import { Button, Select, Modal } from '@polkadot/react-components';
 import { useApi } from '@polkadot/react-hooks';
 //import keyring from '@polkadot/ui-keyring';
 
@@ -13,53 +13,27 @@ import { useTranslation } from '../translate';
 //import useProxies from '../Accounts/useProxies';
 
 interface Props extends ModalProps {
-  valueList?: Array<string>;
+  appIdList?: Array<string>;
+  blockList?: Array<string>;
+  proposalIdList?: Array<string>;
   className?: string;
   onClose: () => void;
   onStatusChange: (status: ActionStatus) => void;
 
   changeQueryStatus: (status: boolean) => void;
-  changeAppId: (appId: Number) => void;
+  changeAppId: (appId: string) => void;
   changeBlockNumber: (blockNumber: string) => void;
-  changeModelID: (modelID: string) => void;
+  changeProposalId: (proposalId: string) => void;
 }
 
-/* interface CreateOptions {
-  genesisHash?: string;
-  name: string;
-  tags?: string[];
-}
 
-function createProxy (address: string, { genesisHash, name, tags = [] }: CreateOptions, success: string): ActionStatus {
-  // we will fill in all the details below
-  const status = { action: 'create' } as ActionStatus;
-
-  try {
-    keyring.addExternal(address, { genesisHash, isProxied: true, name, tags });
-
-    status.account = address;
-    status.status = 'success';
-    status.message = success;
-  } catch (error) {
-    status.status = 'error';
-    status.message = (error as Error).message;
-  }
-
-  return status;
-} */
-
-/* function handleChange(event) {
-  console.log(event.target.value)
-} */
-
-
-function ProxyAdd ({ valueList = [''], className = '', onClose, onStatusChange, changeQueryStatus, changeAppId, changeBlockNumber, changeModelID}: Props): React.ReactElement<Props> {
+function ProxyAdd ({ appIdList = [''],blockList = [''],proposalIdList = [''], className = '', onClose, onStatusChange, changeQueryStatus, changeAppId, changeBlockNumber, changeProposalId}: Props): React.ReactElement<Props> {
   const { api, isDevelopment } = useApi();
   const { t } = useTranslation();
 
- const [{ isAppIdValid, appId }, setAppId] = useState({ isAppIdValid: false, appId: 0 });
+ const [{ isAppIdValid, appId }, setAppId] = useState({ isAppIdValid: false, appId: ''});
  const [{ isBlockNumberValid, blockNumber }, setBlockNumber] = useState({ isBlockNumberValid: false, blockNumber: '' });
- const [{ isModelIDValid, modelID }, setModelID] = useState({ isModelIDValid: false, modelID: '' });
+ const [{ isProposalIdValid, proposalId }, setProposalId] = useState({ isProposalIdValid: false, proposalId: '' });
 
  //const [stashAddress, setStashAddress] = useState<string | null>(null);
  // const { hasOwned } = useProxies(stashAddress);
@@ -69,15 +43,14 @@ function ProxyAdd ({ valueList = [''], className = '', onClose, onStatusChange, 
     (): void => {
       onClose();
     },
-    [api.genesisHash, isDevelopment, name, onClose, onStatusChange, changeQueryStatus, changeAppId, changeBlockNumber, changeModelID, t]
+    [api.genesisHash, isDevelopment, name, onClose, onStatusChange, changeQueryStatus, changeAppId, changeBlockNumber, changeProposalId, t]
   );
 
   const _onChangeAppId = useCallback(
     (appId: string): void=> {
       changeQueryStatus(true);
-      var appId_num = (Number)(appId+'');
-      changeAppId(appId_num);
-      setAppId({ isAppIdValid: true, appId: appId_num })
+      changeAppId(appId);
+      setAppId({ isAppIdValid: true, appId: appId })
     },
     []
   );
@@ -89,33 +62,36 @@ function ProxyAdd ({ valueList = [''], className = '', onClose, onStatusChange, 
     },
     []
   );
-  const _onChangeModelID = useCallback(
-    (modelID: string) : void=> {
+  const _onChangeProposalId = useCallback(
+    (proposalId: string) : void=> {
       changeQueryStatus(true);
-      changeModelID(modelID);
-      setModelID({ isModelIDValid: true, modelID: modelID })
+      changeProposalId(proposalId);
+      setProposalId({ isProposalIdValid: true, proposalId: proposalId })
     },
     []
   );
-console.log("blockNumber:"+blockNumber);
+  console.log("appId:"+appId);
+  console.log("blockNumber:"+blockNumber);
+  console.log("proposalId:"+proposalId);
   return (
     <Modal
       className={className}
-      header={t<string>('List query')}
+      header={t<string>('Redemption query')}
       size='large'
     >
       <Modal.Content>
         <Modal.Columns>
           <Modal.Column>
-            <Input
-              value={appId+''}
+            <Select
+              valueList={appIdList}
               className='full'
               help={t<string>('Enter the Application ID of the token you want to search.')}
-              isError={isAppIdValid}
               label={t<string>('AppId')}
+              isError={isAppIdValid}
               onChange={_onChangeAppId}
-              placeholder={t<string>('AppId')}
-            />
+            >
+
+            </Select>
           </Modal.Column>
           <Modal.Column>
             <p>{t<string>('')}</p>
@@ -124,7 +100,7 @@ console.log("blockNumber:"+blockNumber);
         <Modal.Columns>
           <Modal.Column>
               <Select
-                valueList={valueList}
+                valueList={blockList}
                 className='full'
                 help={t<string>('Enter the Block Number of the token you want to search.')}
                 label={t<string>('Block Number')}
@@ -141,15 +117,16 @@ console.log("blockNumber:"+blockNumber);
         </Modal.Columns>
         <Modal.Columns>
           <Modal.Column>
-            <Input
-              value={modelID}
+            <Select
+              valueList={proposalIdList}
               className='full'
-              help={t<string>('Enter the Model ID of the token you want to search.')}
-              isError={isModelIDValid}
-              label={t<string>('Model ID')}
-              onChange={_onChangeModelID}
-              placeholder={t<string>('Model ID')}
-            />
+              help={t<string>('Enter the Proposal ID of the token you want to search.')}
+              label={t<string>('Proposal ID')}
+              isError={isProposalIdValid}
+              onChange={_onChangeProposalId}
+            >
+
+            </Select>
           </Modal.Column>
           <Modal.Column>
             <p>{t<string>('')}</p>

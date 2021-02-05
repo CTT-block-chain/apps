@@ -108,20 +108,19 @@ function Account ({ appId = '',account: { address, meta }, className = '', filte
 
   const testValue2='正常';
 
-  //console.log("appId:"+appId);
+  console.log("appId:"+appId);
   let commodityPowers = useCall<DeriveCommodityPower[]>(
       api.api.derive.kp.accountCommodities, [address, appId]
   );
-  /*console.log("commodityPowers:"+commodityPowers);
+  console.log("commodityPowers:"+commodityPowers);
   if(!!commodityPowers){
     console.log("commodityPowers:"+JSON.stringify(commodityPowers));
-  }*/
-  if(!!commodityPowers){
-    if(commodityPowers.length>0){
-      commodityPowers.forEach((val, idx, array) => {
-        let power: string = '';
-        power=(parseFloat(val.power+'')/100.00).toFixed(4).toString();
-        return (
+  }
+
+  return (
+    <>
+       {commodityPowers?.map(({ commodityId, appId, power }, index): React.ReactNode => (
+
           <tr className={className}>
             <td className='favorite'>
               <Icon
@@ -131,7 +130,7 @@ function Account ({ appId = '',account: { address, meta }, className = '', filte
               />
             </td>
             <td className='address'>
-              {val.commodityId+''}
+              {commodityId+''}
             </td>
 
             <td className='address'>
@@ -247,7 +246,7 @@ function Account ({ appId = '',account: { address, meta }, className = '', filte
             <td className='number'>
             {power && (
               <FormatKP
-                value={power}
+                value={(parseFloat(power+'')/100.00).toFixed(4).toString()}
                 withSi
               />
             )}
@@ -257,29 +256,9 @@ function Account ({ appId = '',account: { address, meta }, className = '', filte
             <td />
             <td />
           </tr>
-
-        );
-
-      });
-    }else{
-      return (
-       <tr className={className}>
-
-       </tr>
-      );
-    }
-  }else{
-    return (
-     <tr className={className}>
-
-      </tr>
-    );
-  }
-
-  return (
-     <tr className={className}>
-
-      </tr>
+          ))
+        }
+    </>
   );
 }
 

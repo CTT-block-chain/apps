@@ -15,13 +15,14 @@ import { useTranslation } from '../translate';
 const ACMODEL_ACCOUNT = stringToU8a('modlpy/acmod'.padEnd(32, '\0'));//模型
 
 interface Props {
+  modelNum?: number;
   referendumCount?: number;
 }
 
-function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
+function Summary ({ modelNum = 0,referendumCount }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
-  const activeProposals = useCall<unknown[]>(api.derive.democracy.proposals);
+  //const activeProposals = useCall<unknown[]>(api.derive.democracy.proposals);
  // const bestNumber = useCall<BN>(api.derive.chain.bestNumber);
   //const publicPropCount = useCall<BN>(api.query.democracy.publicPropCount);
   //const referendumTotal = useCall<BN>(api.query.democracy.referendumCount);
@@ -52,7 +53,7 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
     <SummaryBox>
       <section>
         <CardSummary label={t<string>('Total number of models')}>
-          {formatNumber(activeProposals?.length)}
+          {formatNumber(modelNum)}
         </CardSummary>
       </section>
       <section>

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //import { DeriveAccountPowers} from '@polkadot/api-derive/types';
+import { DeriveAppFinanceRecord, DeriveAppInfos} from '@polkadot/api-derive/types';
 
 import { ActionStatus } from '@polkadot/react-components/Status/types';
 import { AccountId, ProxyDefinition, ProxyType, Voting } from '@polkadot/types/interfaces';
@@ -11,9 +12,9 @@ import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 //import { isLedger } from '@polkadot/react-api';
-import { useApi, useAccounts, useCall, useFavorites, useLoadingDelay } from '@polkadot/react-hooks';
+import { useApi, useAccounts, useCall, useFavorites, useLoadingDelay , useToggle} from '@polkadot/react-hooks';
 //import { FormatBalance } from '@polkadot/react-query';
-import { Input, Table } from '@polkadot/react-components';
+import { Button, Input, Table } from '@polkadot/react-components';
 import { BN_ZERO } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
@@ -21,6 +22,7 @@ import { useTranslation } from '../translate';
 import Account from './Account';
 import { sortAccounts } from '../util';
 import Summary from './Summary';
+import FilterView from '../modals/FilterView';
 
 interface Balances {
   accounts: Record<string, BN>;
@@ -42,6 +44,7 @@ const STORE_FAVS = 'accounts:favorites';
 function Overview ({ className = '', onStatusChange }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
+  const [isFilterViewOpen, toggleFilterView] = useToggle();
   const { allAccounts, hasAccounts } = useAccounts();
   const [favorites, toggleFavorite] = useFavorites(STORE_FAVS);
   const [{ balanceTotal }, setBalances] = useState<Balances>({ accounts: {} });
@@ -59,16 +62,72 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   });
   const isLoading = useLoadingDelay();
 
-  const headerRef = useRef([
-    [t('accounts'), 'start', 3],
-    [t('parent'), 'address media--1400'],
-    [t('type')],
-    [t('tags'), 'start'],
-    [t('Redemption number'), 'expand'],
-    [t(''), 'media--1400'],
-    [t(''), 'start'],
-    [t(''), 'start'],
-  ]);
+  const [queryStatus, setQueryStatus] = useState<boolean>(false);
+  const [appId, setAppId] = useState<string>('');
+  const [blockNumber, setBlockNumber] = useState<string>('');
+  const [proposalId, setProposalId] = useState<string>('');
+
+  const appFinanceRecords = useCall<DeriveAppFinanceRecord[]>(api.derive.kp.appFinanceRecords);
+  //console.log("appFinanceRecords:"+JSON.stringify(appFinanceRecords));
+  var appIdList: Array<string>=[];
+  var blockList: Array<string>=[];
+  var proposalIdList: Array<string>=[];
+
+  const apps = useCall<DeriveAppInfos>(api.derive.members.apps);
+
+  if (!!apps) {
+    apps.forEach(app => {
+      appIdList.push(app.appId+'');
+    });
+  }
+  console.log("appIdList:"+JSON.stringify(appIdList));
+  //默认显示最新一期：
+   var queryLbParamItem: Array<string>=[];
+   if( !!appFinanceRecords && appFinanceRecords.length > 0 ){
+     appFinanceRecords.forEach((val, idx, array) => {
+        var flag = true;
+        if(appId!=''){
+          if((val.appId+'')!= (appId+'')){
+            flag = false;
+          }
+        }
+        if(blockNumber!=''){
+          if((val.block+'')!= (blockNumber+'')){
+            flag = false;
+          }
+        }
+        if(proposalId!=''){
+          if((val.proposalId+'')!= (proposalId+'')){
+            flag = false;
+          }
+        }
+        if(flag){
+          queryLbParamItem.push(val.appId+'');
+          queryLbParamItem.push(val.block+'');
+          queryLbParamItem.push(val.proposalId+'');
+        }
+        blockList.push(val.block+'');
+        proposalIdList.push(val.proposalId+'');
+     });
+   }
+   console.log("queryLbParamItem:"+JSON.stringify(queryLbParamItem));
+   if(appId==''&& appIdList.length>0){
+     setAppId(appIdList[0]);
+   }
+   if(blockNumber==''&& blockList.length>0){
+     setBlockNumber(blockList[0]);
+   }
+   if(proposalId==''&& proposalIdList.length>0){
+     setProposalId(proposalIdList[0]);
+   }
+
+  useEffect(() => {
+
+    
+    console.log(appId + ', ' + blockNumber + ', ' + proposalId);
+    setFilter(appId + ', ' + blockNumber + ', ' + proposalId);
+
+  }, [api, appId, blockNumber, proposalId, appFinanceRecords]);
 
   useEffect((): void => {
     const sortedAccounts = sortAccounts(allAccounts, favorites);
@@ -103,6 +162,18 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
       })
     );
   }, [api, delegations, sortedAccounts]);
+
+ const headerRef = useRef([
+    [t('accounts'), 'start', 3],
+    [t('parent'), 'address media--1400'],
+    [t('type')],
+    [t('tags'), 'start'],
+    [t('balance'), 'media--1400'],
+    [t('Permitted redemption number'), 'start'],
+    [t('Redemption number'), 'expand'],
+    [t(''), 'media--1400'],
+
+  ]);
 
   const _setBalance = useCallback(
     (account: string, balance: BN) =>
@@ -148,6 +219,27 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
       <div className={className} >
        <Summary/>
       </div>
+      <div className={className} >
+        {isFilterViewOpen && (
+          <FilterView
+            appIdList={appIdList}
+            blockList={blockList}
+            proposalIdList={proposalIdList}
+            onClose={toggleFilterView}
+            onStatusChange={onStatusChange}
+            changeQueryStatus={setQueryStatus}
+            changeAppId={setAppId}
+            changeBlockNumber={setBlockNumber}
+            changeProposalId={setProposalId}
+          />
+        )}
+       <Button
+         icon='plus'
+         isDisabled={false}
+         label={t<string>('Redemption query')}
+         onClick={toggleFilterView}
+       />
+      </div>
       <Table
         empty={(!hasAccounts || (!isLoading && sortedAccountsWithDelegation)) && t<string>("You don't have any accounts. Some features are currently hidden and will only become available once you have accounts.")}
         filter={filter}
@@ -156,6 +248,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
       >
         {!isLoading && sortedAccountsWithDelegation?.map(({ account, delegation, isFavorite }, index): React.ReactNode => (
           <Account
+            param2={queryLbParamItem}
             account={account}
             delegation={delegation}
             filter={filterOn}

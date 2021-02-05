@@ -6,7 +6,7 @@ import { SortedTargets } from '../types';
 
 import BN from 'bn.js';
 import React, { useMemo, useRef } from 'react';
-import { Button, Table, Icon } from '@polkadot/react-components';
+import { Button, Table } from '@polkadot/react-components';
 import { useAvailableSlashes } from '@polkadot/react-hooks';
 import { FormatBalance } from '@polkadot/react-query';
 import { BN_ZERO } from '@polkadot/util';
@@ -59,8 +59,6 @@ function Actions ({ className = '', isInElection, ownStashes, targets }: Props):
     [t('stashes'), 'start', 2],
     [t('controller'), 'address'],
     [t('rewards'), 'start media--1200'],
-    [<span style={{color: 'blue'}}>{t('Weighted value')}</span>, 'address'],
-    [<Icon icon='backward' color = 'blue'/>, 'address'],
     [t('bonded'), 'number'],
     [undefined, undefined, 2]
   ]);

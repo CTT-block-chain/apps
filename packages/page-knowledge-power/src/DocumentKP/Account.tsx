@@ -112,20 +112,23 @@ function Account ({ appId = '', account: { address, meta }, className = '', filt
  const docPowers = useCall<DeriveDocumentPower[]>(
      api.api.derive.kp.accountDocuments, [address, appId]
  );
+ var docTypeList: Array<String>=[];
  if(!!docPowers){
-   //console.log("docPowers:"+JSON.stringify(docPowers));
- }
- if(!!docPowers){
+   // console.log("docPowers11:"+JSON.stringify(docPowers));
     if(docPowers.length>0){
       docPowers.forEach((val, idx, array) => {
-       const typesMap: string[] = ['参数发布', '鉴别', '品鉴', '选品', '模型创建'];
-       const docType = typesMap[val.documentType.toNumber()];
-
-       let power: string = '';
-       power=(parseFloat(val.power+'')/100.00).toFixed(4).toString()
-
-       return (
-         <tr className={className}>
+        const typesMap: string[] = ['参数发布', '鉴别', '品鉴', '选品', '模型创建'];
+        const docType = typesMap[val.documentType.toNumber()];
+       // docPowers[idx].docType = docType;
+        docTypeList.push(docType);
+      });
+      //console.log("docPowers:"+JSON.stringify(docPowers));
+    }
+ }
+  return (
+    <>
+      {docPowers?.map(({ documentId, appId, power }, index): React.ReactNode => (
+          <tr className={className}>
            <td className='favorite'>
              <Icon
                color={isFavorite ? 'orange' : 'gray'}
@@ -134,7 +137,7 @@ function Account ({ appId = '', account: { address, meta }, className = '', filt
              />
            </td>
            <td className='address'>
-             {val.documentId+''}
+             {documentId+''}
            </td>
 
            <td className='address'>
@@ -244,7 +247,7 @@ function Account ({ appId = '', account: { address, meta }, className = '', filt
             {appId}
            </td>
            <td className='address'>
-            {docType}
+            {docTypeList[index]}
            </td>
            <td className='address'>
             {testValue2}
@@ -253,7 +256,7 @@ function Account ({ appId = '', account: { address, meta }, className = '', filt
            <td className='number'>
            {power && (
              <FormatKP
-               value={power}
+               value={(parseFloat(power+'')/100.00).toFixed(4).toString()}
                withSi
              />
            )}
@@ -262,30 +265,10 @@ function Account ({ appId = '', account: { address, meta }, className = '', filt
            <td />
            <td />
            <td />
-         </tr>
-
-       );
-
-     });
-    }else{
-      return (
-       <tr className={className}>
-
-       </tr>
-      );
-    }
-
- }else{
-   return (
-    <tr className={className}>
-
-    </tr>
-   );
- }
-  return (
-     <tr className={className}>
-
-      </tr>
+          </tr>
+        ))
+      }
+    </>
   );
 }
 

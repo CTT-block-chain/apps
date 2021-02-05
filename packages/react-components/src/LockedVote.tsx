@@ -9,6 +9,8 @@ import { LockedVote } from '@polkadot/react-query';
 import { classes } from './util';
 
 export interface Props {
+  powerRatio?: string;
+  intoType?: string;
   className?: string;
   label?: React.ReactNode;
   params?: AccountId | AccountIndex | Address | string | Uint8Array | null;
@@ -16,7 +18,7 @@ export interface Props {
 }
 
 function LockedVoteDisplay (props: Props): React.ReactElement<Props> | null {
-  const { className = '', label, params } = props;
+  const {powerRatio = '', intoType = '', className = '', label, params  } = props;
 
   if (!params) {
     return null;
@@ -24,6 +26,8 @@ function LockedVoteDisplay (props: Props): React.ReactElement<Props> | null {
 
   return (
     <LockedVote
+      powerRatio={powerRatio}
+      intoType={intoType}
       className={classes('ui--LockedVote', className)}
       label={label}
       params={params}

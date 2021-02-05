@@ -30,6 +30,8 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   const { api } = useApi();
   const [filterOn, setFilter] = useState<string>('');
 
+
+
   const isLoading = useLoadingDelay();
 
   const headerRef = useRef([
@@ -37,10 +39,10 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     [t('accounts'), 'start'],
     [t('AppId'), 'start'],
     [t('state'), 'start'],
-    [t(''), 'start'],
-    [t('Total balances of models'), 'expand'],
+    [t('Member of model group'), 'address'],
+    [t('earnest money'), 'address'],
+    [t('Total profit of models'), 'expand'],
     [t(''), 'expand'],
-    [],
     [],
     [],
   ]);
@@ -51,7 +53,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
   useEffect(() => {
 
-  }, []);
+  }, [api]);
 
 
   const footer = useMemo(() => (
@@ -82,13 +84,17 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   ), [filterOn, t]);
 
   const allModels = useCall<DeriveModelData[]>(api.derive.kp.allModels);
-
+  console.log("allModels:"+JSON.stringify(allModels));
 
   return (
     <div className={className}>
-      <div className={className} >
-       <Summary/>
-      </div>
+
+       <div className={className} >
+        <Summary
+          modelNum={allModels?.length}
+        />
+       </div>
+
       <Table
         empty={(!isLoading && allModels) && t<string>("")}
         filter={filter}
@@ -100,6 +106,9 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
             account={models.account}
             appId={models.appId}
             modelId={models.modelId}
+            commodityName={models.commodityName}
+            experts={models.experts}
+            deposit={models.deposit}
             status={models.status}
             createReward={models.createReward?models.createReward:''}
             key={index}
@@ -107,6 +116,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
         ))}
       </Table>
     </div>
+
   );
 }
 

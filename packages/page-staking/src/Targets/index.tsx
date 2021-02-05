@@ -123,13 +123,9 @@ function Targets ({ className = '', isInElection, ownStashes, targets: { avgStak
   );
 
   const labelsRef = useRef({
-    WeightedValue1: t<string>('Weighted value'),
     rankBondOther: t<string>('other stake'),
-    WeightedValue2: t<string>('Weighted value'),
     rankBondOwn: t<string>('own stake'),
-    WeightedValue3: t<string>('Weighted value'),
     rankBondTotal: t<string>('total stake'),
-    WeightedValue4: t<string>('Weighted value'),
     rankComm: t<string>('comm.'),
     rankNumNominators: t<string>('nominators'),
     rankOverall: t<string>('profit/era')
@@ -137,15 +133,15 @@ function Targets ({ className = '', isInElection, ownStashes, targets: { avgStak
 
   const header = useMemo(() => [
     [t('validators'), 'start', 3],
-    ...(['WeightedValue1','rankNumNominators', 'WeightedValue2','rankComm', 'WeightedValue3','rankBondTotal', 'WeightedValue4','rankBondOwn', 'rankBondOther', 'rankOverall'] as (keyof typeof labelsRef.current)[])
+    ...(['rankNumNominators', 'rankComm', 'rankBondTotal', 'rankBondOwn', 'rankBondOther', 'rankOverall'] as (keyof typeof labelsRef.current)[])
      .map((header) => [
        <>
-       {(header=='rankNumNominators'||header=='rankComm'||header=='rankBondTotal'||header=='rankBondOwn'||header=='rankBondOther'||header=='rankOverall')&&
-       <><span> {labelsRef.current[header]}</span>
-       <Icon icon={sortBy === header ? (sortFromMax ? 'chevron-down' : 'chevron-up') : 'minus'} /></>}
-       {(header=='WeightedValue1'||header=='WeightedValue2'||header=='WeightedValue3'||header=='WeightedValue4')&&
-       <><span  style={{color: 'blue'}}> {labelsRef.current[header]}</span>
-       <Icon icon='backward' color = 'blue'/></>}
+       {
+         <>
+         <span> {labelsRef.current[header]}</span>
+         <Icon icon={sortBy === header ? (sortFromMax ? 'chevron-down' : 'chevron-up') : 'minus'} />
+         </>
+         }
        </>,
         `${sorted ? `isClickable ${sortBy === header ? 'highlight--border' : ''} number` : 'number'} ${CLASSES[header] || ''}`,
         1,

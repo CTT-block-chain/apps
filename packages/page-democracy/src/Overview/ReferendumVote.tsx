@@ -18,8 +18,10 @@ function voteLabel ({ conviction }: Vote, isDelegating: boolean): string {
 }
 
 function ReferendumVote ({ vote: { accountId, balance, isDelegating, vote } }: Props): React.ReactElement<Props> {
+  var intoType = 'ReferendumVote';
   return (
     <AddressMini
+      intoType={intoType}
       balance={balance}
       labelBalance={voteLabel(vote, isDelegating)}
       value={accountId}

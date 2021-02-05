@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { FormatKP } from '@polkadot/react-query';
-import { AccountId } from '@polkadot/types/interfaces';
+//import { AccountId } from '@polkadot/types/interfaces';
 import { DeriveLeaderboardData, DeriveLeaderBoardItem } from '@polkadot/api-derive/types';
 
 import React, { useEffect} from 'react';
@@ -41,7 +41,7 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
   }, []);
 
   let appIdStr: string = '';
-  let cycle: string = '';//榜单期数
+  //let cycle: string = '';//榜单期数
 
   if(!!param2 && param2.length > 0){
 
@@ -53,10 +53,16 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
 
   const lb = useCall<DeriveLeaderboardData>(api.api.derive.kp.leaderboardRecord, [param2]);
 
+  console.log("lb:"+JSON.stringify(lb));
+
   let flag = false;
-  if( intoType == 'query' && param2[0] == appId && param2[1] == blockNumber && param2[2] == modelID){
-    flag = true;
-  }else if( intoType == 'default' ){
+  if( appId!='' || blockNumber!='' || modelID!=''){
+    if( intoType == 'query' && param2[0] == appId && param2[1] == blockNumber && param2[2] == modelID){
+      flag = true;
+    }else if( intoType == 'default' ){
+      flag = true;
+    }
+  }else{
     flag = true;
   }
   if(flag){
@@ -78,53 +84,50 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
 
     const status = '正常';
 
-    if( !!board ){
-      board.forEach((val, idx, array) => {
-        let power: String = '';
-        power = (parseFloat(val.power+'') / 100.00 ).toFixed(4).toString()
+    return (
+      <>
+        {board?.map(({ commodityId, owner, power }, index): React.ReactNode => (
 
-        let address: AccountId = val.owner
-        return (
-          <tr className={className}>
-            <td className='favorite'>
+            <tr className={className}>
+              <td className='favorite'>
 
-            </td>
-            <td className='address'>
-              { val.commodityId }
-            </td>
-            <td className='address'>
-              {  appIdStr }
-            </td>
-            <td className='address'>
-              <AddressSmall value={address} />
-            </td>
-            <td className='address'>
-             {cycle}
-            </td>
-            <td className='address'>
-             {(idx+1)+''}
-            </td>
-            <td className='address'>
-             {status}
-            </td>
-            <td className='number'>
-             <FormatKP
-               value={power}
-               withSi
-             />
-            </td>
-            <td />
-            <td />
-            <td />
-          </tr>
-        );
+              </td>
+              <td className='address'>
+                { commodityId }
+              </td>
+              <td className='address'>
+                {  appIdStr }
+              </td>
+              <td className='address'>
 
-      });
-    }else{
-      return (
-        <></>
-      );
-    }
+              </td>
+              <td className='address'>
+                <AddressSmall value={owner} />
+              </td>
+              <td className='address'>
+               { param2[1]+'' }
+              </td>
+              <td className='address'>
+               {(index+1)+''}
+              </td>
+              <td className='address'>
+               {status}
+              </td>
+              <td className='number'>
+               <FormatKP
+                 value={(parseFloat(power+'') / 100.00 ).toFixed(4).toString()}
+                 withSi
+               />
+              </td>
+              <td />
+              <td />
+              <td />
+            </tr>
+
+        ))
+        }
+      </>
+    );
   }else{
     return (
       <></>

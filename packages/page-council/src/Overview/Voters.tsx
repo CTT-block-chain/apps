@@ -17,13 +17,14 @@ function Voters ({ balance, voters }: Props): React.ReactElement<Props> {
   if (!balance || !voters || !voters.length) {
     return <><td className='all number' /><td className='number' /></>;
   }
-
+  var intoType = 'Voters';
   return (
     <>
       <td className='all expand'>
         <Expander summary={<FormatBalance value={balance} />} >
           {voters.map((who): React.ReactNode =>
             <AddressMini
+              intoType={intoType}
               key={who.toString()}
               value={who}
               withLockedVote

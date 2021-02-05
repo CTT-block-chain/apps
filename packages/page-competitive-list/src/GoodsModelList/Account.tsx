@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { FormatKP } from '@polkadot/react-query';
-import { AccountId } from '@polkadot/types/interfaces';
+//import { AccountId } from '@polkadot/types/interfaces';
 import { DeriveLeaderboardData, DeriveLeaderBoardItem } from '@polkadot/api-derive/types';
 
 
@@ -40,95 +40,102 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
   }, []);
 
   let appIdStr: string = '';
-  let cycle: string = '';//榜单期数
+  //let cycle: string = '';//榜单期数
 
-  if(!!param2 && param2.length > 0 ){
+  let queryFlag = true;
+  var newParam2 : Array<number|string>=[];
+  newParam2.push(param2[0]);
+  newParam2.push(param2[1]);
+  newParam2.push(param2[2]);
 
-    if( !!param2[2] ){
+  if(!!newParam2 && newParam2.length > 0 ){
 
-      console.log("param2[0]:"+param2[0]);//[1000,123190,""]   appId, blockNumber, modelId
+    if( !!newParam2[2] ){
 
-      appIdStr = param2[0].toString();
+      console.log("newParam2[0]:"+newParam2[0]);//[1000,123190,""]   appId, blockNumber, modelId
 
-      cycle = param2[1].toString();
+      appIdStr = newParam2[0].toString();
+
+      //cycle = newParam2[1].toString();
 
     }else{//清空数据，modelId为空的不查,只查模型榜单
-
-      param2[0]='';
-      param2[1]='';
-      param2[2]='';
+      queryFlag = false;
+      newParam2[0]='';
+      newParam2[1]='';
+      newParam2[2]='';
     }
 
   }
+  if(queryFlag){//modelId不为空的榜单
+    const lb = useCall<DeriveLeaderboardData>(api.api.derive.kp.leaderboardRecord, [newParam2]);
+    console.log("lb:"+JSON.stringify(lb));
 
-
-  const lb = useCall<DeriveLeaderboardData>(api.api.derive.kp.leaderboardRecord, [param2]);
-
-  let flag = false;
-  if( intoType == 'query' && param2[0] == appId && param2[1] == blockNumber && param2[2] == modelID){
-    flag = true;
-  }else if( intoType == 'default' ){
-    flag = true;
-  }
-  if(flag){
-    var board: Array<DeriveLeaderBoardItem>=[];
-    // var accounts: Array=[];
-    if( !!lb ){
-      /* if( !!lb.accounts && lb.accounts.length > 0){
-        accounts = lb.accounts;
-      } */
-      if(!!lb.board && lb.board.length > 0){
-        board = lb.board;
+    let flag = false;
+    if( intoType == 'query' && newParam2[0] == appId && newParam2[1] == blockNumber && newParam2[2] == modelID){
+      flag = true;
+    }else if( intoType == 'default' ){
+      flag = true;
+    }
+    if(flag){
+      var board: Array<DeriveLeaderBoardItem>=[];
+      // var accounts: Array=[];
+      if( !!lb ){
+        /* if( !!lb.accounts && lb.accounts.length > 0){
+          accounts = lb.accounts;
+        } */
+        if(!!lb.board && lb.board.length > 0){
+          board = lb.board;
+        }
       }
-    }
-    console.log("board:"+JSON.stringify(board));
-   // console.log("accounts:"+JSON.stringify(accounts));
+      console.log("board:"+JSON.stringify(board));
+     // console.log("accounts:"+JSON.stringify(accounts));
 
 
 
-    const status = '正常';
+      const status = '正常';
+      return (
+        <>
+          {board?.map(({ commodityId, owner, power }, index): React.ReactNode => (
 
-   if( !!board ){
-     board.forEach((val, idx, array) => {
-       let power: String = '';
-        power = (parseFloat(val.power+'') / 100.00 ).toFixed(4).toString()
+              <tr className={className}>
+                <td className='favorite'>
 
-        let address: AccountId = val.owner
-        return (
-          <tr className={className}>
-            <td className='favorite'>
+                </td>
+                <td className='address'>
+                  { commodityId }
+                </td>
+                <td className='address'>
+                  {  appIdStr }
+                </td>
+                <td className='address'>
 
-            </td>
-            <td className='address'>
-              { val.commodityId }
-            </td>
-            <td className='address'>
-              {  appIdStr }
-            </td>
-            <td className='address'>
-              <AddressSmall value={address} />
-            </td>
-            <td className='address'>
-             {cycle}
-            </td>
-            <td className='address'>
-             {(idx+1)+''}
-            </td>
-            <td className='address'>
-             {status}
-            </td>
-            <td className='number'>
-             <FormatKP
-               value={power}
-               withSi
-             />
-            </td>
-            <td />
-            <td />
-            <td />
-          </tr>
-        );
-     });
+                </td>
+                <td className='address'>
+                  <AddressSmall value={owner} />
+                </td>
+                <td className='address'>
+                  { newParam2[1]+'' }
+                </td>
+                <td className='address'>
+                 {(index+1)+''}
+                </td>
+                <td className='address'>
+                 {status}
+                </td>
+                <td className='number'>
+                 <FormatKP
+                   value={(parseFloat(power+'') / 100.00 ).toFixed(4).toString()}
+                   withSi
+                 />
+                </td>
+                <td />
+                <td />
+                <td />
+              </tr>
+           ))
+          }
+        </>
+      );
     }else{
       return (
         <></>
@@ -139,6 +146,8 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
       <></>
     );
   }
+
+
 }
 
 export default React.memo(styled(Account)`
