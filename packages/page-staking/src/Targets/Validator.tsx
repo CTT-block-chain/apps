@@ -98,17 +98,15 @@ function Validator ({ allSlashes, canSelect, filterName, info, isNominated, isSe
   var newBondOwn = new BN(0);
   if(!!powerRatio){
     if(isElected){
-      var a: BN = new BN((bondTotal+'')).idivn(Number(powerRatio));
-      var b: BN = new BN((bondOwn+'')).idivn(Number(powerRatio));
-      newBondTotal = a;
-      newBondOwn = b;
+      newBondTotal = new BN((bondTotal+'')).idivn(Number(powerRatio));
+      newBondOwn = new BN((bondOwn+'')).idivn(Number(powerRatio));
     }else{
-      var a: BigInt = BigInt(0);
-      var b: BigInt = BigInt(0);
+      var a = BigInt(0);
+      var b = BigInt(0);
       if(Number(powerRatio)!=1){
-        a = BigInt(bondTotal+'') * BigInt((parseFloat(powerRatio+'').toFixed(4) * 10000 ) + '') ;
+        a = BigInt(bondTotal+'') * BigInt((Number(parseFloat(powerRatio+'').toFixed(4)+'') * 10000 ) + '') ;
         a = a / BigInt(10000+'');
-        b = BigInt(bondOwn+'') * BigInt((parseFloat(powerRatio+'').toFixed(4) * 10000  ) + '') ;
+        b = BigInt(bondOwn+'') * BigInt((Number(parseFloat(powerRatio+'').toFixed(4)+'') * 10000 ) + '') ;
         b = b / BigInt(10000+'');
       }else{
         a = BigInt(bondTotal+'') * BigInt(Number(powerRatio) + '') ;

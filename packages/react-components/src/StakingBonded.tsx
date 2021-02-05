@@ -22,13 +22,14 @@ function StakingBonded ({ className = '', stakingInfo }: Props): React.ReactElem
     return null;
   }
   //console.log("stakingInfo:",JSON.stringify(stakingInfo));
-  var powerRatio = useCall<string>(api.derive.kp.powerRatio, [stakingInfo.accountId]);
+  var newAccount = stakingInfo?stakingInfo.accountId:'';
+  var powerRatio = useCall<string>(api.derive.kp.powerRatio, [newAccount]);
   var newBalance = new BN(0);
   
   if(!!powerRatio && !!balance){
-    var a: BigInt = BigInt(0);
+    var a = BigInt(0);
     if(Number(powerRatio)!=1){
-      a = BigInt(balance+'') * BigInt((parseFloat(powerRatio+'').toFixed(4) * 10000  ) + '') ;
+      a = BigInt(balance+'') * BigInt((Number(parseFloat(powerRatio+'').toFixed(4)+'') * 10000 ) + '') ;
       a = a / BigInt(10000+'');
     }else{
       a = BigInt(balance+'') * BigInt(Number(powerRatio) + '') ;

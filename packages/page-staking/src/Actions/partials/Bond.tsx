@@ -43,9 +43,9 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
   //console.log("startBalance:"+startBalance);
   let powerWeighted : BN = new BN(0);
   if(!!powerRatio && !!startBalance){
-    var a: BigInt;
+    var a = BigInt(0);
     if(Number(powerRatio)!=1){
-      a= BigInt(startBalance+'') * BigInt((parseFloat(powerRatio+'').toFixed(2) * 10000 ) + '') ;
+      a= BigInt(startBalance+'') * BigInt((Number(parseFloat(powerRatio+'').toFixed(4)+'') * 10000 ) + '') ;
       a = a / BigInt(10000+'');
     }else{
       a = BigInt(startBalance+'') * BigInt(Number(powerRatio) + '') ;
@@ -56,10 +56,14 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
   //console.log("powerWeighted:"+powerWeighted);
 
   if(!!powerRatio && !!amount){
-    var a: BigInt = BigInt(amount+'') * BigInt((parseFloat(powerRatio+'').toFixed(2) * 10000 ) + '') ;
-    a = a / BigInt(10000+'');
+    var a = BigInt(0);
+    if(Number(powerRatio)!=1){
+      a= BigInt(amount+'') * BigInt((Number(parseFloat(powerRatio+'').toFixed(4)+'') * 10000 ) + '') ;
+      a = a / BigInt(10000+'');
+    }else{
+      a = BigInt(amount+'') * BigInt(Number(powerRatio) + '') ;
+    }
     powerWeighted = new BN(a+'');
-   //powerWeighted = new BN(amount+'').muln(Number(powerRatio));
    console.log("powerWeighted2:"+powerWeighted);
   }
 

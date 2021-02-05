@@ -53,8 +53,7 @@ function AddressMini ({ intoType = '', balance, bonded, children, className = ''
     console.log("powerRatio:"+powerRatio);
     var newBonded = new BN(0);
     if(!!powerRatio){
-      var a: BN = new BN((bonded+'')).idivn(Number(powerRatio));
-      newBonded = a;
+      newBonded = new BN((bonded+'')).idivn(Number(powerRatio));
     }
     console.log("newBonded:"+newBonded);
 
@@ -119,8 +118,7 @@ function AddressMini ({ intoType = '', balance, bonded, children, className = ''
    console.log("powerRatio:"+powerRatio);
    var newBalance = new BN(0);
    if(!!powerRatio && !!balance){
-     var a: BN = new BN((balance+'')).idivn(Number(powerRatio));
-     newBalance = a;
+     newBalance = new BN((balance+'')).idivn(Number(powerRatio));
    }
    console.log("newBalance:"+newBalance);
 
@@ -165,7 +163,7 @@ function AddressMini ({ intoType = '', balance, bonded, children, className = ''
 
          {withBonded && (
            <BondedDisplay
-             bonded={newBonded}
+             bonded={bonded}
              label=''
              params={value}
            />
@@ -181,24 +179,15 @@ function AddressMini ({ intoType = '', balance, bonded, children, className = ''
    );
 
 
-
-
-
-
-
-
-
-
-
  }else if(!!value && !!intoType && intoType=='ReferendumVote'){
    console.log("value:"+value);
    var powerRatio = useCall<string>(api.derive.kp.powerRatio, [value+'']);
    console.log("powerRatio:"+powerRatio);
    var newBalance = new BN(0);
    if(!!powerRatio && !!balance){
-     var a: BigInt = BigInt(0);
+     var a = BigInt(0);
      if(Number(powerRatio)!=1){
-       a = BigInt(balance+'') * BigInt((parseFloat(powerRatio+'').toFixed(4) * 10000  ) + '') ;
+       a = BigInt(balance+'') * BigInt((Number(parseFloat(powerRatio+'').toFixed(4)+'') * 10000 ) + '') ;
        a = a / BigInt(10000+'');
      }else{
        a = BigInt(balance+'') * BigInt(Number(powerRatio) + '') ;
@@ -248,7 +237,7 @@ function AddressMini ({ intoType = '', balance, bonded, children, className = ''
 
          {withBonded && (
            <BondedDisplay
-             bonded={newBonded}
+             bonded={bonded}
              label=''
              params={value}
            />
@@ -304,7 +293,7 @@ function AddressMini ({ intoType = '', balance, bonded, children, className = ''
          {withBalance && <div className='ui--Bonded' style={{alignItems:'flex-end'}}><Label label={powerRatio?powerRatio+'x-':''} /></div>}
          {withBalance && (
            <BalanceDisplay
-             balance={newBalance}
+             balance={balance}
              label={labelBalance}
              params={value}
            />
@@ -312,7 +301,7 @@ function AddressMini ({ intoType = '', balance, bonded, children, className = ''
 
          {withBonded && (
            <BondedDisplay
-             bonded={newBonded}
+             bonded={bonded}
              label=''
              params={value}
            />

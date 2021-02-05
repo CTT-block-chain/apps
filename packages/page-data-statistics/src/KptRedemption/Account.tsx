@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import BN from 'bn.js';
 import React, {  useEffect} from 'react';
 //import styledfrom 'styled-components';
-import { FormatBalance } from '@polkadot/react-query';
 import { AddressSmall, AddressInfoAddress} from '@polkadot/react-components';
 import {  useApi, useCall } from '@polkadot/react-hooks';
 import { useTranslation } from '../translate';

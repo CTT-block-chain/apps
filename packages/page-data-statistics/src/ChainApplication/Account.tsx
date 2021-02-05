@@ -7,21 +7,21 @@ import styled from 'styled-components';
 import React, {  useEffect } from 'react';
 //import styled from 'styled-components';
 //import { FormatBalance } from '@polkadot/react-query';
-import { AddressSmall} from '@polkadot/react-components';
+import { AddressInfoAddress} from '@polkadot/react-components';
 //import { useApi} from '@polkadot/react-hooks';
 //import { useTranslation } from '../translate';
 
 interface Props {
-  adminAccount?: string;
+  adminAccount?: Array<string>;
   appId?: Number;
   appName?: string;
-  identityAccount?: string;
+  identityAccount?: Array<string>;
   returnRate?: Number;
   stake?: Number;
   className?: string;
 }
 
-function Account ({ adminAccount = '', appId = 0, appName = '' , identityAccount = '', returnRate = 0, stake=0, className = ''}: Props): React.ReactElement<Props> | null {
+function Account ({ adminAccount = [''], appId = 0, appName = '' , identityAccount = [''], returnRate = 0, stake=0, className = ''}: Props): React.ReactElement<Props> | null {
   //const { t } = useTranslation();
   //const { theme } = useContext<ThemeDef>(ThemeContext);
   //const { queueExtrinsic } = useContext(StatusContext);
@@ -35,6 +35,7 @@ function Account ({ adminAccount = '', appId = 0, appName = '' , identityAccount
 
   }, []);
 
+  var displayName: string = '帐户数';
    return (
      <tr className={className}>
        <td className='favorite'>
@@ -43,12 +44,7 @@ function Account ({ adminAccount = '', appId = 0, appName = '' , identityAccount
        <td className='address'>
          {appName}
        </td>
-       <td className='address'>
-         <AddressSmall value={adminAccount} />
-       </td>
-       <td className='address'>
-         <AddressSmall value={identityAccount} />
-       </td>
+
        <td className='address'>
          {
            appId+''
@@ -56,6 +52,29 @@ function Account ({ adminAccount = '', appId = 0, appName = '' , identityAccount
            这里必须变成字符串，不然会报错
            */
          }
+       </td>
+       <td className='address'>
+         {returnRate+'%'}
+       </td>
+       <td className='address'>
+          <AddressInfoAddress
+            isformat={false}
+            displayName={displayName}
+            addressInfo={adminAccount}
+            withBalance
+            withBalanceToggle
+            withExtended={false}
+          />
+       </td>
+       <td className='address'>
+          <AddressInfoAddress
+            isformat={false}
+            displayName={displayName}
+            addressInfo={identityAccount}
+            withBalance
+            withBalanceToggle
+            withExtended={false}
+          />
        </td>
        <td className='number'>
          {stake+''}

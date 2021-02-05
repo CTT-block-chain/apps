@@ -3,10 +3,8 @@
 import { PowerSize } from '@polkadot/types/interfaces';
 
 import BN from 'bn.js';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useEffect } from 'react';
 import { useApi, useCall } from '@polkadot/react-hooks';
-import { BalanceVoting } from '@polkadot/react-query';
-import { BN_ZERO } from '@polkadot/util';
 
 import InputBalanceChanges from './InputBalanceChanges';
 import { useTranslation } from './translate';
@@ -14,10 +12,10 @@ import { useTranslation } from './translate';
 interface Props {
   newIsDisabled?: boolean;
   accountId?: string | null;
-  balance?: string;
+  balance?: BN;
 }
 
-function VoteValue ({ newIsDisabled, accountId , balance=''}: Props): React.ReactElement<Props> | null {
+function VoteValue ({ newIsDisabled, accountId , balance}: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const { api } = useApi();
 
@@ -35,9 +33,9 @@ function VoteValue ({ newIsDisabled, accountId , balance=''}: Props): React.Reac
    let powerRatio = useCall<string>(api.derive.kp.powerRatio, [accountId]);
    let powerWeighted : BN = new BN(0);
    if(!!powerRatio && !!balance){
-     var a: BigInt;
+     var a = BigInt(0);
      if(Number(powerRatio)!=1){
-       a= BigInt(balance+'') * BigInt((parseFloat(powerRatio+'').toFixed(4) * 10000 ) + '') ;
+       a= BigInt(balance+'') * BigInt((Number(parseFloat(powerRatio+'').toFixed(4)+'') * 10000 ) + '') ;
        a = a / BigInt(10000+'');
      }else{
        a = BigInt(balance+'') * BigInt(Number(powerRatio) + '') ;

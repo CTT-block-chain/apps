@@ -70,7 +70,7 @@ function VoteValue ({ newIsDisabled, accountId, autoFocus, isCouncil, onChange }
     [accountId]
   );
 
-  const isDisabled = accountId !== selectedId;
+  var isDisabled = accountId !== selectedId;
   if(!!newIsDisabled){
     isDisabled = newIsDisabled;
   }

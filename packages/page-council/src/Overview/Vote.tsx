@@ -44,23 +44,23 @@ function Vote ({ electionsInfo }: Props): React.ReactElement<Props> {
     }
   }, [electionsInfo]);
 
-  let powerRatio = '';
   let powerWeighted : BN = new BN(0);
-  powerRatio = useCall<string>(api.derive.kp.powerRatio, [accountId?accountId:'']);
-  console.log("powerRatio:"+powerRatio);
-  console.log("voteValue:"+voteValue);
+  var newAccountId = accountId?accountId:'';
+  let powerRatio = useCall<string>(api.derive.kp.powerRatio, [newAccountId]);
+  //console.log("powerRatio:"+powerRatio);
+  //console.log("voteValue:"+voteValue);
 
   if(!!powerRatio && !!voteValue){
-    var a: BigInt;
+    var a = BigInt(0);
     if(Number(powerRatio)!=1){
-      a= BigInt(voteValue+'') * BigInt((parseFloat(powerRatio+'').toFixed(4) * 10000 ) + '') ;
+      a= BigInt(voteValue+'') * BigInt((Number(parseFloat(powerRatio+'').toFixed(4)+'') * 10000 ) + '') ;
       a = a / BigInt(10000+'');
     }else{
       a = BigInt(voteValue+'') * BigInt(Number(powerRatio) + '') ;
     }
     powerWeighted = new BN(a+'');
   }
-  console.log("powerWeighted:"+powerWeighted);
+  //console.log("powerWeighted:"+powerWeighted);
 
   useEffect((): void => {
     accountId && api.derive.council.votesOf(accountId).then(({ votes }): void => {

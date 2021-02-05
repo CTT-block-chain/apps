@@ -4,9 +4,9 @@
 import { PropIndex, Proposal } from '@polkadot/types/interfaces';
 
 import BN from 'bn.js';
-import React, { useMemo, useState , useEffect} from 'react';
-import { Button, ConvictionDropdown, Modal, ProposedAction, TxButton, VoteAccount, VoteValue, VoteValue2 , InputBalanceChanges} from '@polkadot/react-components';
-import { useAccounts, useApi, useToggle , useCall} from '@polkadot/react-hooks';
+import React, { useMemo, useState } from 'react';
+import { Button, ConvictionDropdown, Modal, ProposedAction, TxButton, VoteAccount, VoteValue, VoteValue2 } from '@polkadot/react-components';
+import { useAccounts, useApi, useToggle } from '@polkadot/react-hooks';
 
 import { useTranslation } from '../translate';
 
@@ -94,7 +94,7 @@ function Voting ({ proposal, referendumId }: Props): React.ReactElement<Props> |
             <Modal.Columns>
               <Modal.Column>
                 <VoteValue2
-                  balance={balance?balance:''}
+                  balance={balance?balance:new BN(0)}
                   accountId={accountId}
                 />
               </Modal.Column>

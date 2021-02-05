@@ -51,7 +51,7 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
   var total2 = new BN(600);//当前周期设置为1小时
   const modelCycleRewardStage = useCall<DeriveModelCycleRewardTime>(api.derive.kp.modelCycleRewardStage);
 
-  console.log("modelCycleRewardStage:" + JSON.stringify(modelCycleRewardStage));
+  //console.log("modelCycleRewardStage:" + JSON.stringify(modelCycleRewardStage));
 
   var total = new BN(1);
   let stage: Number = 0;
@@ -64,8 +64,8 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
        total = new BN((100-modelCycleRewardStage.leftSeconds)+'');
        total2 = new BN(100);
      }
-     console.log("total:" + total);
-     console.log("stage:" + stage);
+    // console.log("total:" + total);
+    // console.log("stage:" + stage);
   }
 
 

@@ -77,7 +77,7 @@ function renderBalances (props: Props, allAccounts: string[], bestNumber: BlockN
     return (
       <>
         <Expander  summary={<Label label={displayName+'('+addressInfo.length+')'} />}>
-          <div className='body column'>
+          <div className='body column' style={{display:'flex',flexDirection:'column',alignContent:'center'}}>
             {allItems}
           </div>
         </Expander>
