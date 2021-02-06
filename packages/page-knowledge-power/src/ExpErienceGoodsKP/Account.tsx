@@ -106,7 +106,7 @@ function Account ({ appId = '',account: { address, meta }, className = '', filte
     [address, t]
   );
 
-  const testValue2='正常';
+ // const testValue2='正常';
 
   console.log("appId:"+appId);
   let commodityPowers = useCall<DeriveCommodityPower[]>(
@@ -119,7 +119,7 @@ function Account ({ appId = '',account: { address, meta }, className = '', filte
 
   return (
     <>
-       {commodityPowers?.map(({ commodityId, appId, power }, index): React.ReactNode => (
+       {commodityPowers?.map(({ commodityId, appId, isSlashed, power }, index): React.ReactNode => (
 
           <tr className={className}>
             <td className='favorite'>
@@ -240,7 +240,7 @@ function Account ({ appId = '',account: { address, meta }, className = '', filte
              {appId}
             </td>
             <td className='address'>
-             {testValue2}
+             {!isSlashed?'正常':'罚没'}
             </td>
             <td className='number'/>
             <td className='number'>

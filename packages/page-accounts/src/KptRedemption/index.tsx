@@ -123,7 +123,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
   useEffect(() => {
 
-    
+
     console.log(appId + ', ' + blockNumber + ', ' + proposalId);
     setFilter(appId + ', ' + blockNumber + ', ' + proposalId);
 
@@ -168,10 +168,10 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     [t('parent'), 'address media--1400'],
     [t('type')],
     [t('tags'), 'start'],
-    [t('balance'), 'media--1400'],
+    [t('balance'), 'number'],
     [t('Permitted redemption number'), 'start'],
-    [t('Redemption number'), 'expand'],
-    [t(''), 'media--1400'],
+    [t('Redemption number'), 'number'],
+    [t(''), 'expand'],
 
   ]);
 

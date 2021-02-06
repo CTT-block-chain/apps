@@ -101,6 +101,10 @@ function Validator ({ allSlashes, canSelect, filterName, info, isNominated, isSe
       newBondTotal = new BN((bondTotal+'')).idivn(Number(powerRatio));
       newBondOwn = new BN((bondOwn+'')).idivn(Number(powerRatio));
     }else{
+      newBondTotal = new BN((bondTotal+''));
+      newBondOwn = new BN((bondOwn+''));
+    }
+    /* else{
       var a = BigInt(0);
       var b = BigInt(0);
       if(Number(powerRatio)!=1){
@@ -116,7 +120,7 @@ function Validator ({ allSlashes, canSelect, filterName, info, isNominated, isSe
       newBondTotal = new BN(a+'');
       newBondOwn = new BN(b+'');
 
-    }
+    } */
   }
   return (
     <tr>

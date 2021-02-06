@@ -30,9 +30,10 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
   const headerRef = useRef([
     [t('AppName'), 'start', 2],
+    [t('AppId'), 'start'],
+    [t('Rebate'), 'start'],
     [t('Manage accounts'), 'start'],
     [t('Manage key'), 'start'],
-    [t('AppId'), 'start'],
     [t('Mortgage kpt'), 'expand'],
     [t(''), 'expand'],
     [t(''), 'expand'],

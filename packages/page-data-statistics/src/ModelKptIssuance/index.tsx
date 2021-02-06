@@ -1,7 +1,8 @@
 // Copyright 2017-2020 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { DeriveModelRewardRecords} from '@polkadot/api-derive/types';
+//DeriveModelRewardRecords
+import { DeriveModelReward} from '@polkadot/api-derive/types';
 
 import { ActionStatus } from '@polkadot/react-components/Status/types';
 import { } from '@polkadot/types/interfaces';
@@ -12,7 +13,7 @@ import React, {  useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useApi,  useCall, useLoadingDelay } from '@polkadot/react-hooks';
 
-import { Input, Table } from '@polkadot/react-components';
+import { Select, Table } from '@polkadot/react-components';
 //import { BN_ZERO } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
@@ -48,13 +49,23 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
  /// const [{ sortedAccounts, sortedAddresses }, setSorted] = useState<Sorted>({ sortedAccounts: [], sortedAddresses: [] });
  // const delegations = useCall<Voting[]>(api.query.democracy?.votingOf?.multi, [sortedAddresses]);
 
+  const [year, setYear] = useState<string>('');
+
+  /* const allRewardsRecord = useCall<DeriveModelRewardRecords[]>(api.derive.kp.allRewardsRecord);
+  console.log("allRewardsRecord:" + JSON.stringify(allRewardsRecord));
+ */
+  const modelCycleRewardIndex = useCall<number[]>(api.derive.kp.modelCycleRewardIndex);
+  console.log("modelCycleRewardIndex:" + JSON.stringify(modelCycleRewardIndex));
+
+  var yearList: Array<string>=[];
+
   const isLoading = useLoadingDelay();
 
   const headerRef = useRef([
     [t('Model id'), 'start', 2],
     [t('accounts'), 'start'],
     [t('AppId'), 'start'],
-    [t(''), 'start'],
+    [t('Number of periods'), 'start'],
     [t('Number of additional issuances (KPT)'), 'expand'],
     [t(''), 'expand'],
     [],
@@ -120,39 +131,53 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
   const filter = useMemo(() => (
     <div className='filter--tags'>
-      <Input
-        autoFocus
-        isFull
+      <Select
+        valueList={yearList}
+        className=''
+        help={t<string>('')}
         label={t<string>('filter by number of additional issues')}
-        onChange={setFilter}
-        value={filterOn}
-      />
+        isError={false}
+        onChange={setYear}
+      >
+
+      </Select>
     </div>
-  ), [filterOn, t]);
+  ), [filterOn, t, modelCycleRewardIndex]);
 
-  const allRewardsRecord = useCall<DeriveModelRewardRecords[]>(api.derive.kp.allRewardsRecord);
 
-  console.log("allRewardsRecord:" + JSON.stringify(allRewardsRecord));
-
+  if(!!modelCycleRewardIndex){
+    modelCycleRewardIndex.forEach((val, idx, array) => {
+      yearList.push(val+'');
+    });
+    if(year==''&& yearList.length>0){
+      setYear(yearList[0]);
+    }
+  }
+  console.log("yearList2:" + JSON.stringify(yearList));
+  var param = year?Number(year):Number(0);
+  const modelCycleReward = useCall<DeriveModelReward[]>(api.derive.kp.modelCycleReward,[param]);
+  console.log("modelCycleReward:" + JSON.stringify(modelCycleReward));
 
   return (
     <div className={className}>
       <div className={className} >
        <Summary/>
       </div>
+
       <Table
-        empty={(!isLoading && allRewardsRecord) && t<string>("")}
+        empty={(!isLoading && modelCycleReward) && t<string>("")}
         filter={filter}
         footer={footer}
         header={headerRef.current}
       >
-        {!isLoading && allRewardsRecord?.map((models, index): React.ReactNode => (
+        {!isLoading && modelCycleReward?.map((models, index): React.ReactNode => (
           <Account
+            year={year}
             account={models.account}
             appId={models.appId}
             modelId={models.modelId}
             //status={models.status}
-            rewards={models.rewards?models.rewards:[]}
+            rewards={models.reward?models.reward:''}
             key={index}
           />
         ))}

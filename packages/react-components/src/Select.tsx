@@ -24,12 +24,13 @@ interface Props {
   value?: string | null;
   withLabel?: boolean;
   withEllipsis?: boolean;
+  isSmall?: boolean;
 }
 
 function Select ({ valueList = [''], children, className, defaultValue, help, icon, inputClassName,
  isAction = false, isDisabled = false, isEditable = false,
  isError = false, isFull = false, isHidden = false, isWarning = false, label,
- labelExtra, name,  onChange,  value, withEllipsis, withLabel }: Props): React.ReactElement<Props> {
+ labelExtra, name,  onChange,  value, withEllipsis, withLabel, isSmall = false }: Props): React.ReactElement<Props> {
 
   console.log("valueList:" + JSON.stringify(valueList));
   //valueList.push("123456");
@@ -42,7 +43,6 @@ function Select ({ valueList = [''], children, className, defaultValue, help, ic
       onChange && onChange((target as HTMLSelectElement).value),
     [onChange]
   );
-
   return (
     <Labelled
       className={className}
@@ -52,9 +52,10 @@ function Select ({ valueList = [''], children, className, defaultValue, help, ic
       labelExtra={labelExtra}
       withEllipsis={withEllipsis}
       withLabel={withLabel}
+      isSmall={isSmall}
     >
       <select
-        style={{ width: '100%',height:'70px',padding:'0em 1em',}}
+        style={{ width: '100%',height:'60px',padding:'0em 0em',borderWidth:'0em'}}
         onChange={_onChange}
         hidden={isHidden}
         name={name || stateName}
