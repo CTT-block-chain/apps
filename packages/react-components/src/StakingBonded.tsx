@@ -40,11 +40,11 @@ function StakingBonded ({ className = '', stakingInfo }: Props): React.ReactElem
 
 
   return (
-    <Expander summary={<FormatBalance value={balance} />}>
-      {newBalance && (
+    <Expander summary={<FormatBalance value={newBalance} />}>
+      {balance && (
        <div className='ui--Bonded' style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
          <Label label={powerRatio?(parseFloat(powerRatio+'').toFixed(2))+'x-':''}/>
-         <FormatBalance className={className} value={newBalance} />
+         <FormatBalance className={className} value={balance} />
        </div>
       )}
     </Expander>

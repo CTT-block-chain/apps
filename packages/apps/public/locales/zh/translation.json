@@ -423,6 +423,7 @@
   "Number of positive trends":"正趋势次数",
   "Number of awards":"奖励数（kpt）",
   "Number of block issues":"区块发行量",
+  "Number of periods":"期数",
   "Number of redemption periods":"赎回期数",
   "Of the beneficiary amount, at least {{bondPercentage}} would need to be put up as collateral. The maximum of this and the minimum bond will be used to secure the proposal, refundable if it passes.": "在受益人金额中，至少{{bondPercentage}} 需要作为抵押品。最高保证金和最低保证金将用于担保该提案，如果通过，可退还。",
   "Once bonded, it wil need to be unlocked/withdrawn and will be locked for at least the bonding duration.": "一旦绑定，则需要解锁/取出，并至少在绑定时间内锁定",

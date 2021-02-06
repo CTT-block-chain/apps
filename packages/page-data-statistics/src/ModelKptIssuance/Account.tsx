@@ -12,18 +12,20 @@ import {  useApi, useCall } from '@polkadot/react-hooks';
 
 
 interface Props {
+  year: string;
   account: string;
   appId?: string;
   modelId?: string;
   status?: string;
   className?: string;
   filter?: string;
-  rewards: string[];
+  rewards: string;
+  //rewards: string[];
 }
 
 
 
-function Account ({ account = '', className = '', appId = '', modelId = '', status = '', rewards = [], filter }: Props): React.ReactElement<Props> | null {
+function Account ({ year = '', account = '', className = '', appId = '', modelId = '', status = '', rewards = '', filter }: Props): React.ReactElement<Props> | null {
   //const { t } = useTranslation();
   //const { theme } = useContext<ThemeDef>(ThemeContext);
   //const { queueExtrinsic } = useContext(StatusContext);
@@ -41,7 +43,20 @@ function Account ({ account = '', className = '', appId = '', modelId = '', stat
  //测试数据
  //var rewards2=['10000000000'];
 
- /*  */
+ /* 
+  {rewards&&
+  (
+  <AddressInfoKPT
+    isformat={false}
+    kptInfo={rewards}
+    address={account}
+    withBalance
+    withBalanceToggle
+    withExtended={false}
+  />
+  )
+  }
+  */
   return (
     <tr className={className}>
       <td className='favorite'>
@@ -59,21 +74,10 @@ function Account ({ account = '', className = '', appId = '', modelId = '', stat
       </td>
 
       <td className='address'>
-
+        {year}
       </td>
       <td className='number'>
-        {rewards&&
-        (
-        <AddressInfoKPT
-          isformat={false}
-          kptInfo={rewards}
-          address={account}
-          withBalance
-          withBalanceToggle
-          withExtended={false}
-        />
-        )
-        }
+        {rewards}
       </td>
       <td className='number'>
 
