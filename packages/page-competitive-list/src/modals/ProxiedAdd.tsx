@@ -13,6 +13,7 @@ import { useTranslation } from '../translate';
 //import useProxies from '../Accounts/useProxies';
 
 interface Props extends ModalProps {
+  intoType?: string;
   valueList?: Array<string>;
   className?: string;
   onClose: () => void;
@@ -53,7 +54,7 @@ function createProxy (address: string, { genesisHash, name, tags = [] }: CreateO
 } */
 
 
-function ProxyAdd ({ valueList = [''], className = '', onClose, onStatusChange, changeQueryStatus, changeAppId, changeBlockNumber, changeModelID}: Props): React.ReactElement<Props> {
+function ProxyAdd ({ intoType = '', valueList = [''], className = '', onClose, onStatusChange, changeQueryStatus, changeAppId, changeBlockNumber, changeModelID}: Props): React.ReactElement<Props> {
   const { api, isDevelopment } = useApi();
   const { t } = useTranslation();
 
@@ -121,6 +122,7 @@ console.log("blockNumber:"+blockNumber);
             <p>{t<string>('')}</p>
           </Modal.Column>
         </Modal.Columns>
+        {(intoType != 'WholeNetworklist')&&(
         <Modal.Columns>
           <Modal.Column>
               <Select
@@ -139,6 +141,7 @@ console.log("blockNumber:"+blockNumber);
             <p>{t<string>('')}</p>
           </Modal.Column>
         </Modal.Columns>
+        )}
         <Modal.Columns>
           <Modal.Column>
             <Input

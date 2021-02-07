@@ -45,7 +45,7 @@ function LockedVote ({ powerRatio = '', intoType = '',children, className = '', 
     return (
       <Expander summary={<FormatBalance value={newStake} />} >
         <div className='ui--Bonded' style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-          <Label label={powerRatio?(parseFloat(powerRatio+'').toFixed(2) )+'x-':''}/>
+          <Label label={powerRatio?(parseFloat(powerRatio+'').toFixed(2) )+'x-':''} className={className}/>
           <FormatBalance
             className={className}
             label={label}

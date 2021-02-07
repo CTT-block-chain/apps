@@ -73,6 +73,7 @@ function ListNominees ({ nominating, stashId }: Props): React.ReactElement<Props
               balance={nomBalanceMap[nomineeId]}
               key={index}
               value={nomineeId}
+              value2={stashId}
               withBalance={!!eraExposure}
             />
           ))}

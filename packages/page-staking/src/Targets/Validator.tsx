@@ -174,25 +174,23 @@ function Validator ({ allSlashes, canSelect, filterName, info, isNominated, isSe
         }
       </td>
       <td className='number together'>
-        <Expander summary={<FormatBalance value={bondTotal} />}>
-          {newBondTotal && (
-           <div className='ui--Bonded' style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-             <Label label={powerRatio?(parseFloat(powerRatio+'').toFixed(2))+'x-':''}/>
-             <FormatBalance value={newBondTotal} />
-           </div>
-          )}
-        </Expander>
+        <FormatBalance value={newBondTotal} />
       </td>
 
       <td className='number together'>
-        <Expander summary={<FormatBalance value={bondOwn} />}>
-          {newBondOwn&& (
-           <div className='ui--Bonded' style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-             <Label label={powerRatio?(parseFloat(powerRatio+'').toFixed(2))+'x-':''}/>
-             <FormatBalance value={newBondOwn} />
-           </div>
-          )}
-        </Expander>
+        {isElected &&
+          <Expander summary={<FormatBalance value={bondOwn} />}>
+            {newBondOwn&& (
+             <div className='ui--Bonded' style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+               <Label label={powerRatio?(parseFloat(powerRatio+'').toFixed(2))+'x-':''}/>
+               <FormatBalance value={newBondOwn} />
+             </div>
+            )}
+          </Expander>
+        }
+        {!isElected &&
+          <FormatBalance value={newBondOwn} />
+        }
       </td>
       <td className='number together media--1600'>{!bondOther.isZero() && <FormatBalance value={bondOther} />}</td>
       <td className='number together'>{!rewardPayout.isZero() && <FormatBalance value={rewardPayout} />}</td>

@@ -174,11 +174,12 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   console.log("appId:"+appId);
   console.log("blockNumber:"+blockNumber);
   console.log("modelID:"+modelID); */
-
+  var intoType = 'WholeNetworklist';
   return (
     <div className={className}>
       {isProxyOpen && (
         <Proxy
+          intoType={intoType}
           valueList={valueList}
           onClose={toggleProxy}
           onStatusChange={onStatusChange}

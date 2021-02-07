@@ -55,7 +55,7 @@ function Select ({ valueList = [''], children, className, defaultValue, help, ic
       isSmall={isSmall}
     >
       <select
-        style={{ width: '100%',height:'60px',padding:'0em 0em',borderWidth:'0em'}}
+        style={{ width: '100%',height:'60px',padding:'0em 0em'}}
         onChange={_onChange}
         hidden={isHidden}
         name={name || stateName}

@@ -55,16 +55,18 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
 
   console.log("lb:"+JSON.stringify(lb));
 
-  let flag = false;
-  if( appId!='' || blockNumber!='' || modelID!=''){
-    if( intoType == 'query' && param2[0] == appId && param2[1] == blockNumber && param2[2] == modelID){
-      flag = true;
-    }else if( intoType == 'default' ){
-      flag = true;
+  let flag = true;
+  if( appId!='' ){
+    if(param2[0] != appId){
+      flag = false;
     }
-  }else{
-    flag = true;
   }
+  if( modelID!='' ){
+    if(param2[2] != modelID){
+      flag = false;
+    }
+  }
+ 
   if(flag){
     var board: Array<DeriveLeaderBoardItem>=[];
    // var accounts: Array=[];
