@@ -32,6 +32,7 @@ interface Props {
   summary?: React.ReactNode;
   type?: KeyringItemType;
   value?: AccountId | AccountIndex | Address | string | null | Uint8Array;
+  value2?: AccountId | AccountIndex | Address | string | null | Uint8Array;
   withAddress?: boolean;
   withBalance?: boolean;
   withBonded?: boolean;
@@ -41,7 +42,7 @@ interface Props {
   withShrink?: boolean;
 }
 
-function AddressMini ({ intoType = '', balance, bonded, children, className = '', iconInfo, isHighlight, isPadded = true, label, labelBalance, summary, value, withAddress = true, withBalance = false, withBonded = false, withLockedVote = false, withName = true, withShrink = false, withSidebar = true }: Props): React.ReactElement<Props> | null {
+function AddressMini ({ intoType = '', balance, bonded, children, className = '', iconInfo, isHighlight, isPadded = true, label, labelBalance, summary, value, value2, withAddress = true, withBalance = false, withBonded = false, withLockedVote = false, withName = true, withShrink = false, withSidebar = true }: Props): React.ReactElement<Props> | null {
   const { api } = useApi();
   if (!value) {
     return null;
@@ -94,7 +95,7 @@ function AddressMini ({ intoType = '', balance, bonded, children, className = ''
               params={value}
             />
           )}
-          {withBonded && <div className='ui--Bonded' style={{alignItems:'flex-end'}}><Label label={powerRatio?powerRatio+'x-':''} /></div>}
+          {withBonded && <div className='ui--Bonded' style={{alignItems:'flex-end'}}><Label label={powerRatio?(parseFloat(powerRatio+'').toFixed(2))+'x-':''} /></div>}
           {withBonded && (
             <BondedDisplay
               bonded={newBonded}
@@ -112,9 +113,9 @@ function AddressMini ({ intoType = '', balance, bonded, children, className = ''
       </div>
     );
 
- }else if(!!value && !!intoType && intoType=='ActiveNominations'){
-   console.log("value:"+value);
-   var powerRatio = useCall<string>(api.derive.kp.powerRatio, [value+'']);
+ }else if(!!value2 && !!intoType && intoType=='ActiveNominations'){
+   console.log("value2:"+value2);
+   var powerRatio = useCall<string>(api.derive.kp.powerRatio, [value2+'']);
    console.log("powerRatio:"+powerRatio);
    var newBalance = new BN(0);
    if(!!powerRatio && !!balance){
@@ -152,7 +153,7 @@ function AddressMini ({ intoType = '', balance, bonded, children, className = ''
          {children}
        </div>
        <div className='ui--AddressMini-balances' style={{display:'flex',flexDirection:'row'}}>
-         {withBalance && <div className='ui--Bonded' style={{alignItems:'flex-end'}}><Label label={powerRatio?powerRatio+'x-':''} /></div>}
+         {withBalance && <div className='ui--Bonded' style={{alignItems:'flex-end'}}><Label label={powerRatio?(parseFloat(powerRatio+'').toFixed(2))+'x-':''} /></div>}
          {withBalance && (
            <BalanceDisplay
              balance={newBalance}
@@ -290,7 +291,7 @@ function AddressMini ({ intoType = '', balance, bonded, children, className = ''
          {children}
        </div>
        <div className='ui--AddressMini-balances' style={{display:'flex',flexDirection:'row'}}>
-         {withBalance && <div className='ui--Bonded' style={{alignItems:'flex-end'}}><Label label={powerRatio?powerRatio+'x-':''} /></div>}
+         {withBalance && <div className='ui--Bonded' style={{alignItems:'flex-end'}}><Label label={powerRatio?(parseFloat(powerRatio+'').toFixed(2))+'x-':''} /></div>}
          {withBalance && (
            <BalanceDisplay
              balance={balance}

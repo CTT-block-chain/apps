@@ -35,8 +35,7 @@ function Account ({ adminAccount = [''], appId = 0, appName = '' , identityAccou
 
   }, []);
 
-  var displayName: string = '帐户数';
-   return (
+  return (
      <tr className={className}>
        <td className='favorite'>
 
@@ -54,7 +53,7 @@ function Account ({ adminAccount = [''], appId = 0, appName = '' , identityAccou
          }
        </td>
        <td className='address'>
-         {returnRate+'%'}
+         {returnRate?(returnRate/Number(10))+'‰':''}
        </td>
        <td className='address'>
           <AddressInfoAddress

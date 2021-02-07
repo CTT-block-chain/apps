@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { StakerState } from '@polkadot/react-hooks/types';
+//import { StakingLedger } from '@polkadot/types/interfaces';
 import { SortedTargets } from '../types';
 
 import BN from 'bn.js';
 import React, { useMemo, useRef } from 'react';
 import { Button, Table } from '@polkadot/react-components';
-import { useAvailableSlashes } from '@polkadot/react-hooks';
+import { useCall, useAvailableSlashes, useApi } from '@polkadot/react-hooks';
 import { FormatBalance } from '@polkadot/react-query';
 import { BN_ZERO } from '@polkadot/util';
 
@@ -36,24 +37,25 @@ function sortStashes (a: StakerState, b: StakerState): number {
   return (a.isStashValidating ? 1 : (a.isStashNominating ? 5 : 99)) - (b.isStashValidating ? 1 : (b.isStashNominating ? 5 : 99));
 }
 
-function extractState (ownStashes?: StakerState[]): State {
+
+function extractState ( ownStashes?: StakerState[]): State {
+  var bondedTotal = new BN(0);
+  var foundStashes: StakerState[];
   if (!ownStashes) {
     return {};
+  }else{
+    foundStashes = ownStashes.sort(sortStashes);
   }
-
   return {
-    bondedTotal: ownStashes.reduce((total: BN, { stakingLedger }) =>
-      stakingLedger
-        ? total.add(stakingLedger.total.unwrap())
-        : total,
-    BN_ZERO),
-    foundStashes: ownStashes.sort(sortStashes)
+    bondedTotal: bondedTotal,
+    foundStashes: foundStashes
   };
 }
 
 function Actions ({ className = '', isInElection, ownStashes, targets }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const allSlashes = useAvailableSlashes();
+  const { api } = useApi();
 
   const headerRef = useRef([
     [t('stashes'), 'start', 2],
@@ -64,19 +66,19 @@ function Actions ({ className = '', isInElection, ownStashes, targets }: Props):
   ]);
 
   const { bondedTotal, foundStashes } = useMemo(
-    () => extractState(ownStashes),
+    () => extractState( ownStashes),
     [ownStashes]
-  );
+  ); 
 
   const footer = useMemo(() => (
     <tr>
       <td colSpan={4} />
       <td className='number'>
-        {bondedTotal && <FormatBalance value={bondedTotal} />}
+
       </td>
       <td colSpan={2} />
     </tr>
-  ), [bondedTotal]);
+  ), []);
 
   return (
     <div className={className}>
