@@ -117,7 +117,7 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
               </td>
               <td className='number'>
                <FormatKP
-                 value={(parseFloat(power+'') / 100.00 ).toFixed(4).toString()}
+                 value={(parseFloat(power+'') / 100.00 ).toFixed(2).toString()}
                  withSi
                />
               </td>

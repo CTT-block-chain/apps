@@ -34,11 +34,10 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     [t('Rebate'), 'start'],
     [t('Manage accounts'), 'start'],
     [t('Manage key'), 'start'],
-    [t('Mortgage kpt'), 'expand'],
-    [t(''), 'expand'],
-    [t(''), 'expand'],
-    [t(''), 'expand'],
-    [t(''), 'expand'],
+    [t('Platform comments'), 'start'],
+    [t('Mortgage kpt'), 'start'],
+    [],
+    [],
   ]);
 
   useEffect((): void => {
@@ -100,6 +99,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
             appId={app.appId}
             appName={app.appName}
             identityAccount={app.identityAccount}
+            platformCommentsExpert={app.platformExperts}
             returnRate={app.returnRate}
             stake={app.stake}
             key={index}
