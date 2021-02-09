@@ -69,7 +69,7 @@ function renderBalances (props: Props, allAccounts: string[], bestNumber: BlockN
     <>
       {kpInfo?.map((kp, index): React.ReactNode => (
         <>
-          <Label label={kp.appName+': '+parseFloat(kp.power+'').toFixed(4)+' KP'} />
+          <Label label={kp.appName+': '+parseFloat(kp.power+'').toFixed(2)+' KP'} />
         </>
       ))}
     </>

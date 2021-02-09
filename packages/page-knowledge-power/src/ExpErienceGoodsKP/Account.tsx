@@ -240,13 +240,13 @@ function Account ({ appId = '',account: { address, meta }, className = '', filte
              {appId}
             </td>
             <td className='address'>
-             {!isSlashed?'正常':'罚没'}
+             {(isSlashed+'')=='false'?'正常':'罚没'}
             </td>
             <td className='number'/>
             <td className='number'>
             {power && (
               <FormatKP
-                value={(parseFloat(power+'')/100.00).toFixed(4).toString()}
+                value={(parseFloat(power+'')/100.00).toFixed(2).toString()}
                 withSi
               />
             )}

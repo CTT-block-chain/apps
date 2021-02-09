@@ -256,7 +256,7 @@ function Account ({ appId = '', account: { address, meta }, className = '', filt
            <td className='number'>
            {power && (
              <FormatKP
-               value={(parseFloat(power+'')/100.00).toFixed(4).toString()}
+               value={(parseFloat(power+'')/100.00).toFixed(2).toString()}
                withSi
              />
            )}

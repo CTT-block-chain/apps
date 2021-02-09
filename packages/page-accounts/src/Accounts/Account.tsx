@@ -219,7 +219,7 @@ function Account ({ account: { address, meta }, className = '', delegation, filt
       {
       "appName":'减法app',
       "appId":'10000001',
-      "power":( parseFloat(singlePower+'') / 100.00 ).toFixed(4) + '',
+      "power":( parseFloat(singlePower+'') / 100.00 ).toFixed(2) + '',
       }
     ];
   }else{
@@ -227,7 +227,7 @@ function Account ({ account: { address, meta }, className = '', delegation, filt
       {
       "appName":'减法app',
       "appId":'10000001',
-      "power":'0.0000',
+      "power":'0.00',
       }
     ];
   }

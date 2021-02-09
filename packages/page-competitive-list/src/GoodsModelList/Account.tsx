@@ -70,12 +70,23 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
     const lb = useCall<DeriveLeaderboardData>(api.api.derive.kp.leaderboardRecord, [newParam2]);
     console.log("lb:"+JSON.stringify(lb));
 
-    let flag = false;
-    if( intoType == 'query' && newParam2[0] == appId && newParam2[1] == blockNumber && newParam2[2] == modelID){
-      flag = true;
-    }else if( intoType == 'default' ){
-      flag = true;
+    let flag = true;
+    if( appId!='' ){
+      if(param2[0] != appId){
+        flag = false;
+      }
     }
+    if( blockNumber!='' ){
+      if(param2[1] != blockNumber){
+        flag = false;
+      }
+    }
+    if( modelID!='' ){
+      if(param2[2] != modelID){
+        flag = false;
+      }
+    }
+    
     if(flag){
       var board: Array<DeriveLeaderBoardItem>=[];
       // var accounts: Array=[];
@@ -124,7 +135,7 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
                 </td>
                 <td className='number'>
                  <FormatKP
-                   value={(parseFloat(power+'') / 100.00 ).toFixed(4).toString()}
+                   value={(parseFloat(power+'') / 100.00 ).toFixed(2).toString()}
                    withSi
                  />
                 </td>
