@@ -12,6 +12,7 @@ import { AddressInfoAddress} from '@polkadot/react-components';
 //import { useTranslation } from '../translate';
 
 interface Props {
+  appType?: string;
   adminAccount?: Array<string>;
   appId?: Number;
   appName?: string;
@@ -22,7 +23,7 @@ interface Props {
   className?: string;
 }
 
-function Account ({ adminAccount = [''], appId = 0, appName = '' , identityAccount = [''], platformCommentsExpert = [''], returnRate = 0, stake=0, className = ''}: Props): React.ReactElement<Props> | null {
+function Account ({appType = '', adminAccount = [''], appId = 0, appName = '' , identityAccount = [''], platformCommentsExpert = [''], returnRate = 0, stake=0, className = ''}: Props): React.ReactElement<Props> | null {
   //const { t } = useTranslation();
   //const { theme } = useContext<ThemeDef>(ThemeContext);
   //const { queueExtrinsic } = useContext(StatusContext);
@@ -55,8 +56,11 @@ function Account ({ adminAccount = [''], appId = 0, appName = '' , identityAccou
            */
          }
        </td>
+       <td className='address'>
+         {appType}
+       </td>
        <td className='number'>
-         {returnRate?(returnRate/Number(10))+'‰':''}
+         {returnRate?(Number(returnRate)/Number(10))+'‰':''}
        </td>
        <td className='address'>
           <AddressInfoAddress

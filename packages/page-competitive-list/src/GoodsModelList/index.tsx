@@ -1,70 +1,77 @@
 // Copyright 2017-2020 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { DeriveLeaderboardKeys} from '@polkadot/api-derive/types';
+import { DeriveLeaderboardKeyGroup, DeriveLeaderboardKeys, DeriveApp, DeriveLeaderboardCycle} from '@polkadot/api-derive/types';
 
 import { ActionStatus } from '@polkadot/react-components/Status/types';
-//import { AccountId, ProxyDefinition, ProxyType, Voting } from '@polkadot/types/interfaces';
-//import { Delegation, SortedAccount } from '../types';
-
-//import BN from 'bn.js';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-//import { isLedger } from '@polkadot/react-api';
 import { useApi, useCall, useLoadingDelay, useToggle  } from '@polkadot/react-hooks';
-//import { FormatBalance } from '@polkadot/react-query';
 import { Button, Input, Table } from '@polkadot/react-components';
-//import { BN_ZERO } from '@polkadot/util';
-
 import { useTranslation } from '../translate';
 import Proxy from '../modals/ProxiedAdd';
 import Account from './Account';
-
-/* interface Balances {
-  accounts: Record<string, BN>;
-  balanceTotal?: BN;
-} */
-
-/* interface Sorted {
-  sortedAccounts: SortedAccount[];
-  sortedAddresses: string[];
-} */
 
 interface Props {
   className?: string;
   onStatusChange: (status: ActionStatus) => void;
 }
 
-//const STORE_FAVS = 'accounts:favorites';
 
 function Overview ({ className = '', onStatusChange }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
   const [isProxyOpen, toggleProxy] = useToggle();
   const [filterOn, setFilter] = useState<string>('');
-  //const [sortedAccountsWithDelegation, setSortedAccountsWithDelegation] = useState<SortedAccount[] | undefined>();
- // const [{ sortedAccounts, sortedAddresses }, setSorted] = useState<Sorted>({ sortedAccounts: [], sortedAddresses: [] });
- // const delegations = useCall<Voting[]>(api.query.democracy?.votingOf?.multi, [sortedAddresses]);
-
   //新增的
-  const [queryLbParam, setQueryLbParam] = useState<any[] | undefined>();
+  const [queryLbParam, setQueryLbParam] = useState<DeriveLeaderboardCycle[] | undefined>();
   const [queryStatus, setQueryStatus] = useState<boolean>(false);
-  const [appId, setAppId] = useState<Number>(0);
+  const [appId, setAppId] = useState<string>('');
   const [blockNumber, setBlockNumber] = useState<string>('');
   const [modelID, setModelID] = useState<string>('');
 
-  /* const proxies = useCall<[ProxyDefinition[], BN][]>(api.query.proxy?.proxies.multi, [sortedAddresses], {
-    transform: (result: [([AccountId, ProxyType] | ProxyDefinition)[], BN][]): [ProxyDefinition[], BN][] =>
-      api.tx.proxy.addProxy.meta.args.length === 3
-        ? result as [ProxyDefinition[], BN][]
-        : (result as [[AccountId, ProxyType][], BN][]).map(([arr, bn]): [ProxyDefinition[], BN] =>
-          [arr.map(([delegate, proxyType]): ProxyDefinition => api.createType('ProxyDefinition', { delegate, proxyType })), bn]
-        )
-  }); */
   const isLoading = useLoadingDelay();
 
-  const lbKeys = useCall<DeriveLeaderboardKeys>(api.derive.kp.leaderboardKeys);
-  console.log("lbKeys:" + JSON.stringify(lbKeys));
+  const lbKeys = useCall<DeriveLeaderboardKeyGroup>(api.derive.kp.leaderboardKeys);
+
+  var appIdList: Array<string>=[];
+  var valueList: Array<string>=[];
+
+ var cycle: string = '';
+ //默认显示榜单最新一期：
+  let queryLbParamItem: DeriveLeaderboardKeys = [];
+  if( !!queryLbParam && queryLbParam.length > 0 ){
+    queryLbParam.forEach((val, idx, array) => {
+       if(blockNumber!=''){
+         if(val.index == blockNumber+''){
+           cycle = val.index;
+           queryLbParamItem = val.keys;
+         }
+         valueList.push(val.index);
+       }else{
+         queryLbParamItem = val.keys;
+         valueList.push(val.index);
+         cycle = val.index;
+       }
+    });
+  }
+  console.log("queryLbParamItem:" + JSON.stringify(queryLbParamItem));
+
+
+  const apps = useCall<DeriveApp>(api.derive.members.apps);
+
+  if (!!apps) {
+    apps.infos.forEach(app => {
+      appIdList.push(app.appId+'');
+    });
+  }
+
+  if(appId==''&& appIdList.length>0){
+    setAppId(appIdList[0]);
+  }
+  if(blockNumber==''&& valueList.length>0){
+    setBlockNumber(valueList[valueList.length-1]);
+  }
 
   const headerRef = useRef([
     [t('Experience goods id'), 'start', 2],
@@ -84,21 +91,17 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   }, []);
 
   useEffect(() => {
-    /* if (api.query.democracy?.votingOf && !delegations?.length) {
-      return;
-    } */
-    console.log(appId + ', ' + blockNumber + ', ' + modelID);
-    if(appId!=0){
-      setFilter(appId + ', ' + blockNumber + ', ' + modelID);
-    }
 
-    setQueryLbParam(lbKeys);
+   setFilter(appId + ', ' + blockNumber + ', ' + modelID);
+
+   if( !!lbKeys){
+     setQueryLbParam(lbKeys.models);
+   }
 
   }, [api, appId, blockNumber, modelID, lbKeys]);
 
-
  // console.log("queryLbParam2:" + JSON.stringify(queryLbParam));
-
+  console.log("queryStatus:"+queryStatus);
   const footer = useMemo(() => (
     <tr>
       <td colSpan={3} />
@@ -129,47 +132,11 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     </div>
   ), [filterOn, t]);
 
-  var valueList: Array<string>=[];
-  //默认显示榜单最新一期：
-   let queryLbParamItem: any;
-   if( !!queryLbParam && queryLbParam.length > 0 ){
-     queryLbParam.forEach((val, idx, array) => {
-        if(blockNumber!=''){
-          if(val[1]+''== blockNumber+''){
-            queryLbParamItem = val;
-          }
-          if(val[0]!='' && val[1]!=''){
-            valueList.push(val[1]+'');
-          }
-        }else{
-          if(val[0]!='' && val[1]!=''){
-            valueList.push(val[1]+'');
-            queryLbParamItem = val;
-          }
-        }
-     });
-   }
-    /*
-    */
-
-  /*
-  //循环显示所有期数
-  {!isLoading && queryLbParam && queryLbParam.map((pa, index): React.ReactNode => (
-     <Account
-        param2={pa}
-        cycle={index}
-      />
-      ))
-   } */
-  /* console.log("queryStatus:"+queryStatus);
-  console.log("appId:"+appId);
-  console.log("blockNumber:"+blockNumber);
-  console.log("modelID:"+modelID); */
-
   return (
     <div className={className}>
       {isProxyOpen && (
         <Proxy
+          appIdList={appIdList}
           valueList={valueList}
           onClose={toggleProxy}
           onStatusChange={onStatusChange}
@@ -193,18 +160,10 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
         footer={footer}
         header={headerRef.current}
       >
-        {!isLoading && !queryStatus && queryLbParam&&
-         <Account
-            param2={queryLbParamItem}
-            intoType={'default'}
-            appId={appId}
-            blockNumber={blockNumber}
-            modelID={modelID}
-          />
-        }
-        {queryStatus && queryLbParam &&queryLbParam.map((pa, index): React.ReactNode => (
+        {queryLbParamItem && queryLbParamItem.map((pa, index): React.ReactNode => (
          <Account
             key={index}
+            cycle={cycle}
             param2={pa}
             intoType={'query'}
             appId={appId}

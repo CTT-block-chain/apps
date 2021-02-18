@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import BN from 'bn.js';
 import React, {  useEffect} from 'react';
 //import styledfrom 'styled-components';
-import { AddressInfoKPT,AddressSmall} from '@polkadot/react-components';
+import { AddressSmall} from '@polkadot/react-components';
 import {  useApi, useCall } from '@polkadot/react-hooks';
 
 

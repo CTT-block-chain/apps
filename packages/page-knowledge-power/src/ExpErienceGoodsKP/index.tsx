@@ -1,7 +1,7 @@
 // Copyright 2017-2020 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { DeriveAppInfos } from '@polkadot/api-derive/types';
+import { DeriveApp } from '@polkadot/api-derive/types';
 
 import { ActionStatus } from '@polkadot/react-components/Status/types';
 import { AccountId, ProxyDefinition, ProxyType, Voting } from '@polkadot/types/interfaces';
@@ -156,11 +156,11 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
   //console.log("sortedAccountsWithDelegation:"+JSON.stringify(sortedAccountsWithDelegation));
 
-  const apps = useCall<DeriveAppInfos>(api.derive.members.apps);
+  const apps = useCall<DeriveApp>(api.derive.members.apps);
   console.log("apps:"+JSON.stringify(apps));
   let appIdList: Array<string>=[];
   if (!!apps) {
-    apps.forEach(app => {
+    apps.infos.forEach(app => {
       appIdList.push(app.appId+'');
     });
   }

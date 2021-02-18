@@ -1,7 +1,7 @@
 // Copyright 2017-2020 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { DeriveAppInfos } from '@polkadot/api-derive/types';
+import { DeriveApp, DeriveAppInfos, DeriveAppSummary} from '@polkadot/api-derive/types';
 
 import { ActionStatus } from '@polkadot/react-components/Status/types';
 
@@ -13,6 +13,7 @@ import { Input, Table } from '@polkadot/react-components';
 import { useTranslation } from '../translate';
 
 import Account from './Account';
+import Summary from './Summary';
 
 
 interface Props {
@@ -28,9 +29,19 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
   const isLoading = useLoadingDelay();
 
+  var newApps: DeriveAppInfos = [];
+  var deriveAppSummary: DeriveAppSummary = {
+    total: 0,
+    commodity: 0,
+    service: 0,
+    governance: 0,
+    others: 0,
+};
+
   const headerRef = useRef([
     [t('AppName'), 'start', 2],
     [t('AppId'), 'start'],
+    [t('type'), 'start'],
     [t('Rebate'), 'start'],
     [t('Manage accounts'), 'start'],
     [t('Manage key'), 'start'],
@@ -77,24 +88,33 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     </div>
   ), [filterOn, t]);
 
-   const apps = useCall<DeriveAppInfos>(api.derive.members.apps);
-   console.log("apps:", JSON.stringify(apps));
+   const apps = useCall<DeriveApp>(api.derive.members.apps);
+   console.log("apps:" + JSON.stringify(apps));
+
    if (!!apps) {
-     apps.forEach(app => {
-       console.log("app:", JSON.stringify(app));
+     newApps = apps.infos;
+     deriveAppSummary = apps.summary;
+     apps.infos.forEach(app => {
+       console.log("app:"+JSON.stringify(app));
      });
    }
 
   return (
     <div className={className}>
+      <div className={className} >
+       <Summary
+         deriveAppSummary={deriveAppSummary}
+       />
+      </div>
       <Table
-        empty={(!isLoading && apps) && t<string>("")}
+        empty={(!isLoading && newApps) && t<string>("")}
         filter={filter}
         footer={footer}
         header={headerRef.current}
       >
-        {!isLoading && apps?.map(( app , index): React.ReactNode => (
+        {!isLoading && newApps?.map(( app , index): React.ReactNode => (
           <Account
+            appType={app.appType}
             adminAccount={app.adminAccount}
             appId={app.appId}
             appName={app.appName}

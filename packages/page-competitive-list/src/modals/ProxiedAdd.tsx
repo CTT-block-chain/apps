@@ -7,12 +7,11 @@ import { ModalProps } from '../types';
 import React, { useCallback, useState } from 'react';
 import { Button, Input, Select, Modal } from '@polkadot/react-components';
 import { useApi } from '@polkadot/react-hooks';
-//import keyring from '@polkadot/ui-keyring';
 
 import { useTranslation } from '../translate';
-//import useProxies from '../Accounts/useProxies';
 
 interface Props extends ModalProps {
+  appIdList?: Array<string>;
   intoType?: string;
   valueList?: Array<string>;
   className?: string;
@@ -20,51 +19,18 @@ interface Props extends ModalProps {
   onStatusChange: (status: ActionStatus) => void;
 
   changeQueryStatus: (status: boolean) => void;
-  changeAppId: (appId: Number) => void;
+  changeAppId: (appId: string) => void;
   changeBlockNumber: (blockNumber: string) => void;
   changeModelID: (modelID: string) => void;
 }
 
-/* interface CreateOptions {
-  genesisHash?: string;
-  name: string;
-  tags?: string[];
-}
-
-function createProxy (address: string, { genesisHash, name, tags = [] }: CreateOptions, success: string): ActionStatus {
-  // we will fill in all the details below
-  const status = { action: 'create' } as ActionStatus;
-
-  try {
-    keyring.addExternal(address, { genesisHash, isProxied: true, name, tags });
-
-    status.account = address;
-    status.status = 'success';
-    status.message = success;
-  } catch (error) {
-    status.status = 'error';
-    status.message = (error as Error).message;
-  }
-
-  return status;
-} */
-
-/* function handleChange(event) {
-  console.log(event.target.value)
-} */
-
-
-function ProxyAdd ({ intoType = '', valueList = [''], className = '', onClose, onStatusChange, changeQueryStatus, changeAppId, changeBlockNumber, changeModelID}: Props): React.ReactElement<Props> {
+function ProxyAdd ({ appIdList = [''], intoType = '', valueList = [''], className = '', onClose, onStatusChange, changeQueryStatus, changeAppId, changeBlockNumber, changeModelID}: Props): React.ReactElement<Props> {
   const { api, isDevelopment } = useApi();
   const { t } = useTranslation();
 
- const [{ isAppIdValid, appId }, setAppId] = useState({ isAppIdValid: false, appId: 0 });
- const [{ isBlockNumberValid, blockNumber }, setBlockNumber] = useState({ isBlockNumberValid: false, blockNumber: '' });
- const [{ isModelIDValid, modelID }, setModelID] = useState({ isModelIDValid: false, modelID: '' });
-
- //const [stashAddress, setStashAddress] = useState<string | null>(null);
- // const { hasOwned } = useProxies(stashAddress);
-  //changeBlockNumber(valueList[0]);
+  const [{ isAppIdValid, appId }, setAppId] = useState({ isAppIdValid: false, appId: ''});
+  const [{ isBlockNumberValid, blockNumber }, setBlockNumber] = useState({ isBlockNumberValid: false, blockNumber: '' });
+  const [{ isModelIDValid, modelID }, setModelID] = useState({ isModelIDValid: false, modelID: '' });
 
   const _createProxied = useCallback(
     (): void => {
@@ -76,9 +42,8 @@ function ProxyAdd ({ intoType = '', valueList = [''], className = '', onClose, o
   const _onChangeAppId = useCallback(
     (appId: string): void=> {
       changeQueryStatus(true);
-      var appId_num = (Number)(appId+'');
-      changeAppId(appId_num);
-      setAppId({ isAppIdValid: true, appId: appId_num })
+      changeAppId(appId);
+      setAppId({ isAppIdValid: true, appId: appId })
     },
     []
   );
@@ -99,6 +64,7 @@ function ProxyAdd ({ intoType = '', valueList = [''], className = '', onClose, o
     []
   );
 console.log("blockNumber:"+blockNumber);
+console.log("appId:"+appId);
   return (
     <Modal
       className={className}
@@ -108,21 +74,22 @@ console.log("blockNumber:"+blockNumber);
       <Modal.Content>
         <Modal.Columns>
           <Modal.Column>
-            <Input
-              value={appId+''}
+            <Select
+              valueList={appIdList}
               className='full'
               help={t<string>('Enter the Application ID of the token you want to search.')}
-              isError={isAppIdValid}
               label={t<string>('AppId')}
+              isError={isAppIdValid}
               onChange={_onChangeAppId}
-              placeholder={t<string>('AppId')}
-            />
+            >
+
+            </Select>
           </Modal.Column>
           <Modal.Column>
             <p>{t<string>('')}</p>
           </Modal.Column>
         </Modal.Columns>
-        {(intoType != 'WholeNetworklist')&&(
+
         <Modal.Columns>
           <Modal.Column>
               <Select
@@ -141,7 +108,8 @@ console.log("blockNumber:"+blockNumber);
             <p>{t<string>('')}</p>
           </Modal.Column>
         </Modal.Columns>
-        )}
+
+        {(intoType != 'WholeNetworklist')&&(
         <Modal.Columns>
           <Modal.Column>
             <Input
@@ -158,7 +126,7 @@ console.log("blockNumber:"+blockNumber);
             <p>{t<string>('')}</p>
           </Modal.Column>
         </Modal.Columns>
-
+        )}
       </Modal.Content>
       <Modal.Actions onCancel={onClose}>
         <Button
