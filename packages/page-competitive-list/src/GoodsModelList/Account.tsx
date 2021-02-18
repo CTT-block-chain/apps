@@ -13,6 +13,7 @@ import {  useApi, useCall } from '@polkadot/react-hooks';
 
 
 interface Props {
+  cycle?: string;
   param2: Array<string>;
   className?: string;
   intoType?: string;
@@ -25,7 +26,7 @@ interface Props {
 
 
 
-function Account ({ param2 = [], className = '', appId='', intoType='', blockNumber='', modelID='',}: Props): React.ReactElement<Props> | null | any {
+function Account ({ cycle = '', param2 = [], className = '', appId='', intoType='', blockNumber='', modelID='',}: Props): React.ReactElement<Props> | null | any {
  // const { t } = useTranslation();
  // const { theme } = useContext<ThemeDef>(ThemeContext);
  // const { queueExtrinsic } = useContext(StatusContext);
@@ -39,7 +40,7 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
 
   }, []);
 
-  let appIdStr: string = '';
+  //let appIdStr: string = '';
   //let cycle: string = '';//榜单期数
 
   let queryFlag = true;
@@ -54,7 +55,7 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
 
       console.log("newParam2[0]:"+newParam2[0]);//[1000,123190,""]   appId, blockNumber, modelId
 
-      appIdStr = newParam2[0].toString();
+      //appIdStr = newParam2[0].toString();
 
       //cycle = newParam2[1].toString();
 
@@ -76,17 +77,12 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
         flag = false;
       }
     }
-    if( blockNumber!='' ){
-      if(param2[1] != blockNumber){
-        flag = false;
-      }
-    }
     if( modelID!='' ){
       if(param2[2] != modelID){
         flag = false;
       }
     }
-    
+
     if(flag){
       var board: Array<DeriveLeaderBoardItem>=[];
       // var accounts: Array=[];
@@ -116,7 +112,7 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
                   { commodityId }
                 </td>
                 <td className='address'>
-                  {  appIdStr }
+                  {  appId+'' }
                 </td>
                 <td className='address'>
 
@@ -125,7 +121,7 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
                   <AddressSmall value={owner} />
                 </td>
                 <td className='address'>
-                  { newParam2[1]+'' }
+                  { cycle }
                 </td>
                 <td className='address'>
                  {(index+1)+''}

@@ -44,7 +44,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
  // const [favorites, toggleFavorite] = useFavorites(STORE_FAVS);
   //const [{ balanceTotal }, setBalances] = useState<Balances>({ accounts: {} });
-  const [filterOn, setFilter] = useState<string>('');
+  //const [filterOn, setFilter] = useState<string>('');
  // const [sortedAccountsWithDelegation, setSortedAccountsWithDelegation] = useState<SortedAccount[] | undefined>();
  /// const [{ sortedAccounts, sortedAddresses }, setSorted] = useState<Sorted>({ sortedAccounts: [], sortedAddresses: [] });
  // const delegations = useCall<Voting[]>(api.query.democracy?.votingOf?.multi, [sortedAddresses]);
@@ -142,7 +142,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
       </Select>
     </div>
-  ), [filterOn, t, modelCycleRewardIndex]);
+  ), [t, modelCycleRewardIndex]);
 
 
   if(!!modelCycleRewardIndex){

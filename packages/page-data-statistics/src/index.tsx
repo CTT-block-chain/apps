@@ -13,7 +13,7 @@ import { useTranslation } from './translate';
 import useCounter from './useCounter';
 import ModelKptIssuance from './ModelKptIssuance';
 import KptRedemption from './KptRedemption';
-import ChainApplication from './ChainApplication';
+import ModelReview from './ModelReview';
 
 export { useCounter };
 
@@ -36,8 +36,8 @@ function AccountsApp ({ basePath, onStatusChange }: Props): React.ReactElement<P
     }
     ,
     {
-      name: 'chainApplication',
-      text: t<string>('Chain Application')
+      name: 'modelReview',
+      text: t<string>('Model review')
     }
   ]);
 
@@ -52,8 +52,8 @@ function AccountsApp ({ basePath, onStatusChange }: Props): React.ReactElement<P
         />
       </header>
       <Switch>
-        <Route path={`${basePath}/ChainApplication`}>
-          <ChainApplication
+        <Route path={`${basePath}/ModelReview`}>
+          <ModelReview
             basePath={basePath}
             onStatusChange={onStatusChange}
           />

@@ -14,6 +14,7 @@ import {  useApi, useCall } from '@polkadot/react-hooks';
 //import { useTranslation } from '../translate';
 
 interface Props {
+  cycle?: string;
   param2: Array<string>;
   className?: string;
   intoType?: string;
@@ -26,7 +27,7 @@ interface Props {
 
 
 
-function Account ({ param2 = [], className = '', appId='', intoType='', blockNumber='', modelID='', }: Props): React.ReactElement<Props> | null | any {
+function Account ({ cycle = '', param2 = [], className = '', appId='', intoType='', blockNumber='', modelID='', }: Props): React.ReactElement<Props> | null | any {
  // const { t } = useTranslation();
  // const { theme } = useContext<ThemeDef>(ThemeContext);
   //const { queueExtrinsic } = useContext(StatusContext);
@@ -40,16 +41,7 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
 
   }, []);
 
-  let appIdStr: string = '';
-  //let cycle: string = '';//榜单期数
-
-  if(!!param2 && param2.length > 0){
-
-    appIdStr = param2[0].toString();  //[1000,123190,""]   appId, blockNumber, modelId
-    param2[2] = "";  //把 modelId 去掉，只查全网榜单的记录
-
-  }
-  console.log("param2:"+JSON.stringify(param2))
+  //let appIdStr: string = '';
 
   const lb = useCall<DeriveLeaderboardData>(api.api.derive.kp.leaderboardRecord, [param2]);
 
@@ -66,23 +58,16 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
       flag = false;
     }
   }
- 
+
   if(flag){
     var board: Array<DeriveLeaderBoardItem>=[];
-   // var accounts: Array=[];
 
     if( !!lb ){
-     /* if( !!lb.accounts && lb.accounts.length > 0){
-        accounts = lb.accounts;
-      } */
       if(!!lb.board && lb.board.length > 0){
         board = lb.board;
       }
     }
     console.log("board:"+JSON.stringify(board));
-   // console.log("accounts:"+JSON.stringify(accounts));
-
-
 
     const status = '正常';
 
@@ -98,7 +83,7 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
                 { commodityId }
               </td>
               <td className='address'>
-                {  appIdStr }
+                {  appId+'' }
               </td>
               <td className='address'>
 
@@ -107,7 +92,7 @@ function Account ({ param2 = [], className = '', appId='', intoType='', blockNum
                 <AddressSmall value={owner} />
               </td>
               <td className='address'>
-               { param2[1]+'' }
+               { cycle }
               </td>
               <td className='address'>
                {(index+1)+''}

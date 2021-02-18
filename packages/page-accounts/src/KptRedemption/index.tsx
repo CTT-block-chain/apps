@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //import { DeriveAccountPowers} from '@polkadot/api-derive/types';
-import { DeriveAppFinanceRecord, DeriveAppInfos} from '@polkadot/api-derive/types';
+import { DeriveAppFinanceRecord, DeriveApp} from '@polkadot/api-derive/types';
 
 import { ActionStatus } from '@polkadot/react-components/Status/types';
 import { AccountId, ProxyDefinition, ProxyType, Voting } from '@polkadot/types/interfaces';
@@ -64,19 +64,18 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
   const [queryStatus, setQueryStatus] = useState<boolean>(false);
   const [appId, setAppId] = useState<string>('');
-  const [blockNumber, setBlockNumber] = useState<string>('');
   const [proposalId, setProposalId] = useState<string>('');
+  console.log("queryStatus:"+queryStatus);
 
   const appFinanceRecords = useCall<DeriveAppFinanceRecord[]>(api.derive.kp.appFinanceRecords);
   //console.log("appFinanceRecords:"+JSON.stringify(appFinanceRecords));
   var appIdList: Array<string>=[];
-  var blockList: Array<string>=[];
   var proposalIdList: Array<string>=[];
 
-  const apps = useCall<DeriveAppInfos>(api.derive.members.apps);
+  const apps = useCall<DeriveApp>(api.derive.members.apps);
 
   if (!!apps) {
-    apps.forEach(app => {
+    apps.infos.forEach(app => {
       appIdList.push(app.appId+'');
     });
   }
@@ -91,11 +90,6 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
             flag = false;
           }
         }
-        if(blockNumber!=''){
-          if((val.block+'')!= (blockNumber+'')){
-            flag = false;
-          }
-        }
         if(proposalId!=''){
           if((val.proposalId+'')!= (proposalId+'')){
             flag = false;
@@ -106,16 +100,12 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
           queryLbParamItem.push(val.block+'');
           queryLbParamItem.push(val.proposalId+'');
         }
-        blockList.push(val.block+'');
         proposalIdList.push(val.proposalId+'');
      });
    }
    console.log("queryLbParamItem:"+JSON.stringify(queryLbParamItem));
    if(appId==''&& appIdList.length>0){
      setAppId(appIdList[0]);
-   }
-   if(blockNumber==''&& blockList.length>0){
-     setBlockNumber(blockList[0]);
    }
    if(proposalId==''&& proposalIdList.length>0){
      setProposalId(proposalIdList[0]);
@@ -124,10 +114,10 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   useEffect(() => {
 
 
-    console.log(appId + ', ' + blockNumber + ', ' + proposalId);
-    setFilter(appId + ', ' + blockNumber + ', ' + proposalId);
+    console.log(appId + ', ' + proposalId);
+    setFilter(appId +', ' + proposalId);
 
-  }, [api, appId, blockNumber, proposalId, appFinanceRecords]);
+  }, [api, appId, proposalId, appFinanceRecords]);
 
   useEffect((): void => {
     const sortedAccounts = sortAccounts(allAccounts, favorites);
@@ -223,13 +213,11 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
         {isFilterViewOpen && (
           <FilterView
             appIdList={appIdList}
-            blockList={blockList}
             proposalIdList={proposalIdList}
             onClose={toggleFilterView}
             onStatusChange={onStatusChange}
             changeQueryStatus={setQueryStatus}
             changeAppId={setAppId}
-            changeBlockNumber={setBlockNumber}
             changeProposalId={setProposalId}
           />
         )}

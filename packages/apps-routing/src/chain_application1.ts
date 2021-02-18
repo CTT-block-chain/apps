@@ -4,7 +4,7 @@
 import { TFunction } from 'i18next';
 import { Route } from './types';
 
-import Component from '@polkadot/app-settings';
+import Component from '@ctt/app-chain-application-manage';
 
 export default function create (t: TFunction): Route {
   return {
@@ -13,9 +13,9 @@ export default function create (t: TFunction): Route {
       needsApi: []
     },
     group: 'chain_application',
-    icon: 'browser',
-    name: 'chain_application',
-    text: t('nav.chain_application', 'Chain Application', { ns: 'apps-routing' }),
+    icon: 'mobile',
+    name: 'chain_application_manage',
+    text: t('nav.chain_application_manage', 'Chain Application Manage', { ns: 'apps-routing' }),
     //useCounter
   };
 }

@@ -28,6 +28,7 @@ import techcomm from './techcomm';
 import transfer from './transfer';
 import treasury from './treasury';
 //import chain_application from './chain_application';
+import chain_application1 from './chain_application1';
 import knowledge_power from './knowledge_power';
 import competitive_list from './competitive_list';
 //import roles_and_role_groups from './roles_and_role_groups';
@@ -58,10 +59,11 @@ export default function create (t: TFunction): Routes {
     sudo(t),
     js(t),
     settings(t),
+    chain_application1(t),
     knowledge_power(t),
     // chain_application(t),
      competitive_list(t),
-    // roles_and_role_groups(t),
+     //roles_and_role_groups(t),
      data_statistics(t),
   ];
 }

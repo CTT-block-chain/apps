@@ -8,9 +8,7 @@ import { SortedTargets } from '../types';
 import BN from 'bn.js';
 import React, { useMemo, useRef } from 'react';
 import { Button, Table } from '@polkadot/react-components';
-import { useCall, useAvailableSlashes, useApi } from '@polkadot/react-hooks';
-import { FormatBalance } from '@polkadot/react-query';
-import { BN_ZERO } from '@polkadot/util';
+import { useAvailableSlashes } from '@polkadot/react-hooks';
 
 import ElectionBanner from '../ElectionBanner';
 import { useTranslation } from '../translate';
@@ -55,8 +53,7 @@ function extractState ( ownStashes?: StakerState[]): State {
 function Actions ({ className = '', isInElection, ownStashes, targets }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const allSlashes = useAvailableSlashes();
-  const { api } = useApi();
-
+  
   const headerRef = useRef([
     [t('stashes'), 'start', 2],
     [t('controller'), 'address'],

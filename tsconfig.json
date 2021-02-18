@@ -80,7 +80,9 @@
       "@ctt/app-data-statistics": [ "packages/page-data-statistics/src" ],
       "@ctt/app-data-statistics/*": [ "packages/page-data-statistics/src/*" ],
       "@ctt/app-issuance-fund": [ "packages/page-issuance-fund/src" ],
-      "@ctt/app-issuance-fund/*": [ "packages/page-issuance-fund/src/*" ]
+      "@ctt/app-issuance-fund/*": [ "packages/page-issuance-fund/src/*" ],
+      "@ctt/app-chain-application-manage": [ "packages/page-chain-application-manage/src" ],
+      "@ctt/app-chain-application-manage/*": [ "packages/page-chain-application-manage/src/*" ]
     },
     "skipLibCheck": true,
     "typeRoots": [
