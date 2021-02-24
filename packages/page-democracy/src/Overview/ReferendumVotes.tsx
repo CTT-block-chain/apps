@@ -4,7 +4,7 @@
 import { DeriveReferendumVote } from '@polkadot/api-derive/types';
 
 import BN from 'bn.js';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo , useState} from 'react';
 import { Expander } from '@polkadot/react-components';
 import { FormatBalance } from '@polkadot/react-query';
 import { formatNumber } from '@polkadot/util';
@@ -27,6 +27,31 @@ const LOCKS = [1, 10, 20, 30, 40, 50, 60];
 function ReferendumVotes ({ change, className, count, isAye, isWinning, total, votes }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
 
+  var [totalItemList, setTotalItemList] = useState<Array<string> | undefined>();
+  const [test, setTest] = useState<string>('');
+  if( totalItemList == undefined){
+    var a: Array<string> = [''];
+    setTotalItemList(a);
+  }
+  var newTotal = new BN(0);
+  if(Number(newTotal+'')==0){
+    newTotal = total;
+  }
+
+  useEffect(() => {
+
+  //  console.log("totalItemList:"+JSON.stringify(totalItemList));
+    var newTotal2 = BigInt(0);
+    if(!!totalItemList){
+      totalItemList.forEach((val, idx, array) => {
+        newTotal2 = BigInt(val+'') + newTotal2;
+      });
+    }
+    newTotal = new BN(newTotal2+'');
+   // console.log("newTotal:"+newTotal);
+
+  }, [totalItemList, setTotalItemList, test, setTest]);
+
   const sorted = useMemo(
     () => votes.sort((a, b) => {
       const ta = a.balance.muln(LOCKS[a.vote.conviction.toNumber()]).divn(10);
@@ -36,6 +61,10 @@ function ReferendumVotes ({ change, className, count, isAye, isWinning, total, v
     }),
     [votes]
   );
+ /* console.log("totalItemList3:"+JSON.stringify(totalItemList));
+  console.log("sorted:"+JSON.stringify(sorted));
+  console.log("total:"+total); */
+
 
   return (
     <Expander
@@ -56,14 +85,18 @@ function ReferendumVotes ({ change, className, count, isAye, isWinning, total, v
             ? t<string>('Aye {{count}}', { replace: { count: count ? ` (${formatNumber(count)})` : '' } })
             : t<string>('Nay {{count}}', { replace: { count: count ? ` (${formatNumber(count)})` : '' } })
           }
-          <div><FormatBalance value={total} /></div>
+          <div><FormatBalance value={newTotal} /></div>
         </>
       }
     >
-      {sorted.map((vote) =>
+      {sorted.map((vote, index) =>
         <ReferendumVote
           key={vote.accountId.toString()}
           vote={vote}
+          ReferendumVoteIndex={index+''}
+          totalItemList2={totalItemList?totalItemList:['']}
+          changeTest={setTest}
+          changeTotalItemList={setTotalItemList}
         />
       )}
     </Expander>

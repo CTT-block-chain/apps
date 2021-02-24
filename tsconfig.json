@@ -82,7 +82,9 @@
       "@ctt/app-issuance-fund": [ "packages/page-issuance-fund/src" ],
       "@ctt/app-issuance-fund/*": [ "packages/page-issuance-fund/src/*" ],
       "@ctt/app-chain-application-manage": [ "packages/page-chain-application-manage/src" ],
-      "@ctt/app-chain-application-manage/*": [ "packages/page-chain-application-manage/src/*" ]
+      "@ctt/app-chain-application-manage/*": [ "packages/page-chain-application-manage/src/*" ],
+      "@ctt/app-redeem": [ "packages/page-redeem/src" ],
+      "@ctt/app-redeem/*": [ "packages/page-redeem/src/*" ]
     },
     "skipLibCheck": true,
     "typeRoots": [

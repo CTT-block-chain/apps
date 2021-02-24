@@ -19,7 +19,7 @@ function TotalIssuance ({ children, className = '', label }: Props): React.React
   if(!!totalPower){
       totalValue=Number(totalPower.toString()) / 100.0;
   }
-  let totalValueStr: String = parseFloat(totalValue+'').toFixed().toString()+' KP';
+  let totalValueStr: String = parseFloat(totalValue+'').toFixed(2).toString()+' KP';
 
   return (
     <div className={className}>

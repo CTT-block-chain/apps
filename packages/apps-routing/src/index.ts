@@ -5,6 +5,7 @@ import { TFunction } from 'i18next';
 import { Routes } from './types';
 
 import accounts from './accounts';
+import redeem from './redeem';
 import addresses from './addresses';
 import calendar from './calendar';
 import claims from './claims';
@@ -42,6 +43,7 @@ export default function create (t: TFunction): Routes {
     claims(t),
     poll(t),
     transfer(t),
+    redeem(t),
     genericAsset(t),
     staking(t),
     democracy(t),

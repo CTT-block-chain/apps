@@ -12,7 +12,7 @@ import { Delegation } from '../types';
 import BN from 'bn.js';
 import React, { useCallback, useEffect } from 'react';
 import styled from 'styled-components';
-import { AddressInfo, AddressInfoKPT, AddressMini, AddressSmall, Badge, CryptoType, Forget, Icon, IdentityIcon, Tags } from '@polkadot/react-components';
+import { AddressInfo, AddressMini, AddressSmall, Badge, CryptoType, Forget, Icon, IdentityIcon, Tags } from '@polkadot/react-components';
 import { useAccountInfo, useApi, useCall, useToggle } from '@polkadot/react-hooks';
 import { Option } from '@polkadot/types';
 import keyring from '@polkadot/ui-keyring';
@@ -63,9 +63,9 @@ function Account ({  param2 = [], account: { address, meta }, className = '', de
     newParam2.push(Number(param2[0]));
     newParam2.push(param2[2]);
   }
-  console.log("newParam2:"+JSON.stringify(newParam2))
-  const redemptionInfo = useCall<DeriveAccountFinanceRecord>(api.api.derive.kp.accountFinanceRecord, newParam2);
-  console.log("redemptionInfo:"+JSON.stringify(redemptionInfo));
+  //console.log("newParam2:"+JSON.stringify(newParam2));
+  const redemptionInfo = useCall<DeriveAccountFinanceRecord>(api.api.derive.kp.accountAppIncomeRecord, newParam2);
+  //console.log("redemptionInfo:"+JSON.stringify(redemptionInfo));
 
   const recoveryInfo = useCall<RecoveryConfig | null>(api.api.query.recovery?.recoverable, [address], transformRecovery);
   const multiInfos = useMultisigApprovals(address);
@@ -124,10 +124,7 @@ function Account ({  param2 = [], account: { address, meta }, className = '', de
 
 
 
-  var appFinanceAccountExchangeRecords = useCall<string[]>(api.api.derive.kp.appFinanceAccountExchangeRecords, [address]);
-  //console.log("appFinanceAccountExchangeRecords:" + JSON.stringify(appFinanceAccountExchangeRecords));
-  //测试数据
-  //appFinanceAccountExchangeRecords=['10000000000'];
+
   return (
     <tr className={className}>
       <td className='favorite'>
@@ -331,28 +328,17 @@ function Account ({  param2 = [], account: { address, meta }, className = '', de
           withExtended={false}
         />
       </td>
-      <td className='number'>
-        {redemptionInfo?redemptionInfo.actuallyAmount+' KPT':'0 KPT'}
+      <td className='address'>
+        {redemptionInfo?redemptionInfo.maxAmount+' KPT':'0 KPT'}
       </td>
-      
-      <td className='number'>
-        {appFinanceAccountExchangeRecords&&
-        (
-        <AddressInfoKPT
-          key={address}
-          kptInfo={appFinanceAccountExchangeRecords}
-          address={address}
-          withBalance
-          withBalanceToggle
-          withExtended={false}
-        />
-        )
-        }
+
+      <td className='address'>
+        {redemptionInfo?redemptionInfo.actuallyAmount+' KPT':'0 KPT'}
       </td>
       <td className='button'>
 
       </td>
-      <td className='media--1400'>
+      <td >
 
       </td>
     </tr>

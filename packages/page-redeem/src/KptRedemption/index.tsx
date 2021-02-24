@@ -68,7 +68,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   console.log("queryStatus:"+queryStatus);
 
   const appFinanceRecords = useCall<DeriveAppFinanceRecord[]>(api.derive.kp.appFinanceRecords);
-  //console.log("appFinanceRecords:"+JSON.stringify(appFinanceRecords));
+ // console.log("appFinanceRecords:"+JSON.stringify(appFinanceRecords));
   var appIdList: Array<string>=[];
   var proposalIdList: Array<string>=[];
 
@@ -79,7 +79,10 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
       appIdList.push(app.appId+'');
     });
   }
-  console.log("appIdList:"+JSON.stringify(appIdList));
+  //console.log("appIdList:"+JSON.stringify(appIdList));
+
+  var income = new BN(0);
+
   //默认显示最新一期：
    var queryLbParamItem: Array<string>=[];
    if( !!appFinanceRecords && appFinanceRecords.length > 0 ){
@@ -99,11 +102,14 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
           queryLbParamItem.push(val.appId+'');
           queryLbParamItem.push(val.block+'');
           queryLbParamItem.push(val.proposalId+'');
+          income = val.totalBalance;
+        }else{
+          income = val.totalBalance;
         }
         proposalIdList.push(val.proposalId+'');
      });
    }
-   console.log("queryLbParamItem:"+JSON.stringify(queryLbParamItem));
+   //console.log("queryLbParamItem:"+JSON.stringify(queryLbParamItem));
    if(appId==''&& appIdList.length>0){
      setAppId(appIdList[0]);
    }
@@ -112,7 +118,6 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
    }
 
   useEffect(() => {
-
 
     console.log(appId + ', ' + proposalId);
     setFilter(appId +', ' + proposalId);
@@ -161,7 +166,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
     [t('balance'), 'number'],
     [t('Permitted redemption number'), 'start'],
     [t('Redemption number'), 'number'],
-    [t(''), 'expand'],
+    [],
 
   ]);
 
@@ -207,7 +212,10 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   return (
     <div className={className}>
       <div className={className} >
-       <Summary/>
+       <Summary
+          redeemCount={appFinanceRecords?Number(appFinanceRecords.length):0}
+          income={income?income:new BN(0)}
+       />
       </div>
       <div className={className} >
         {isFilterViewOpen && (
