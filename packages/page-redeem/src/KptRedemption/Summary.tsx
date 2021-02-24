@@ -10,18 +10,19 @@ import BN from 'bn.js';
 import React from 'react';
 import { SummaryBox, CardSummary } from '@polkadot/react-components';
 import { useApi, useCall } from '@polkadot/react-hooks';
-import { formatNumber } from '@polkadot/util';
+//import { formatNumber } from '@polkadot/util';
 import { FormatBalance } from '@polkadot/react-query';
 
 import { useTranslation } from '../translate';
 
 
 interface Props {
-  referendumCount?: number;
+   redeemCount?: number;
+   income?: BN;
 }
 
 
-function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
+function Summary ({ redeemCount = 0, income }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
  // const activeProposals = useCall<unknown[]>(api.derive.democracy.proposals);
@@ -36,15 +37,15 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
  //console.log("appFinanceCountInfo:" + JSON.stringify(appFinanceCountInfo));
 
   var currentSeconds = new BN(1);
-  var count: number = 0;
-  var totalBurn = new BN(0);
+  //var count: number = 0;
+  //var totalBurn = new BN(0);
   if(!!appFinanceCountInfo){
      currentSeconds = new BN((300-Number(appFinanceCountInfo.leftSeconds+''))+'');
-     count = Number(appFinanceCountInfo.count+'');
+    // count = Number(appFinanceCountInfo.count+'');
    //  totalBurn = new BN(appFinanceCountInfo.totalBurn+'');//未格式化
-    var a: string = appFinanceCountInfo.totalBurn.toString().substring(0,appFinanceCountInfo.totalBurn.toString().length-4)+'';
+    //var a: string = appFinanceCountInfo.totalBurn.toString().substring(0,appFinanceCountInfo.totalBurn.toString().length-4)+'';
   //  console.log("a:"+a);
-    totalBurn = new BN(Number(a)+'');
+   // totalBurn = new BN(Number(a)+'');
   }
 
 
@@ -53,17 +54,17 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
     <SummaryBox>
       <section>
         <CardSummary label={t<string>('Number of redemption periods')}>
-          {formatNumber(count)}
+          {redeemCount}
         </CardSummary>
       </section>
       <section>
          {
-           totalBurn
+           income
          ?
          (
            <CardSummary className='media--1000' label={t<string>('Total redemption')}>
              <FormatBalance
-               value={totalBurn}
+               value={income}
                withSi
              />
            </CardSummary>
@@ -72,15 +73,13 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
          (
            <CardSummary label={t<string>('Total redemption')}>
              <FormatBalance
-               value={0}
+               value={income}
                withSi
              />
            </CardSummary>
          )
 
          }
-      </section>
-      <section>
       </section>
 
       {bestNumber &&(

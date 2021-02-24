@@ -14,23 +14,23 @@ import { useTranslation } from '../translate';
 
 interface Props extends ModalProps {
   appIdList?: Array<string>;
-  proposalIdList?: Array<string>;
+  cycleList?: Array<string>;
   className?: string;
   onClose: () => void;
   onStatusChange: (status: ActionStatus) => void;
 
   changeQueryStatus: (status: boolean) => void;
   changeAppId: (appId: string) => void;
-  changeProposalId: (proposalId: string) => void;
+  changeCycle: (cycle: string) => void;
 }
 
 
-function ProxyAdd ({ appIdList = [''],proposalIdList = [''], className = '', onClose, onStatusChange, changeQueryStatus, changeAppId, changeProposalId}: Props): React.ReactElement<Props> {
+function ProxyAdd ({ appIdList = [''],cycleList = [''], className = '', onClose, onStatusChange, changeQueryStatus, changeAppId, changeCycle}: Props): React.ReactElement<Props> {
   const { api, isDevelopment } = useApi();
   const { t } = useTranslation();
 
  const [{ isAppIdValid, appId }, setAppId] = useState({ isAppIdValid: false, appId: ''});
- const [{ isProposalIdValid, proposalId }, setProposalId] = useState({ isProposalIdValid: false, proposalId: '' });
+ const [{ isCycleValid, cycle }, setCycle] = useState({ isCycleValid: false, cycle: '' });
 
  //const [stashAddress, setStashAddress] = useState<string | null>(null);
  // const { hasOwned } = useProxies(stashAddress);
@@ -40,7 +40,7 @@ function ProxyAdd ({ appIdList = [''],proposalIdList = [''], className = '', onC
     (): void => {
       onClose();
     },
-    [api.genesisHash, isDevelopment, name, onClose, onStatusChange, changeQueryStatus, changeAppId, changeProposalId, t]
+    [api.genesisHash, isDevelopment, name, onClose, onStatusChange, changeQueryStatus, changeAppId, changeCycle, t]
   );
 
   const _onChangeAppId = useCallback(
@@ -51,16 +51,16 @@ function ProxyAdd ({ appIdList = [''],proposalIdList = [''], className = '', onC
     },
     []
   );
-  const _onChangeProposalId = useCallback(
-    (proposalId: string) : void=> {
+  const _onChangeCycle = useCallback(
+    (cycle: string) : void=> {
       changeQueryStatus(true);
-      changeProposalId(proposalId);
-      setProposalId({ isProposalIdValid: true, proposalId: proposalId })
+      changeCycle(cycle);
+      setCycle({ isCycleValid: true, cycle: cycle })
     },
     []
   );
   console.log("appId:"+appId);
-  console.log("proposalId:"+proposalId);
+  console.log("cycle:"+cycle);
   return (
     <Modal
       className={className}
@@ -89,12 +89,12 @@ function ProxyAdd ({ appIdList = [''],proposalIdList = [''], className = '', onC
         <Modal.Columns>
           <Modal.Column>
             <Select
-              valueList={proposalIdList}
+              valueList={cycleList}
               className='full'
-              help={t<string>('Enter the Proposal ID of the token you want to search.')}
-              label={t<string>('Proposal ID')}
-              isError={isProposalIdValid}
-              onChange={_onChangeProposalId}
+              help={t<string>('Enter the Cycle of the token you want to search.')}
+              label={t<string>('Cycle')}
+              isError={isCycleValid}
+              onChange={_onChangeCycle}
             >
 
             </Select>

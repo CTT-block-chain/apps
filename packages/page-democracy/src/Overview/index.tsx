@@ -30,7 +30,7 @@ function Overview ({ className }: Props): React.ReactElement<Props> {
   const [isProposeOpen, togglePropose] = useToggle();
   const referendums = useCall<DeriveReferendumExt[]>(api.derive.democracy.referendums);
   
-  console.log("referendums:"+JSON.stringify(referendums));
+ // console.log("referendums:"+JSON.stringify(referendums));
   
   return (
     <div className={className}>

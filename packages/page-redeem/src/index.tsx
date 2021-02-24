@@ -12,7 +12,8 @@ import basicMd from './md/basic.md';
 import { useTranslation } from './translate';
 import useCounter from './useCounter';
 import Accounts from './Accounts';
-import Vanity from './Vanity';
+import YearRedemption from './YearRedemption';
+import KptRedemption from './KptRedemption';
 
 export { useCounter };
 
@@ -26,12 +27,12 @@ function AccountsApp ({ basePath, onStatusChange }: Props): React.ReactElement<P
   const itemsRef = useRef([
     {
       isRoot: true,
-      name: 'overview',
-      text: t<string>('My accounts')
+      name: 'kptRedemption2',
+      text: t<string>('Financing redemption')
     },
     {
-      name: 'vanity',
-      text: t<string>('Vanity generator')
+      name: 'yearRedemption',
+      text: t<string>('Year redemption')
     }
   ]);
 
@@ -46,14 +47,14 @@ function AccountsApp ({ basePath, onStatusChange }: Props): React.ReactElement<P
         />
       </header>
       <Switch>
-        <Route path={`${basePath}/vanity`}>
-          <Vanity
+        <Route path={`${basePath}/yearRedemption`}>
+          <YearRedemption
             basePath={basePath}
             onStatusChange={onStatusChange}
           />
         </Route>
-        <Route>
-          <Accounts
+        <Route >
+          <KptRedemption
             basePath={basePath}
             onStatusChange={onStatusChange}
           />
