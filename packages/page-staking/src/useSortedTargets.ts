@@ -1,6 +1,7 @@
 // Copyright 2017-2020 @polkadot/app-staking authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ApiPromise } from '@polkadot/api';
 import { DeriveSessionIndexes, DeriveStakingElected, DeriveStakingWaiting } from '@polkadot/api-derive/types';
 import { Balance, ValidatorPrefsTo196 } from '@polkadot/types/interfaces';
 import { SortedTargets, TargetSortBy, ValidatorInfo } from './types';
@@ -8,7 +9,7 @@ import { SortedTargets, TargetSortBy, ValidatorInfo } from './types';
 import BN from 'bn.js';
 import { useMemo, useState } from 'react';
 import { registry } from '@polkadot/react-api';
-import { useAccounts, useApi, useCall, useDebounce } from '@polkadot/react-hooks';
+import { calcInflation, useAccounts, useApi, useCall, useDebounce } from '@polkadot/react-hooks';
 import { Option } from '@polkadot/types';
 import { BN_ONE, BN_ZERO, formatBalance } from '@polkadot/util';
 
@@ -118,6 +119,9 @@ function extractSingle (allAccounts: string[], amount: BN = baseBalance(), { inf
       rankReward: 0,
       rewardPayout: skipRewards ? BN_ZERO : rewardPayout,
       rewardSplit,
+      skipRewards,
+      stakedReturn: 0,
+      stakedReturnCmp: 0,
       validatorPayment,
       validatorPrefs
     };
@@ -126,7 +130,7 @@ function extractSingle (allAccounts: string[], amount: BN = baseBalance(), { inf
   return [list, Object.keys(nominators)];
 }
 
-function extractInfo (allAccounts: string[], amount: BN = baseBalance(), electedDerive: DeriveStakingElected, waitingDerive: DeriveStakingWaiting, favorites: string[], lastReward = BN_ONE): Partial<SortedTargets> {
+function extractInfo (api: ApiPromise, allAccounts: string[], amount: BN = baseBalance(), electedDerive: DeriveStakingElected, waitingDerive: DeriveStakingWaiting, favorites: string[], lastReward = BN_ONE, totalIssuance: BN): Partial<SortedTargets> {
   const perValidatorReward = lastReward.divn(electedDerive.info.length);
   const [elected, nominators] = extractSingle(allAccounts, amount, electedDerive, favorites, perValidatorReward, true);
   const [waiting] = extractSingle(allAccounts, amount, waitingDerive, favorites, perValidatorReward, false);
@@ -138,6 +142,17 @@ function extractInfo (allAccounts: string[], amount: BN = baseBalance(), elected
     .sort((a, b) => a.cmp(b));
   const totalStaked = activeTotals.reduce((total: BN, value) => total.iadd(value), new BN(0));
   const avgStaked = totalStaked.divn(activeTotals.length);
+  const inflation = calcInflation(api, totalStaked, totalIssuance);
+
+  // add the explicit stakedReturn
+  !avgStaked.isZero() && elected.forEach((e): void => {
+    if (!e.skipRewards) {
+      e.stakedReturn = inflation.stakedReturn * avgStaked.muln(1_000_000).div(e.bondTotal).toNumber() / 1_000_000;
+      e.stakedReturnCmp = e.stakedReturn * (100 - e.commissionPer) / 100;
+
+      console.log(`validator stake return: ${e.stakedReturn.toFixed(2)}%`);
+    }
+  });
 
   return { avgStaked, lowStaked: activeTotals[0] || BN_ZERO, nominators, totalStaked, validatorIds, validators };
 }
@@ -159,12 +174,13 @@ export default function useSortedTargets (favorites: string[]): SortedTargets {
   const lastReward = useCall<BN>(lastEra && api.query.staking.erasValidatorReward, [lastEra], transformReward);
   const [calcWith, setCalcWith] = useState<BN | undefined>(baseBalance());
   const calcWithDebounce = useDebounce(calcWith);
+  const totalIssuance = useCall<BN>(api.derive.kp.currentIssuance);
 
   const partial = useMemo(
-    () => electedInfo && waitingInfo
-      ? extractInfo(allAccounts, calcWithDebounce, electedInfo, waitingInfo, favorites, lastReward)
+    () => electedInfo && waitingInfo && totalIssuance
+      ? extractInfo(api, allAccounts, calcWithDebounce, electedInfo, waitingInfo, favorites, lastReward, totalIssuance)
       : EMPTY_PARTIAL,
-    [allAccounts, calcWithDebounce, electedInfo, favorites, lastReward, waitingInfo]
+    [api, allAccounts, calcWithDebounce, electedInfo, favorites, lastReward, totalIssuance, waitingInfo]
   );
 
   return { ...partial, calcWith, lastReward, setCalcWith };

@@ -56,6 +56,9 @@ export interface ValidatorInfo extends ValidatorInfoRank {
   numNominators: number;
   rewardPayout: BN;
   rewardSplit: BN;
+  skipRewards: boolean;
+  stakedReturn: number;
+  stakedReturnCmp: number;
   validatorPayment: BN;
   validatorPrefs?: ValidatorPrefs | ValidatorPrefsTo196;
 }
