@@ -21,11 +21,19 @@ function StakingBonded ({ className = '', stakingInfo }: Props): React.ReactElem
   if (!balance?.gtn(0)) {
     return null;
   }
-  //console.log("stakingInfo:",JSON.stringify(stakingInfo));
-  var newAccount = stakingInfo?stakingInfo.accountId:'';
-  var powerRatio = useCall<string>(api.derive.kp.powerRatio, [newAccount]);
-  var newBalance = new BN(0);
-  
+
+  // console.log("stakingInfo:",JSON.stringify(stakingInfo));
+
+  const FLOAT_BASE = 10000;
+  const newAccount = stakingInfo ? stakingInfo.accountId : '';
+  const powerRatio = useCall<string>(api.derive.kp.powerRatio, [newAccount]);
+  let newBalance = new BN(0);
+
+  if (balance && powerRatio) {
+    newBalance = balance.muln(Math.floor(Number(powerRatio) * FLOAT_BASE)).divn(FLOAT_BASE);
+  }
+
+/*
   if(!!powerRatio && !!balance){
     var a = BigInt(0);
     if(Number(powerRatio)!=1){
@@ -36,7 +44,7 @@ function StakingBonded ({ className = '', stakingInfo }: Props): React.ReactElem
     }
     newBalance = new BN(a+'');
   }
-
+*/
 
 
   return (
