@@ -35,19 +35,13 @@ function ReferendumVote ({ vote: { accountId, balance, isDelegating, vote }, Ref
       array[idx] = '';
     });
   }
-
+  
+  const FLOAT_BASE = 10000;
+  let newBalance = new BN(0);
   var powerRatio = useCall<string>(api.derive.kp.powerRatio, [accountId+'']);
   //console.log("powerRatio:"+powerRatio);
-  var newBalance = new BN(0);
-  if(!!powerRatio && !!balance){
-    var a = BigInt(0);
-    if(Number(powerRatio)!=1){
-      a = BigInt(balance+'') * BigInt((Number(parseFloat(powerRatio+'').toFixed(4)+'') * 10000 ) + '') ;
-      a = a / BigInt(10000+'');
-    }else{
-      a = BigInt(balance+'') * BigInt(Number(powerRatio) + '') ;
-    }
-    newBalance = new BN(a+'');
+  if (balance && powerRatio) {
+    newBalance = balance.muln(Math.floor(Number(powerRatio) * FLOAT_BASE)).divn(FLOAT_BASE);
     totalItemList2.push(newBalance+'');
     //console.log("totalItemList2:"+JSON.stringify(totalItemList2));
     changeTotalItemList(totalItemList2);

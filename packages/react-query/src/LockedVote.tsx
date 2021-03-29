@@ -31,15 +31,8 @@ function LockedVote ({ powerRatio = '', intoType = '',children, className = '', 
     console.log("stake:"+info?.stake);
     console.log("powerRatio:"+powerRatio);
     var newStake = new BN(0);
-    if(!!powerRatio && !!info.stake){
-      var a = BigInt(0);
-      if(Number(powerRatio)!=1){
-        a = BigInt(info.stake+'') * BigInt((Number(parseFloat(powerRatio+'').toFixed(4)+'') * 10000 ) + '') ;
-        a = a / BigInt(10000+'');
-      }else{
-        a = BigInt(info.stake+'') * BigInt(Number(powerRatio) + '') ;
-      }
-      newStake = new BN(a+'');
+    if (info.stake && powerRatio) {
+      newStake = info.stake.muln(Math.floor(Number(powerRatio) * FLOAT_BASE)).divn(FLOAT_BASE);
     }
     console.log("newStake:"+newStake);
     return (

@@ -181,21 +181,11 @@ function AddressMini ({ intoType = '', balance, bonded, children, className = ''
 
 
  }else if(!!value && !!intoType && intoType=='ReferendumVote'){
-   console.log("value:"+value);
    var powerRatio = useCall<string>(api.derive.kp.powerRatio, [value+'']);
-   console.log("powerRatio:"+powerRatio);
    var newBalance = new BN(0);
-   if(!!powerRatio && !!balance){
-     var a = BigInt(0);
-     if(Number(powerRatio)!=1){
-       a = BigInt(balance+'') * BigInt((Number(parseFloat(powerRatio+'').toFixed(4)+'') * 10000 ) + '') ;
-       a = a / BigInt(10000+'');
-     }else{
-       a = BigInt(balance+'') * BigInt(Number(powerRatio) + '') ;
-     }
-     newBalance = new BN(a+'');
+   if (balance && powerRatio) {
+     newBalance = balance.muln(Math.floor(Number(powerRatio) * FLOAT_BASE)).divn(FLOAT_BASE);
    }
-   console.log("newBalance:"+newBalance);
 
    return (
      <div className={classes('ui--AddressMini', isHighlight ? 'isHighlight' : '', isPadded ? 'padded' : '', withShrink ? 'withShrink' : '', className)}>

@@ -44,13 +44,18 @@ function Vote ({ electionsInfo }: Props): React.ReactElement<Props> {
     }
   }, [electionsInfo]);
 
-  let powerWeighted : BN = new BN(0);
-  var newAccountId = accountId?accountId:'';
-  let powerRatio = useCall<string>(api.derive.kp.powerRatio, [newAccountId]);
   //console.log("powerRatio:"+powerRatio);
   //console.log("voteValue:"+voteValue);
-
-  if(!!powerRatio && !!voteValue){
+  const FLOAT_BASE = 10000;
+  const newAccount = stakingInfo ? stakingInfo.accountId : '';
+  const powerRatio = useCall<string>(api.derive.kp.powerRatio, [newAccount]);
+  let powerWeighted = new BN(0);
+  
+  if (voteValue && powerRatio) {
+    powerWeighted = voteValue.muln(Math.floor(Number(powerRatio) * FLOAT_BASE)).divn(FLOAT_BASE);
+  }
+  
+  /* if(!!powerRatio && !!voteValue){
     var a = BigInt(0);
     if(Number(powerRatio)!=1){
       a= BigInt(voteValue+'') * BigInt((Number(parseFloat(powerRatio+'').toFixed(4)+'') * 10000 ) + '') ;
@@ -59,7 +64,7 @@ function Vote ({ electionsInfo }: Props): React.ReactElement<Props> {
       a = BigInt(voteValue+'') * BigInt(Number(powerRatio) + '') ;
     }
     powerWeighted = new BN(a+'');
-  }
+  } */
   //console.log("powerWeighted:"+powerWeighted);
 
   useEffect((): void => {
