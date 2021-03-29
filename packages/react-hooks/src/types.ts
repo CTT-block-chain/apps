@@ -136,3 +136,8 @@ export interface StakerState {
   stashId: string;
   validatorPrefs?: ValidatorPrefs;
 }
+
+export interface Inflation {
+  inflation: number;
+  stakedReturn: number;
+}

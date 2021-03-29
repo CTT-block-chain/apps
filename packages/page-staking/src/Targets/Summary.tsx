@@ -7,7 +7,7 @@ import { DeriveBalancesAccount } from '@polkadot/api-derive/types';
 import BN from 'bn.js';
 import React, { useMemo } from 'react';
 import { SummaryBox, CardSummary } from '@polkadot/react-components';
-import { useApi, useCall } from '@polkadot/react-hooks';
+import { calcInflation, useInflation, useApi, useCall } from '@polkadot/react-hooks';
 import { FormatBalance } from '@polkadot/react-query';
 import { stringToU8a } from '@polkadot/util';
 
@@ -41,6 +41,10 @@ function Summary ({ avgStaked, lastReward, lowStaked, numNominators, numValidato
     .add(fundTchBalance ? fundTchBalance.freeBalance : ZERO)
     .add(fundAmodBalance ? fundAmodBalance.freeBalance : ZERO);
   const totalCash = totalIssuance?.sub(fundBalance);
+
+  const inflation = useInflation(totalStaked);
+
+  console.log('inflation:', inflation);
 
   const progressStake = useMemo(
     () => totalCash && totalStaked && totalStaked.gtn(0)

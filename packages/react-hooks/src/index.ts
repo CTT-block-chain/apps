@@ -32,3 +32,4 @@ export { useSudo } from './useSudo';
 export { useToggle } from './useToggle';
 export { useVotingStatus } from './useVotingStatus';
 export { useWeight } from './useWeight';
+export { calcInflation, useInflation } from './useInflation';
