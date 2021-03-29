@@ -31,23 +31,40 @@ function Summary ({ redeemCount = 0, income = 0 }: Props): React.ReactElement<Pr
   //const referendumTotal = useCall<BN>(api.query.democracy.referendumCount);
 
 
-  var totalSeconds = new BN(300);//当前周期设置为30分钟
 
   const appFinanceCountInfo = useCall<DeriveAppFinanceCountInfo>(api.derive.kp.appFinanceCountInfo);
  //console.log("appFinanceCountInfo:" + JSON.stringify(appFinanceCountInfo));
 
   var currentSeconds = new BN(1);
   //var count: number = 0;
-  //var totalBurn = new BN(0);
+  var totalBurn = new BN(0);
   if(!!appFinanceCountInfo){
      currentSeconds = new BN((300-Number(appFinanceCountInfo.leftSeconds+''))+'');
     // count = Number(appFinanceCountInfo.count+'');
    //  totalBurn = new BN(appFinanceCountInfo.totalBurn+'');//未格式化
-   // var a: string = appFinanceCountInfo.totalBurn.toString().substring(0,appFinanceCountInfo.totalBurn.toString().length-4)+'';
-  //  console.log("a:"+a);
-   // totalBurn = new BN(Number(a)+'');
+    var a: string = appFinanceCountInfo.totalBurn.toString().substring(0,appFinanceCountInfo.totalBurn.toString().length-4)+'';
+    console.log("a:"+a);
+    totalBurn = new BN(Number(a)+'');
   }
+  var total2 = new BN(600);//当前周期设置为1小时
+  const modelCycleRewardStage = useCall<DeriveModelCycleRewardTime>(api.derive.kp.modelCycleRewardStage);
 
+  //console.log("modelCycleRewardStage:" + JSON.stringify(modelCycleRewardStage));
+
+  var total = new BN(1);
+  let stage: Number = 0;
+  if(!!modelCycleRewardStage){
+     stage = modelCycleRewardStage.stage.toNumber();
+     if(stage==0){
+       total = new BN((300-modelCycleRewardStage.leftSeconds)+'');
+       total2 = new BN(300);
+     }else if(stage==1 || stage==2){
+       total = new BN((100-modelCycleRewardStage.leftSeconds)+'');
+       total2 = new BN(100);
+     }
+    // console.log("total:" + total);
+    // console.log("stage:" + stage);
+  }
 
   return (
     <SummaryBox>
@@ -58,17 +75,23 @@ function Summary ({ redeemCount = 0, income = 0 }: Props): React.ReactElement<Pr
       </section>
       <section>
          {
-           income
+           appFinanceCountInfo
          ?
          (
            <CardSummary className='media--1000' label={t<string>('Total redemption')}>
-             {income+' KPT'}
+             <FormatBalance
+               value={totalBurn}
+               withSi
+             />
            </CardSummary>
          )
          :
          (
            <CardSummary label={t<string>('Total redemption')}>
-             {'0 KPT'}
+             <FormatBalance
+               value={totalBurn}
+               withSi
+             />
            </CardSummary>
          )
 
@@ -77,18 +100,42 @@ function Summary ({ redeemCount = 0, income = 0 }: Props): React.ReactElement<Pr
       <section>
       </section>
 
-      {bestNumber &&(
-        <section className='media--1100'>
-          <CardSummary
-            label={t<string>('Redemption period')}
-            progress={{
-              total: totalSeconds ,
-              value: bestNumber.mod(currentSeconds?currentSeconds:new BN(0)).addn(1),
-              withTime: true
-            }}
-          />
-        </section>
-      )}
+     {bestNumber && (stage == 0 ) &&(
+       <section className='media--1100'>
+         <CardSummary
+           label={t<string>('ordinary stage')}
+           progress={{
+             total: total2 ,
+             value: bestNumber.mod(total).addn(1),
+             withTime: true
+           }}
+         />
+       </section>
+     )}
+     {bestNumber && (stage == 1 ) &&(
+       <section className='media--1100'>
+         <CardSummary
+           label={t<string>('statistical income stage')}
+           progress={{
+             total: total2 ,
+             value: bestNumber.mod(total).addn(1),
+             withTime: true
+           }}
+         />
+       </section>
+     )}
+     {bestNumber && (stage == 2 ) &&(
+       <section className='media--1100'>
+         <CardSummary
+           label={t<string>('apply for award stage')}
+           progress={{
+             total: total2 ,
+             value: bestNumber.mod(total).addn(1),
+             withTime: true
+           }}
+         />
+       </section>
+     )}
 
     </SummaryBox>
   );

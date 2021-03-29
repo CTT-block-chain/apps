@@ -32,16 +32,8 @@ function VoteValue ({ newIsDisabled, accountId , balance}: Props): React.ReactEl
    }
    let powerRatio = useCall<string>(api.derive.kp.powerRatio, [accountId]);
    let powerWeighted : BN = new BN(0);
-   if(!!powerRatio && !!balance){
-     var a = BigInt(0);
-     if(Number(powerRatio)!=1){
-       a= BigInt(balance+'') * BigInt((Number(parseFloat(powerRatio+'').toFixed(4)+'') * 10000 ) + '') ;
-       a = a / BigInt(10000+'');
-     }else{
-       a = BigInt(balance+'') * BigInt(Number(powerRatio) + '') ;
-     }
-     powerWeighted = new BN(a+'');
-     //powerWeighted =  new BN(startBalance+'').muln(Number(powerRatio));
+   if (balance && powerRatio) {
+     powerWeighted = balance.muln(Math.floor(Number(powerRatio) * FLOAT_BASE)).divn(FLOAT_BASE);
    }
   
    console.log("powerWeighted:"+powerWeighted);

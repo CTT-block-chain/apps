@@ -104,23 +104,6 @@ function Validator ({ allSlashes, canSelect, filterName, info, isNominated, isSe
       newBondTotal = new BN((bondTotal+''));
       newBondOwn = new BN((bondOwn+''));
     }
-    /* else{
-      var a = BigInt(0);
-      var b = BigInt(0);
-      if(Number(powerRatio)!=1){
-        a = BigInt(bondTotal+'') * BigInt((Number(parseFloat(powerRatio+'').toFixed(4)+'') * 10000 ) + '') ;
-        a = a / BigInt(10000+'');
-        b = BigInt(bondOwn+'') * BigInt((Number(parseFloat(powerRatio+'').toFixed(4)+'') * 10000 ) + '') ;
-        b = b / BigInt(10000+'');
-      }else{
-        a = BigInt(bondTotal+'') * BigInt(Number(powerRatio) + '') ;
-        b = BigInt(bondOwn+'') * BigInt(Number(powerRatio) + '') ;
-      }
-
-      newBondTotal = new BN(a+'');
-      newBondOwn = new BN(b+'');
-
-    } */
   }
   return (
     <tr>

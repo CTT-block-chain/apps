@@ -34,6 +34,7 @@ function StakingBonded ({ className = '', stakingInfo }: Props): React.ReactElem
   }
 
 /*
+
   if(!!powerRatio && !!balance){
     var a = BigInt(0);
     if(Number(powerRatio)!=1){

@@ -34,18 +34,34 @@ function Summary ({ redeemCount = 0, income }: Props): React.ReactElement<Props>
   var totalSeconds = new BN(300);//当前周期设置为30分钟
 
  const appFinanceCountInfo = useCall<DeriveAppFinanceCountInfo>(api.derive.kp.appFinanceCountInfo);
- //console.log("appFinanceCountInfo:" + JSON.stringify(appFinanceCountInfo));
+ console.log("appFinanceCountInfo:" + JSON.stringify(appFinanceCountInfo));
 
   var currentSeconds = new BN(1);
   //var count: number = 0;
-  //var totalBurn = new BN(0);
+  var totalBurn = new BN(0);
+  let stage: Number = 0;
   if(!!appFinanceCountInfo){
-     currentSeconds = new BN((300-Number(appFinanceCountInfo.leftSeconds+''))+'');
+     stage = appFinanceCountInfo.stage;
+     if( stage == 0 ){
+       totalSeconds = new BN(0);
+       currentSeconds = new BN('0');
+     }else if( stage == 1 ){
+       totalSeconds = new BN(300);
+       currentSeconds = new BN((300-Number(appFinanceCountInfo.leftSeconds+''))+'');
+     }else if( stage == 2 ){
+       totalSeconds = new BN(450);
+       currentSeconds = new BN((450-Number(appFinanceCountInfo.leftSeconds+''))+'');
+     }else if( stage == 3 ){
+       totalSeconds = new BN(150);
+       currentSeconds = new BN((150-Number(appFinanceCountInfo.leftSeconds+''))+'');
+     }
+
+     console.log("totalBurn:"+appFinanceCountInfo.totalBurn);
     // count = Number(appFinanceCountInfo.count+'');
    //  totalBurn = new BN(appFinanceCountInfo.totalBurn+'');//未格式化
-    //var a: string = appFinanceCountInfo.totalBurn.toString().substring(0,appFinanceCountInfo.totalBurn.toString().length-4)+'';
-  //  console.log("a:"+a);
-   // totalBurn = new BN(Number(a)+'');
+    var a: string = appFinanceCountInfo.totalBurn.toString().substring(0,appFinanceCountInfo.totalBurn.toString().length-4)+'';
+    console.log("a:"+a);
+    totalBurn = new BN(Number(a)+'');
   }
 
 
@@ -59,12 +75,12 @@ function Summary ({ redeemCount = 0, income }: Props): React.ReactElement<Props>
       </section>
       <section>
          {
-           income
+           appFinanceCountInfo
          ?
          (
            <CardSummary className='media--1000' label={t<string>('Total redemption')}>
              <FormatBalance
-               value={income}
+               value={totalBurn}
                withSi
              />
            </CardSummary>
@@ -73,7 +89,7 @@ function Summary ({ redeemCount = 0, income }: Props): React.ReactElement<Props>
          (
            <CardSummary label={t<string>('Total redemption')}>
              <FormatBalance
-               value={income}
+               value={totalBurn}
                withSi
              />
            </CardSummary>
@@ -82,10 +98,39 @@ function Summary ({ redeemCount = 0, income }: Props): React.ReactElement<Props>
          }
       </section>
 
-      {bestNumber &&(
+      {bestNumber && (stage == 0 ) &&(
+        <section className='media--1100'>
+
+        </section>
+      )}
+      {bestNumber && (stage == 1 ) &&(
         <section className='media--1100'>
           <CardSummary
             label={t<string>('Redemption period')}
+            progress={{
+              total: totalSeconds ,
+              value: bestNumber.mod(currentSeconds?currentSeconds:new BN(0)).addn(1),
+              withTime: true
+            }}
+          />
+        </section>
+      )}
+      {bestNumber && (stage == 2 ) &&(
+        <section className='media--1100'>
+          <CardSummary
+            label={t<string>('confirming')}
+            progress={{
+              total: totalSeconds ,
+              value: bestNumber.mod(currentSeconds?currentSeconds:new BN(0)).addn(1),
+              withTime: true
+            }}
+          />
+        </section>
+      )}
+      {bestNumber && (stage == 3 ) &&(
+        <section className='media--1100'>
+          <CardSummary
+            label={t<string>('compensating')}
             progress={{
               total: totalSeconds ,
               value: bestNumber.mod(currentSeconds?currentSeconds:new BN(0)).addn(1),

@@ -41,31 +41,17 @@ function Bond ({ className = '', onChange }: Props): React.ReactElement<Props> {
   let powerRatio = useCall<string>(api.derive.kp.powerRatio, [controllerId]);
   console.log("powerRatio:"+powerRatio);
   //console.log("startBalance:"+startBalance);
+  
+  const FLOAT_BASE = 10000;
   let powerWeighted : BN = new BN(0);
-  if(!!powerRatio && !!startBalance){
-    var a = BigInt(0);
-    if(Number(powerRatio)!=1){
-      a= BigInt(startBalance+'') * BigInt((Number(parseFloat(powerRatio+'').toFixed(4)+'') * 10000 ) + '') ;
-      a = a / BigInt(10000+'');
-    }else{
-      a = BigInt(startBalance+'') * BigInt(Number(powerRatio) + '') ;
-    }
-    powerWeighted = new BN(a+'');
-    //powerWeighted =  new BN(startBalance+'').muln(Number(powerRatio));
+  if (startBalance && powerRatio) {
+    powerWeighted = startBalance.muln(Math.floor(Number(powerRatio) * FLOAT_BASE)).divn(FLOAT_BASE);
   }
   //console.log("powerWeighted:"+powerWeighted);
-
-  if(!!powerRatio && !!amount){
-    var a = BigInt(0);
-    if(Number(powerRatio)!=1){
-      a= BigInt(amount+'') * BigInt((Number(parseFloat(powerRatio+'').toFixed(4)+'') * 10000 ) + '') ;
-      a = a / BigInt(10000+'');
-    }else{
-      a = BigInt(amount+'') * BigInt(Number(powerRatio) + '') ;
-    }
-    powerWeighted = new BN(a+'');
-   console.log("powerWeighted2:"+powerWeighted);
+  if (amount && powerRatio) {
+    powerWeighted = amount.muln(Math.floor(Number(powerRatio) * FLOAT_BASE)).divn(FLOAT_BASE);
   }
+  console.log("powerWeighted2:"+powerWeighted);
 
   const options = useMemo(
     () => createDestCurr(t),
