@@ -30,6 +30,7 @@ function LockedVote ({ powerRatio = '', intoType = '',children, className = '', 
   if(!!intoType && intoType=='Voters'){
     console.log("stake:"+info?.stake);
     console.log("powerRatio:"+powerRatio);
+	const FLOAT_BASE = 10000;
     var newStake = new BN(0);
     if (info.stake && powerRatio) {
       newStake = info.stake.muln(Math.floor(Number(powerRatio) * FLOAT_BASE)).divn(FLOAT_BASE);

@@ -66,7 +66,7 @@ function Actions ({ className = '', isInElection, ownStashes, targets }: Props):
     () => extractState( ownStashes),
     [ownStashes]
   ); 
-
+  console.log("bondedTotal:"+bondedTotal);
   const footer = useMemo(() => (
     <tr>
       <td colSpan={4} />

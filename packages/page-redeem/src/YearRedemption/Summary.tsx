@@ -1,7 +1,7 @@
 // Copyright 2017-2020 @polkadot/app-democracy authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { DeriveAppFinanceCountInfo} from '@polkadot/api-derive/types';
+import { DeriveAppFinanceCountInfo,DeriveModelCycleRewardTime} from '@polkadot/api-derive/types';
 
 //import { DeriveBalancesAccount } from '@polkadot/api-derive/types';
 //import { Balance } from '@polkadot/types/interfaces';
@@ -11,7 +11,7 @@ import React from 'react';
 import { SummaryBox, CardSummary } from '@polkadot/react-components';
 import { useApi, useCall } from '@polkadot/react-hooks';
 //import { formatNumber } from '@polkadot/util';
-//import { FormatBalance } from '@polkadot/react-query';
+import { FormatBalance } from '@polkadot/react-query';
 
 import { useTranslation } from '../translate';
 
@@ -35,11 +35,11 @@ function Summary ({ redeemCount = 0, income = 0 }: Props): React.ReactElement<Pr
   const appFinanceCountInfo = useCall<DeriveAppFinanceCountInfo>(api.derive.kp.appFinanceCountInfo);
  //console.log("appFinanceCountInfo:" + JSON.stringify(appFinanceCountInfo));
 
-  var currentSeconds = new BN(1);
+ //var currentSeconds = new BN(1);
   //var count: number = 0;
   var totalBurn = new BN(0);
   if(!!appFinanceCountInfo){
-     currentSeconds = new BN((300-Number(appFinanceCountInfo.leftSeconds+''))+'');
+    // currentSeconds = new BN((300-Number(appFinanceCountInfo.leftSeconds+''))+'');
     // count = Number(appFinanceCountInfo.count+'');
    //  totalBurn = new BN(appFinanceCountInfo.totalBurn+'');//未格式化
     var a: string = appFinanceCountInfo.totalBurn.toString().substring(0,appFinanceCountInfo.totalBurn.toString().length-4)+'';

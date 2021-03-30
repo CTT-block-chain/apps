@@ -47,7 +47,7 @@ function Vote ({ electionsInfo }: Props): React.ReactElement<Props> {
   //console.log("powerRatio:"+powerRatio);
   //console.log("voteValue:"+voteValue);
   const FLOAT_BASE = 10000;
-  const newAccount = stakingInfo ? stakingInfo.accountId : '';
+  const newAccount = accountId ? accountId : '' ;
   const powerRatio = useCall<string>(api.derive.kp.powerRatio, [newAccount]);
   let powerWeighted = new BN(0);
   

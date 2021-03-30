@@ -1,7 +1,6 @@
 // Copyright 2017-2020 @polkadot/app-staking authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
-import type { ApiPromise } from '@polkadot/api';
+import { ApiPromise } from '@polkadot/api';
 import { DeriveSessionIndexes, DeriveStakingElected, DeriveStakingWaiting } from '@polkadot/api-derive/types';
 import { Balance, ValidatorPrefsTo196 } from '@polkadot/types/interfaces';
 import { SortedTargets, TargetSortBy, ValidatorInfo } from './types';
@@ -9,7 +8,7 @@ import { SortedTargets, TargetSortBy, ValidatorInfo } from './types';
 import BN from 'bn.js';
 import { useMemo, useState } from 'react';
 import { registry } from '@polkadot/react-api';
-import { calcInflation, useAccounts, useApi, useCall, useDebounce } from '@polkadot/react-hooks';
+import { useAccounts, useApi, useCall, useDebounce } from '@polkadot/react-hooks';
 import { Option } from '@polkadot/types';
 import { BN_ONE, BN_ZERO, formatBalance } from '@polkadot/util';
 
@@ -175,10 +174,12 @@ export default function useSortedTargets (favorites: string[]): SortedTargets {
   const [calcWith, setCalcWith] = useState<BN | undefined>(baseBalance());
   const calcWithDebounce = useDebounce(calcWith);
   const totalIssuance = useCall<BN>(api.derive.kp.currentIssuance);
+  console.log("totalIssuance:"+totalIssuance);
+  console.log("totalIssuance:"+JSON.stringify(totalIssuance));
 
   const partial = useMemo(
     () => electedInfo && waitingInfo && totalIssuance
-      ? extractInfo(api, allAccounts, calcWithDebounce, electedInfo, waitingInfo, favorites, lastReward, totalIssuance)
+     ? extractInfo(api, allAccounts, calcWithDebounce, electedInfo, waitingInfo, favorites, lastReward, totalIssuance)
       : EMPTY_PARTIAL,
     [api, allAccounts, calcWithDebounce, electedInfo, favorites, lastReward, totalIssuance, waitingInfo]
   );

@@ -11,7 +11,7 @@ import { HelpOverlay, Tabs } from '@polkadot/react-components';
 import basicMd from './md/basic.md';
 import { useTranslation } from './translate';
 import useCounter from './useCounter';
-import Accounts from './Accounts';
+//import Accounts from './Accounts';
 import YearRedemption from './YearRedemption';
 import KptRedemption from './KptRedemption';
 

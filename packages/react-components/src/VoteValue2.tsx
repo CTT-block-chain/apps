@@ -30,6 +30,7 @@ function VoteValue ({ newIsDisabled, accountId , balance}: Props): React.ReactEl
        controllerAccountKp = Number(pow+'') / 100.0;
      }
    }
+   const FLOAT_BASE = 10000;
    let powerRatio = useCall<string>(api.derive.kp.powerRatio, [accountId]);
    let powerWeighted : BN = new BN(0);
    if (balance && powerRatio) {
