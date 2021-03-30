@@ -4,7 +4,7 @@
 import { DeriveReferendumVote } from '@polkadot/api-derive/types';
 import { Vote } from '@polkadot/types/interfaces';
 
-import React , { useState }from 'react';
+import React , {  }from 'react';
 import { AddressMini } from '@polkadot/react-components';
 import { useCall, useApi } from '@polkadot/react-hooks';
 import BN from 'bn.js';

@@ -181,6 +181,7 @@ function AddressMini ({ intoType = '', balance, bonded, children, className = ''
 
 
  }else if(!!value && !!intoType && intoType=='ReferendumVote'){
+   const FLOAT_BASE = 10000;
    var powerRatio = useCall<string>(api.derive.kp.powerRatio, [value+'']);
    var newBalance = new BN(0);
    if (balance && powerRatio) {
