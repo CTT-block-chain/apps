@@ -1,5 +1,6 @@
 // Copyright 2017-2020 @polkadot/app-staking authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+import type { Inflation } from '@polkadot/react-hooks/types';
 import { ApiPromise } from '@polkadot/api';
 import { DeriveSessionIndexes, DeriveStakingElected, DeriveStakingWaiting } from '@polkadot/api-derive/types';
 import { Balance, ValidatorPrefsTo196 } from '@polkadot/types/interfaces';
@@ -8,7 +9,7 @@ import { SortedTargets, TargetSortBy, ValidatorInfo } from './types';
 import BN from 'bn.js';
 import { useMemo, useState } from 'react';
 import { registry } from '@polkadot/react-api';
-import { useAccounts, useApi, useCall, useDebounce } from '@polkadot/react-hooks';
+import {  useAccounts, useApi, useCall, useDebounce } from '@polkadot/react-hooks';
 import { Option } from '@polkadot/types';
 import { BN_ONE, BN_ZERO, formatBalance } from '@polkadot/util';
 
@@ -127,6 +128,31 @@ function extractSingle (allAccounts: string[], amount: BN = baseBalance(), { inf
   });
 
   return [list, Object.keys(nominators)];
+}
+
+export function calcInflation (api: ApiPromise, totalStaked: BN, totalIssuance: BN): Inflation {
+  //const { falloff, idealStake, maxInflation, minInflation } = getInflationParams(api);
+  const { falloff, idealStake, maxInflation, minInflation } = {
+    falloff: 0.05,
+    idealStake: 0.75,
+    maxInflation: 0.1,
+    minInflation: 0.025
+  };
+
+  const stakedFraction = totalStaked.muln(1_000_000).div(totalIssuance).toNumber() / 1_000_000;
+  const idealInterest = maxInflation / idealStake;
+  const inflation = 100 * (minInflation + (
+    stakedFraction <= idealStake
+      ? (stakedFraction * (idealInterest - (minInflation / idealStake)))
+      : (((idealInterest * idealStake) - minInflation) * Math.pow(2, (idealStake - stakedFraction) / falloff))
+  ));
+
+  console.log(`calcInflation: totalStaked:${totalStaked.toString()}, totalIssuance:${totalIssuance.toString()}, stakedFraction: ${stakedFraction.toString()}, idealInterest:${idealInterest.toString()}`);
+
+  return {
+    inflation,
+    stakedReturn: inflation / stakedFraction
+  };
 }
 
 function extractInfo (api: ApiPromise, allAccounts: string[], amount: BN = baseBalance(), electedDerive: DeriveStakingElected, waitingDerive: DeriveStakingWaiting, favorites: string[], lastReward = BN_ONE, totalIssuance: BN): Partial<SortedTargets> {

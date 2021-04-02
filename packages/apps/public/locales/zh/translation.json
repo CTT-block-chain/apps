@@ -1083,7 +1083,7 @@
   "commission": "佣金",
   "compensating": "赎回补偿期",
   "compiled contract WASM": "编译过的合约 WASM",
-  "confirming": "赎回支付期",
+  "confirming": "支付延长期",
   "connected peers": "连接的节点",
   "contacts": "联系人",
   "contract address": "合约地址",
