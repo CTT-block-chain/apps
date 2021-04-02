@@ -37,14 +37,15 @@ function Summary ({ redeemCount = 0, income = 0 }: Props): React.ReactElement<Pr
 
  //var currentSeconds = new BN(1);
   //var count: number = 0;
-  var totalBurn = new BN(0);
+  var totalBurn:string ='';
   if(!!appFinanceCountInfo){
     // currentSeconds = new BN((300-Number(appFinanceCountInfo.leftSeconds+''))+'');
     // count = Number(appFinanceCountInfo.count+'');
    //  totalBurn = new BN(appFinanceCountInfo.totalBurn+'');//未格式化
-    var a: string = appFinanceCountInfo.totalBurn.toString().substring(0,appFinanceCountInfo.totalBurn.toString().length-4)+'';
+    totalBurn = appFinanceCountInfo.totalBurn.toString();
+  /*  var a: string = appFinanceCountInfo.totalBurn.toString().substring(0,appFinanceCountInfo.totalBurn.toString().length-4)+'';
     console.log("a:"+a);
-    totalBurn = new BN(Number(a)+'');
+    totalBurn = new BN(Number(a)+''); */
   }
   var total2 = new BN(600);//当前周期设置为1小时
   const modelCycleRewardStage = useCall<DeriveModelCycleRewardTime>(api.derive.kp.modelCycleRewardStage);
@@ -53,15 +54,17 @@ function Summary ({ redeemCount = 0, income = 0 }: Props): React.ReactElement<Pr
 
   var total = new BN(1);
   let stage: Number = 0;
+  const unit = new BN(6);
   if(!!modelCycleRewardStage){
      stage = modelCycleRewardStage.stage.toNumber();
      if(stage==0){
-       total = new BN((300-modelCycleRewardStage.leftSeconds)+'');
+       total = new BN((1800-modelCycleRewardStage.leftSeconds)+'');
        total2 = new BN(300);
      }else if(stage==1 || stage==2){
-       total = new BN((100-modelCycleRewardStage.leftSeconds)+'');
+       total = new BN((600-modelCycleRewardStage.leftSeconds)+'');
        total2 = new BN(100);
      }
+     total = total.div(unit);
     // console.log("total:" + total);
     // console.log("stage:" + stage);
   }
@@ -74,63 +77,44 @@ function Summary ({ redeemCount = 0, income = 0 }: Props): React.ReactElement<Pr
         </CardSummary>
       </section>
       <section>
-         {
-           appFinanceCountInfo
-         ?
-         (
-           <CardSummary className='media--1000' label={t<string>('Total redemption')}>
-             <FormatBalance
-               value={totalBurn}
-               withSi
-             />
-           </CardSummary>
-         )
-         :
-         (
-           <CardSummary label={t<string>('Total redemption')}>
-             <FormatBalance
-               value={totalBurn}
-               withSi
-             />
-           </CardSummary>
-         )
-
-         }
+         <CardSummary className='media--1000' label={t<string>('Total redemption')}>
+             {totalBurn}
+         </CardSummary>
       </section>
       <section>
       </section>
 
-     {bestNumber && (stage == 0 ) &&(
+     {total2 && total && (stage == 0 ) &&(
        <section className='media--1100'>
          <CardSummary
            label={t<string>('ordinary stage')}
            progress={{
              total: total2 ,
-             value: bestNumber.mod(total).addn(1),
+             value: total.mod(total2).addn(1),
              withTime: true
            }}
          />
        </section>
      )}
-     {bestNumber && (stage == 1 ) &&(
+     {total2 && total && (stage == 1 ) &&(
        <section className='media--1100'>
          <CardSummary
            label={t<string>('statistical income stage')}
            progress={{
              total: total2 ,
-             value: bestNumber.mod(total).addn(1),
+             value: total.mod(total2).addn(1),
              withTime: true
            }}
          />
        </section>
      )}
-     {bestNumber && (stage == 2 ) &&(
+     {total2 && total && (stage == 2 ) &&(
        <section className='media--1100'>
          <CardSummary
            label={t<string>('apply for award stage')}
            progress={{
              total: total2 ,
-             value: bestNumber.mod(total).addn(1),
+             value: total.mod(total2).addn(1),
              withTime: true
            }}
          />

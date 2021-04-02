@@ -55,15 +55,17 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
 
   var total = new BN(1);
   let stage: Number = 0;
+  const unit = new BN(6);
   if(!!modelCycleRewardStage){
      stage = modelCycleRewardStage.stage.toNumber();
      if(stage==0){
-       total = new BN((300-modelCycleRewardStage.leftSeconds)+'');
+       total = new BN((1800-modelCycleRewardStage.leftSeconds)+'');
        total2 = new BN(300);
      }else if(stage==1 || stage==2){
-       total = new BN((100-modelCycleRewardStage.leftSeconds)+'');
+       total = new BN((600-modelCycleRewardStage.leftSeconds)+'');
        total2 = new BN(100);
      }
+      total = total.div(unit);
     // console.log("total:" + total);
     // console.log("stage:" + stage);
   }
@@ -114,37 +116,37 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
           </CardSummary>
         )}
       </section>
-      {bestNumber && (stage == 0 ) &&(
+      { total2 && total && (stage == 0 ) &&(
         <section className='media--1100'>
           <CardSummary
             label={t<string>('ordinary stage')}
             progress={{
               total: total2 ,
-              value: bestNumber.mod(total).addn(1),
+              value: total.mod(total2).addn(1),
               withTime: true
             }}
           />
         </section>
       )}
-      {bestNumber && (stage == 1 ) &&(
+      {total2 && total && (stage == 1 ) &&(
         <section className='media--1100'>
           <CardSummary
             label={t<string>('statistical income stage')}
             progress={{
               total: total2 ,
-              value: bestNumber.mod(total).addn(1),
+              value: total.mod(total2).addn(1),
               withTime: true
             }}
           />
         </section>
       )}
-      {bestNumber && (stage == 2 ) &&(
+      {total2 && total && (stage == 2 ) &&(
         <section className='media--1100'>
           <CardSummary
             label={t<string>('apply for award stage')}
             progress={{
               total: total2 ,
-              value: bestNumber.mod(total).addn(1),
+              value: total.mod(total2).addn(1),
               withTime: true
             }}
           />

@@ -20,7 +20,8 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
   const bestNumber = useCall<BN>(api.derive.chain.bestNumber);
   const publicPropCount = useCall<BN>(api.query.democracy.publicPropCount);
   const referendumTotal = useCall<BN>(api.query.democracy.referendumCount);
-
+ /* console.log("bestNumber:"+bestNumber);
+  console.log("api.consts.democracy.launchPeriod:"+api.consts.democracy.launchPeriod); */
   return (
     <SummaryBox>
       <section>
@@ -31,7 +32,7 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
           {formatNumber(publicPropCount)}
         </CardSummary>
       </section>
-      
+
 
       <section>
         <CardSummary label={t<string>('referenda')}>
