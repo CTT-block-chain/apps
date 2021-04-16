@@ -64,7 +64,10 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
      }else if(stage==1 || stage==2){
        total = new BN((600-modelCycleRewardStage.leftSeconds)+'');
        total2 = new BN(100);
-     }
+    }else if(stage==3 || stage==4){
+      total = new BN((900-modelCycleRewardStage.leftSeconds)+'');
+      total2 = new BN(150);
+    }
       total = total.div(unit);
     // console.log("total:" + total);
     // console.log("stage:" + stage);
@@ -144,6 +147,30 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
         <section className='media--1100'>
           <CardSummary
             label={t<string>('apply for award stage')}
+            progress={{
+              total: total2 ,
+              value: total.mod(total2).addn(1),
+              withTime: true
+            }}
+          />
+        </section>
+      )}
+      {total2 && total && (stage == 3 ) &&(
+        <section className='media--1100'>
+          <CardSummary
+            label={t<string>('confirming')}
+            progress={{
+              total: total2 ,
+              value: total.mod(total2).addn(1),
+              withTime: true
+            }}
+          />
+        </section>
+      )}
+      {total2 && total && (stage == 4 ) &&(
+        <section className='media--1100'>
+          <CardSummary
+            label={t<string>('compensating')}
             progress={{
               total: total2 ,
               value: total.mod(total2).addn(1),
