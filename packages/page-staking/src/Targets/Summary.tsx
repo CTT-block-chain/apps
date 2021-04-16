@@ -2,21 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Balance } from '@polkadot/types/interfaces';
-import { DeriveBalancesAccount } from '@polkadot/api-derive/types';
 
 import BN from 'bn.js';
 import React, { useMemo } from 'react';
 import { SummaryBox, CardSummary } from '@polkadot/react-components';
-import { calcInflation, useInflation, useApi, useCall } from '@polkadot/react-hooks';
+import { useInflation, useApi, useCall } from '@polkadot/react-hooks';
 import { FormatBalance } from '@polkadot/react-query';
-import { stringToU8a } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
-
-const FUND_FIN_ACCOUNT = stringToU8a('modlpy/trfin'.padEnd(32, '\0'));
-const FUND_MOD_ACCOUNT = stringToU8a('modlpy/trmod'.padEnd(32, '\0'));
-const FUND_TCH_ACCOUNT = stringToU8a('modlpy/trtch'.padEnd(32, '\0'));
-const FUND_AMOD_ACCOUNT = stringToU8a('modlpy/acmod'.padEnd(32, '\0'));
 
 interface Props {
   avgStaked?: BN;
@@ -31,30 +24,20 @@ function Summary ({ avgStaked, lastReward, lowStaked, numNominators, numValidato
   const { t } = useTranslation();
   const { api } = useApi();
   const totalIssuance = useCall<Balance>(api.query.balances?.totalIssuance);
-  const fundFinBalance = useCall<DeriveBalancesAccount>(api.derive.balances.account, [FUND_FIN_ACCOUNT]);
-  const fundModBalance = useCall<DeriveBalancesAccount>(api.derive.balances.account, [FUND_MOD_ACCOUNT]);
-  const fundTchBalance = useCall<DeriveBalancesAccount>(api.derive.balances.account, [FUND_TCH_ACCOUNT]);
-  const fundAmodBalance = useCall<DeriveBalancesAccount>(api.derive.balances.account, [FUND_AMOD_ACCOUNT]);
-  const ZERO = new BN(0);
-  const fundBalance = (fundFinBalance ? fundFinBalance.freeBalance : ZERO)
-    .add(fundModBalance ? fundModBalance.freeBalance : ZERO)
-    .add(fundTchBalance ? fundTchBalance.freeBalance : ZERO)
-    .add(fundAmodBalance ? fundAmodBalance.freeBalance : ZERO);
-  const totalCash = totalIssuance?.sub(fundBalance);
-
+  
   const inflation = useInflation(totalStaked);
-
+ 
   console.log('inflation:', inflation);
 
   const progressStake = useMemo(
-    () => totalCash && totalStaked && totalStaked.gtn(0)
+    () => totalIssuance && totalStaked && totalStaked.gtn(0)
       ? {
         hideValue: true,
-        total: totalCash,
+        total: totalIssuance,
         value: totalStaked
       }
       : undefined,
-    [totalCash, totalStaked]
+    [totalIssuance, totalStaked]
   );
 
   const progressAvg = useMemo(
@@ -71,30 +54,76 @@ function Summary ({ avgStaked, lastReward, lowStaked, numNominators, numValidato
   return (
     <SummaryBox>
       <section className='media--800'>
-        {totalCash && (
-          <CardSummary
-            label={`${totalStaked?.gtn(0) ? `${t<string>('total staked')} / ` : ''}${t<string>('circulation')}`}
-            progress={progressStake}
-          >
-            <div>
-              {totalStaked?.gtn(0) && (
-                <>
-                  <FormatBalance
-                    value={totalStaked}
-                    withCurrency={false}
-                    withSi
-                  />
+       {totalIssuance && (
+         <CardSummary
+           label={`${totalStaked?.gtn(0) ? `${t<string>('total staked')} / ` : ''}${t<string>('Number of block issues')}`}
+           progress={progressStake}
+         >
+           <div>
+             {totalStaked?.gtn(0) && (
+               <>
+                 <FormatBalance
+                   value={totalStaked}
+                   withCurrency={false}
+                   withSi
+                 />
                  &nbsp;/&nbsp;
-                </>
-              )}
-              <FormatBalance
-                value={totalCash}
-                withSi
-              />
-            </div>
-          </CardSummary>
-        )}
-
+               </>
+             )}
+             <FormatBalance
+               value={totalIssuance}
+               withSi
+             />
+           </div>
+         </CardSummary>
+       )}
+       {totalIssuance && (
+         <CardSummary
+           label={`${totalStaked?.gtn(0) ? `${t<string>('total staked')} / ` : ''}${t<string>('Initial issue quantity')}`}
+           progress={progressStake}
+         >
+           <div>
+             {totalStaked?.gtn(0) && (
+               <>
+                 <FormatBalance
+                   value={totalStaked}
+                   withCurrency={false}
+                   withSi
+                 />
+                 &nbsp;/&nbsp;
+               </>
+             )}
+             <FormatBalance
+               value={totalIssuance}
+               withSi
+             />
+           </div>
+         </CardSummary>
+       )}
+       {totalIssuance && (
+         <CardSummary
+           label={`${totalStaked?.gtn(0) ? `${t<string>('total staked')} / ` : ''}${t<string>('Fund stock')}`}
+           progress={progressStake}
+         >
+           <div>
+             {totalStaked?.gtn(0) && (
+               <>
+                 <FormatBalance
+                   value={totalStaked}
+                   withCurrency={false}
+                   withSi
+                 />
+                 &nbsp;/&nbsp;
+               </>
+             )}
+             <FormatBalance
+               value={totalIssuance}
+               withSi
+             />
+           </div>
+         </CardSummary>
+       )}
+            
       </section>
       {avgStaked && lowStaked && (
         <CardSummary
