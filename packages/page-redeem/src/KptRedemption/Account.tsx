@@ -65,7 +65,7 @@ function Account ({  param2 = [], account: { address, meta }, className = '', de
   }
  // console.log("newParam2:"+JSON.stringify(newParam2));
   const redemptionInfo = useCall<DeriveAccountFinanceRecord>(api.api.derive.kp.accountFinanceRecord, newParam2);
-  //console.log("redemptionInfo:"+JSON.stringify(redemptionInfo));
+  console.log("redemptionInfo:"+JSON.stringify(redemptionInfo));
 
   const recoveryInfo = useCall<RecoveryConfig | null>(api.api.query.recovery?.recoverable, [address], transformRecovery);
   const multiInfos = useMultisigApprovals(address);
