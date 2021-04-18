@@ -93,9 +93,11 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
        }else if(stage==1 || stage==2){
          total = new BN((600-modelCycleRewardStage[0].leftSeconds)+'');
          total2 = new BN(100);
-      }else if(stage==3 || stage==4){
-        total = new BN((900-modelCycleRewardStage[0].leftSeconds)+'');
-        total2 = new BN(150);
+
+      }else if(stage==3 || stage==4){//3支付延长期 4赎回补偿期
+        total = new BN((300-modelCycleRewardStage[0].leftSeconds)+'');
+        
+        total2 = new BN(50);
       }
     }
     total = total.div(unit);
