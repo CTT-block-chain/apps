@@ -4,7 +4,7 @@ import { DeriveBalancesAccount,DeriveModelCycleRewardTime } from '@polkadot/api-
 //import { Balance } from '@polkadot/types/interfaces';
 
 import BN from 'bn.js';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SummaryBox, CardSummary } from '@polkadot/react-components';
 import { useApi, useCall } from '@polkadot/react-hooks';
 import { formatNumber , stringToU8a} from '@polkadot/util';
@@ -13,19 +13,47 @@ import { FormatBalance } from '@polkadot/react-query';
 import { useTranslation } from '../translate';
 
 const TRMODEL_ACCOUNT = stringToU8a('modlpy/trmod'.padEnd(32, '\0'));//模型
-
+const POLL_TIMEOUT = 1000;
 interface Props {
   referendumCount?: number;
 }
 
+async function stageInfo (api: ApiPromise): Promise<DeriveModelCycleRewardTime> {
+  try {
+    const stages = await Promise.all([
+      api.derive.kp.modelCycleRewardStage()
+    ]);
+
+    return stages;
+  } catch (error) {
+    console.log("error:"+error);
+    return [];
+  }
+}
 
 function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
   const activeProposals = useCall<unknown[]>(api.derive.democracy.proposals);
   const bestNumber = useCall<BN>(api.derive.chain.bestNumber);
-  //const publicPropCount = useCall<BN>(api.query.democracy.publicPropCount);
- // const referendumTotal = useCall<BN>(api.query.democracy.referendumCount);
+  const [modelCycleRewardStage, setInfo] = useState<DeriveModelCycleRewardTime>({});
+  //console.log("modelCycleRewardStage:" + JSON.stringify(modelCycleRewardStage));
+
+  useEffect((): () => void => {
+    const _getStage = (): void => {
+      stageInfo(api).then(setInfo).catch(console.error);
+    };
+
+    _getStage();
+
+    const timerId = window.setInterval((): void => {
+      _getStage();
+    }, POLL_TIMEOUT);
+
+    return (): void => {
+      window.clearInterval(timerId);
+    };
+  }, []);
 
   const trmodelBalance = useCall<DeriveBalancesAccount>(api.derive.balances.account, [TRMODEL_ACCOUNT]);
 
@@ -49,26 +77,28 @@ function Summary ({ referendumCount }: Props): React.ReactElement<Props> {
      }
 
   var total2 = new BN(600);//当前周期设置为1小时
-  const modelCycleRewardStage = useCall<DeriveModelCycleRewardTime>(api.derive.kp.modelCycleRewardStage);
 
-  //console.log("modelCycleRewardStage:" + JSON.stringify(modelCycleRewardStage));
+
+
 
   var total = new BN(1);
   let stage: Number = 0;
   const unit = new BN(6);
   if(!!modelCycleRewardStage){
-     stage = modelCycleRewardStage.stage.toNumber();
-     if(stage==0){
-       total = new BN((1800-modelCycleRewardStage.leftSeconds)+'');
-       total2 = new BN(300);
-     }else if(stage==1 || stage==2){
-       total = new BN((600-modelCycleRewardStage.leftSeconds)+'');
-       total2 = new BN(100);
-    }else if(stage==3 || stage==4){
-      total = new BN((900-modelCycleRewardStage.leftSeconds)+'');
-      total2 = new BN(150);
+     if(!!modelCycleRewardStage[0] && modelCycleRewardStage.length>0){
+       stage = modelCycleRewardStage[0].stage.toNumber();
+       if(stage==0){
+         total = new BN((1800-modelCycleRewardStage[0].leftSeconds)+'');
+         total2 = new BN(300);
+       }else if(stage==1 || stage==2){
+         total = new BN((600-modelCycleRewardStage[0].leftSeconds)+'');
+         total2 = new BN(100);
+      }else if(stage==3 || stage==4){
+        total = new BN((900-modelCycleRewardStage[0].leftSeconds)+'');
+        total2 = new BN(150);
+      }
     }
-      total = total.div(unit);
+    total = total.div(unit);
     // console.log("total:" + total);
     // console.log("stage:" + stage);
   }
